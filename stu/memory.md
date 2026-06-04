@@ -11,6 +11,7 @@
 | ADR-005 | Bundler: esbuild over @vercel/ncc                                  | Accepted   | 2026-06-04 |
 | ADR-006 | Configuration: optional .versionbot.yml file with input precedence | Accepted   | 2026-06-04 |
 | ADR-007 | License: Source-Available No-Resale over MIT                       | Accepted   | 2026-06-04 |
+| ADR-008 | package.json sync: in-place update preserving all fields           | Accepted   | 2026-06-04 |
 
 ---
 
@@ -81,3 +82,13 @@
 - **Context:** MIT allows anyone to sell or commercialise the tool without restriction. The copyright holder wants to retain commercial rights while keeping the tool freely usable.
 - **Decision:** Custom Source-Available No-Resale License. Free for personal, educational, open-source, and internal business use. Selling, repackaging, or hosting as a paid product requires written permission from Rashay Daya.
 - **Consequences:** Not OSI-approved. Cannot be listed on GitHub Marketplace as "open source". CODEOWNERS restricts LICENSE changes to `@Rashay01`.
+
+---
+
+## ADR-008 — package.json sync: in-place update preserving all fields
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** When syncing `package.json`, options were: (1) update only the `version` field in-place, (2) regenerate the file from scratch, (3) use `npm version` CLI. Option 1 preserves formatting intent and field order. Option 2 loses comments and ordering. Option 3 adds a dependency on npm being available.
+- **Decision:** Parse JSON, update only the `version` key, re-serialise with `JSON.stringify(pkg, null, 2) + '\n'`. Preserves all existing fields. Feature is opt-in (`sync-package-json: 'false'` default).
+- **Consequences:** File ordering and key order preserved. JSON comments (non-standard) are lost on write. Missing `package.json` logs a warning and skips gracefully — does not fail the release.

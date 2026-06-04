@@ -53,7 +53,6 @@ function mockMergedPR(labels: string[] = ['release:minor']): void {
 
 describe('run', () => {
   beforeEach(() => {
-    vi.resetModules();
     vi.clearAllMocks();
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
     vi.mocked(versionModule.readVersion).mockReturnValue('1.0.0');
@@ -94,7 +93,11 @@ describe('run', () => {
     const { run } = await import('../src/index');
     await run();
     expect(versionModule.writeVersion).not.toHaveBeenCalled();
+    expect(changelogModule.prependEntry).not.toHaveBeenCalled();
+    expect(gitModule.configureGit).not.toHaveBeenCalled();
     expect(gitModule.commitRelease).not.toHaveBeenCalled();
+    expect(gitModule.createTag).not.toHaveBeenCalled();
+    expect(releaseModule.createRelease).not.toHaveBeenCalled();
     expect(core.setOutput).toHaveBeenCalledWith('version', '1.1.0');
     expect(core.setOutput).toHaveBeenCalledWith('skipped', 'false');
   });

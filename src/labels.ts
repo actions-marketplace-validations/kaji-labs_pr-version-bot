@@ -1,18 +1,33 @@
 export type BumpType = 'major' | 'minor' | 'patch' | 'none';
 
-const LABEL_MAP: Record<string, BumpType> = {
-  'release:major': 'major',
-  'release:minor': 'minor',
-  'release:patch': 'patch',
-  'release:none': 'none',
+export interface LabelMapConfig {
+  major: string;
+  minor: string;
+  patch: string;
+  none: string;
+}
+
+const DEFAULT_LABEL_MAP: LabelMapConfig = {
+  major: 'release:major',
+  minor: 'release:minor',
+  patch: 'release:patch',
+  none: 'release:none',
 };
 
 export function detectBump(
   labels: string[],
   defaultBump: BumpType,
-  failOnMultiple: boolean
+  failOnMultiple: boolean,
+  labelMap: LabelMapConfig = DEFAULT_LABEL_MAP
 ): BumpType {
-  const releaseLabels = labels.filter((l) => l in LABEL_MAP);
+  const lookup: Record<string, BumpType> = {
+    [labelMap.major]: 'major',
+    [labelMap.minor]: 'minor',
+    [labelMap.patch]: 'patch',
+    [labelMap.none]: 'none',
+  };
+
+  const releaseLabels = labels.filter((l) => l in lookup);
 
   if (releaseLabels.length === 0) return defaultBump;
 
@@ -20,5 +35,5 @@ export function detectBump(
     throw new Error(`Multiple release labels found: ${releaseLabels.join(', ')}`);
   }
 
-  return LABEL_MAP[releaseLabels[0]];
+  return lookup[releaseLabels[0]];
 }

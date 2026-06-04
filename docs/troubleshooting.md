@@ -51,3 +51,23 @@
 **Cause:** The workflow trigger requires `types: [closed]` and the job condition `if: github.event.pull_request.merged == true`. If either is missing, the workflow runs but exits early or does not run at all.
 
 **Fix:** Verify your workflow matches the [Quick Start](quick-start.md) example exactly.
+
+---
+
+## Config file not being read
+
+**Symptom:** Action ignores `.versionbot.yml` settings.
+
+**Cause:** The file is not in the repo root, or the action runs in a different working directory.
+
+**Fix:** Ensure `.versionbot.yml` is in the root of the repository (same level as `action.yml`).
+
+---
+
+## Invalid .versionbot.yml
+
+**Symptom:** Action fails with `Invalid .versionbot.yml`.
+
+**Cause:** The file contains invalid YAML syntax, or the root value is not a mapping (e.g. a list or plain string).
+
+**Fix:** Validate your config file with a YAML linter. The root must be a YAML mapping (key-value pairs), not a list or scalar. See `.versionbot.yml.example` for a valid reference.

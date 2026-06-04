@@ -1,0 +1,25 @@
+# .versionbot.yml — PR Version Bot configuration
+# All fields are optional. Workflow inputs override these values.
+# Remove this file entirely to use built-in defaults.
+
+# File paths
+versionFile: VERSION.md
+changelogFile: CHANGELOG.md
+
+# Version bump behaviour
+defaultBump: patch
+tagPrefix: v
+
+# Release options
+createGithubRelease: true
+failOnMultipleLabels: true
+dryRun: false
+targetBranch: main
+commitMessageTemplate: 'chore(release): {tag}'
+
+# Custom label names (optional — defaults shown)
+labels:
+  major: release:major
+  minor: release:minor
+  patch: release:patch
+  none: release:none

@@ -1,20 +1,19 @@
 import type { BumpType } from './labels';
 
-const BUMP_PRIORITY: Record<Exclude<BumpType, 'none'>, number> = {
+type StableBumpType = Exclude<BumpType, 'none' | 'alpha' | 'beta' | 'rc'>;
+
+const BUMP_PRIORITY: Record<StableBumpType, number> = {
   major: 3,
   minor: 2,
   patch: 1,
 };
 
-function higher(
-  a: Exclude<BumpType, 'none'> | null,
-  b: Exclude<BumpType, 'none'>
-): Exclude<BumpType, 'none'> {
+function higher(a: StableBumpType | null, b: StableBumpType): StableBumpType {
   if (a === null) return b;
   return BUMP_PRIORITY[a] >= BUMP_PRIORITY[b] ? a : b;
 }
 
-function detectFromMessage(message: string): Exclude<BumpType, 'none'> | null {
+function detectFromMessage(message: string): StableBumpType | null {
   if (/BREAKING CHANGE:/m.test(message)) return 'major';
   if (/^(\w+)(\(.+\))?!:/.test(message)) return 'major';
   if (/^feat(\(.+\))?:/.test(message)) return 'minor';
@@ -22,8 +21,8 @@ function detectFromMessage(message: string): Exclude<BumpType, 'none'> | null {
   return null;
 }
 
-export function detectBumpFromCommits(commitMessages: string[]): Exclude<BumpType, 'none'> | null {
-  let result: Exclude<BumpType, 'none'> | null = null;
+export function detectBumpFromCommits(commitMessages: string[]): StableBumpType | null {
+  let result: StableBumpType | null = null;
 
   for (const message of commitMessages) {
     const bump = detectFromMessage(message);

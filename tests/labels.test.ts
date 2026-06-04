@@ -73,3 +73,32 @@ describe('detectBump with custom label map', () => {
     expect(detectBump(['release:major'], 'patch', true)).toBe('major');
   });
 });
+
+describe('detectBump with prerelease labels', () => {
+  it('detects alpha from default label', () => {
+    expect(detectBump(['release:alpha'], 'patch', true)).toBe('alpha');
+  });
+
+  it('detects beta from default label', () => {
+    expect(detectBump(['release:beta'], 'patch', true)).toBe('beta');
+  });
+
+  it('detects rc from default label', () => {
+    expect(detectBump(['release:rc'], 'patch', true)).toBe('rc');
+  });
+
+  it('detects alpha from custom label', () => {
+    const map = { major: 'release:major', minor: 'release:minor', patch: 'release:patch', none: 'release:none', alpha: 'pre:alpha' };
+    expect(detectBump(['pre:alpha'], 'patch', true, map)).toBe('alpha');
+  });
+
+  it('returns defaultBump when no prerelease label present and alpha not configured', () => {
+    const map = { major: 'release:major', minor: 'release:minor', patch: 'release:patch', none: 'release:none' };
+    expect(detectBump(['release:alpha'], 'patch', true, map)).toBe('patch');
+  });
+
+  it('release:none always wins over a prerelease label regardless of order', () => {
+    expect(detectBump(['release:alpha', 'release:none'], 'patch', false)).toBe('none');
+    expect(detectBump(['release:none', 'release:rc'], 'patch', false)).toBe('none');
+  });
+});

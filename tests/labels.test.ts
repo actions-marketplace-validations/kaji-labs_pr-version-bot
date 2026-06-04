@@ -88,12 +88,23 @@ describe('detectBump with prerelease labels', () => {
   });
 
   it('detects alpha from custom label', () => {
-    const map = { major: 'release:major', minor: 'release:minor', patch: 'release:patch', none: 'release:none', alpha: 'pre:alpha' };
+    const map = {
+      major: 'release:major',
+      minor: 'release:minor',
+      patch: 'release:patch',
+      none: 'release:none',
+      alpha: 'pre:alpha',
+    };
     expect(detectBump(['pre:alpha'], 'patch', true, map)).toBe('alpha');
   });
 
   it('returns defaultBump when no prerelease label present and alpha not configured', () => {
-    const map = { major: 'release:major', minor: 'release:minor', patch: 'release:patch', none: 'release:none' };
+    const map = {
+      major: 'release:major',
+      minor: 'release:minor',
+      patch: 'release:patch',
+      none: 'release:none',
+    };
     expect(detectBump(['release:alpha'], 'patch', true, map)).toBe('patch');
   });
 

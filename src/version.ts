@@ -15,7 +15,10 @@ export function readVersion(filePath: string): string {
   return raw;
 }
 
-export function bumpVersion(current: string, bump: Exclude<BumpType, 'none' | 'alpha' | 'beta' | 'rc'>): string {
+export function bumpVersion(
+  current: string,
+  bump: Exclude<BumpType, 'none' | 'alpha' | 'beta' | 'rc'>
+): string {
   const sv = semver.parse(current);
   if (!sv) throw new Error(`Invalid semver: "${current}"`);
 

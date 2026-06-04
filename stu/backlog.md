@@ -2,6 +2,34 @@
 
 ## Open Items
 
+### B-016 — Enrich release notes with PR link, author, and label used
+
+- **Logged:** 2026-06-04
+- **Priority:** Medium
+- **Description:** The GitHub Release body currently contains only a single line: `{bump}: {prTitle} (#{prNumber})`. This is functional but minimal. Richer release notes should include: the full PR link (not just the number), the PR author's GitHub handle, the bump type label that triggered the release (or the conventional commit if that path was used), and a direct link to the diff/compare. Example:
+
+  ```
+  ## What changed
+  - minor: Add .versionbot.yml config file support (#11) by @Rashay01
+    https://github.com/kaji-labs/pr-version-bot/pull/11
+
+  **Full diff:** https://github.com/kaji-labs/pr-version-bot/compare/v0.0.1...v0.1.0
+  ```
+
+- **Implementation:** `src/github-release.ts` — update `createRelease` to accept additional context (author login, PR URL, compare URL). `src/index.ts` — pass `pr.user.login`, `pr.html_url`, and build compare URL from previous tag. See Epic 9 / Story 8.2 for related README sync work.
+- **Status:** Open
+
+---
+
+### B-017 — Include PR link in CHANGELOG.md entries
+
+- **Logged:** 2026-06-04
+- **Priority:** Medium
+- **Description:** `CHANGELOG.md` entries currently use `(#42)` which GitHub auto-links to the PR. But users reading the raw file (or in IDEs) don't see the full URL. Update `buildEntry` in `src/changelog.ts` to include the full PR URL as a Markdown link instead of just the number: `([#42](https://github.com/kaji-labs/pr-version-bot/pull/42))`. The repo URL needs to be available — read from `github.context.payload.repository.html_url` or `github.context.repo` at runtime. This should be opt-in or always-on — always-on is simpler since it's universally better. Unit tests: verify the URL is included in the formatted entry.
+- **Status:** Open
+
+---
+
 ### B-008 — [GO PUBLIC] Enable CodeQL scanning (remove continue-on-error)
 
 - **Logged:** 2026-06-04

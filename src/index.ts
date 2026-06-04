@@ -1,10 +1,11 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { detectBump, type BumpType } from './labels';
+import { detectBump } from './labels';
 import { readVersion, bumpVersion, writeVersion } from './version';
 import { prependEntry } from './changelog';
 import { configureGit, commitRelease, createTag } from './git';
 import { createRelease } from './github-release';
+import { loadConfig, mergeConfig } from './config';
 
 export async function run(): Promise<void> {
   try {
@@ -15,17 +16,24 @@ export async function run(): Promise<void> {
     }
 
     const token = core.getInput('github-token', { required: true });
-    const versionFile = core.getInput('version-file') || 'VERSION.md';
-    const changelogFile = core.getInput('changelog-file') || 'CHANGELOG.md';
-    const defaultBump = (core.getInput('default-bump') || 'patch') as BumpType;
-    const tagPrefix = core.getInput('tag-prefix') || 'v';
-    const createGhRelease = core.getInput('create-github-release') !== 'false';
-    const failOnMultiple = core.getInput('fail-on-multiple-labels') !== 'false';
-    const dryRun = core.getInput('dry-run') === 'true';
-    const commitTemplate = core.getInput('commit-message-template') || 'chore(release): {tag}';
+
+    const inputs: Record<string, string> = {
+      'version-file': core.getInput('version-file'),
+      'changelog-file': core.getInput('changelog-file'),
+      'default-bump': core.getInput('default-bump'),
+      'tag-prefix': core.getInput('tag-prefix'),
+      'create-github-release': core.getInput('create-github-release'),
+      'fail-on-multiple-labels': core.getInput('fail-on-multiple-labels'),
+      'dry-run': core.getInput('dry-run'),
+      'target-branch': core.getInput('target-branch'),
+      'commit-message-template': core.getInput('commit-message-template'),
+    };
+
+    const fileConfig = loadConfig();
+    const config = mergeConfig(fileConfig, inputs);
 
     const labels = (pr.labels as Array<{ name: string }>).map((l) => l.name);
-    const bump = detectBump(labels, defaultBump, failOnMultiple);
+    const bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels);
 
     if (bump === 'none') {
       core.info('release:none label — skipping release');
@@ -34,17 +42,17 @@ export async function run(): Promise<void> {
       return;
     }
 
-    const current = readVersion(versionFile);
-    const next = bumpVersion(current, bump as Exclude<BumpType, 'none'>);
-    const tag = `${tagPrefix}${next}`;
-    const message = commitTemplate.replace('{tag}', tag);
+    const current = readVersion(config.versionFile);
+    const next = bumpVersion(current, bump);
+    const tag = `${config.tagPrefix}${next}`;
+    const message = config.commitMessageTemplate.replace('{tag}', tag);
 
     core.info(`Current version: ${current}`);
     core.info(`Detected bump: ${bump}`);
     core.info(`Next version: ${next}`);
     core.info(`Creating tag: ${tag}`);
 
-    if (dryRun) {
+    if (config.dryRun) {
       core.info('Dry run — no changes written');
       core.setOutput('version', next);
       core.setOutput('tag', tag);
@@ -55,8 +63,8 @@ export async function run(): Promise<void> {
 
     const date = new Date().toISOString().split('T')[0];
 
-    writeVersion(versionFile, next);
-    prependEntry(changelogFile, {
+    writeVersion(config.versionFile, next);
+    prependEntry(config.changelogFile, {
       version: next,
       date,
       prTitle: pr.title as string,
@@ -65,10 +73,10 @@ export async function run(): Promise<void> {
     });
 
     await configureGit();
-    await commitRelease([versionFile, changelogFile], message);
+    await commitRelease([config.versionFile, config.changelogFile], message);
     await createTag(tag);
 
-    if (createGhRelease) {
+    if (config.createGithubRelease) {
       await createRelease(
         token,
         tag,

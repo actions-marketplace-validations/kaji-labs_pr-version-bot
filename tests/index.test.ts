@@ -7,6 +7,7 @@ vi.mock('../src/version');
 vi.mock('../src/changelog');
 vi.mock('../src/git');
 vi.mock('../src/github-release');
+vi.mock('../src/config');
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -15,6 +16,7 @@ import * as versionModule from '../src/version';
 import * as changelogModule from '../src/changelog';
 import * as gitModule from '../src/git';
 import * as releaseModule from '../src/github-release';
+import * as configModule from '../src/config';
 
 function mockInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -54,6 +56,24 @@ function mockMergedPR(labels: string[] = ['release:minor']): void {
 describe('run', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(configModule.loadConfig).mockReturnValue({});
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
     vi.mocked(versionModule.readVersion).mockReturnValue('1.0.0');
     vi.mocked(versionModule.bumpVersion).mockReturnValue('1.1.0');
@@ -90,6 +110,23 @@ describe('run', () => {
   it('skips all writes in dry-run mode and emits outputs', async () => {
     mockMergedPR();
     mockInputs({ 'dry-run': 'true' });
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: true,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
     const { run } = await import('../src/index');
     await run();
     expect(versionModule.writeVersion).not.toHaveBeenCalled();
@@ -136,6 +173,23 @@ describe('run', () => {
   it('skips GitHub Release when create-github-release is false', async () => {
     mockMergedPR();
     mockInputs({ 'create-github-release': 'false' });
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: false,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
     const { run } = await import('../src/index');
     await run();
     expect(releaseModule.createRelease).not.toHaveBeenCalled();

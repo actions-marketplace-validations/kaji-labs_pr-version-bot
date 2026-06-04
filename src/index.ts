@@ -1,7 +1,8 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { detectBump } from './labels';
-import { readVersion, bumpVersion, writeVersion } from './version';
+import { bumpPrerelease, readVersion, bumpVersion, writeVersion } from './version';
+import type { PrereleaseChannel } from './version';
 import { prependEntry } from './changelog';
 import { configureGit, commitRelease, createTag } from './git';
 import { createRelease } from './github-release';
@@ -72,9 +73,14 @@ export async function run(): Promise<void> {
         ? resolvePackagePaths(config.packages, config.versionFile)
         : [config.versionFile];
 
+    const isPrereleaseChannel = (b: typeof bump): b is PrereleaseChannel =>
+      b === 'alpha' || b === 'beta' || b === 'rc';
+
     // Use first package (or root) to determine the "canonical" next version for the tag
     const current = readVersion(packageVersionFiles[0]);
-    const next = bumpVersion(current, bump);
+    const next = isPrereleaseChannel(bump)
+      ? bumpPrerelease(current, bump)
+      : bumpVersion(current, bump as Exclude<typeof bump, PrereleaseChannel | 'none'>);
     const tag = `${config.tagPrefix}${next}`;
     const message = config.commitMessageTemplate.replace('{tag}', tag);
 
@@ -99,7 +105,9 @@ export async function run(): Promise<void> {
       // Monorepo: bump each package independently
       for (const pkgVersionFile of packageVersionFiles) {
         const pkgCurrent = readVersion(pkgVersionFile);
-        const pkgNext = bumpVersion(pkgCurrent, bump);
+        const pkgNext = isPrereleaseChannel(bump)
+          ? bumpPrerelease(pkgCurrent, bump)
+          : bumpVersion(pkgCurrent, bump as Exclude<typeof bump, PrereleaseChannel | 'none'>);
         writeVersion(pkgVersionFile, pkgNext);
         filesToCommit.push(pkgVersionFile);
 

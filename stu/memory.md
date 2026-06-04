@@ -2,19 +2,20 @@
 
 ## ADR Index
 
-| ID      | Title                                                              | Status     | Date       |
-| ------- | ------------------------------------------------------------------ | ---------- | ---------- |
-| ADR-001 | Runtime: TypeScript bundled to dist/index.js via esbuild           | Superseded | 2026-06-04 |
-| ADR-002 | Version trigger: PR labels over conventional commits               | Accepted   | 2026-06-04 |
-| ADR-003 | Releases: GitHub Releases API via octokit                          | Accepted   | 2026-06-04 |
-| ADR-004 | Module: CommonJS (not ESM) for GitHub Actions compatibility        | Accepted   | 2026-06-04 |
-| ADR-005 | Bundler: esbuild over @vercel/ncc                                  | Accepted   | 2026-06-04 |
-| ADR-006 | Configuration: optional .versionbot.yml file with input precedence | Accepted   | 2026-06-04 |
-| ADR-007 | License: Source-Available No-Resale over MIT                       | Accepted   | 2026-06-04 |
-| ADR-008 | package.json sync: in-place update preserving all fields           | Accepted   | 2026-06-04 |
-| ADR-009 | Conventional commits: scan on no-label PRs, labels always win      | Accepted   | 2026-06-04 |
-| ADR-010 | Notifications: built-in https, HTTPS-only, non-fatal on failure    | Accepted   | 2026-06-04 |
-| ADR-011 | Monorepo: shared bump type, per-package version files              | Accepted   | 2026-06-04 |
+| ID      | Title                                                               | Status     | Date       |
+| ------- | ------------------------------------------------------------------- | ---------- | ---------- |
+| ADR-001 | Runtime: TypeScript bundled to dist/index.js via esbuild            | Superseded | 2026-06-04 |
+| ADR-002 | Version trigger: PR labels over conventional commits                | Accepted   | 2026-06-04 |
+| ADR-003 | Releases: GitHub Releases API via octokit                           | Accepted   | 2026-06-04 |
+| ADR-004 | Module: CommonJS (not ESM) for GitHub Actions compatibility         | Accepted   | 2026-06-04 |
+| ADR-005 | Bundler: esbuild over @vercel/ncc                                   | Accepted   | 2026-06-04 |
+| ADR-006 | Configuration: optional .versionbot.yml file with input precedence  | Accepted   | 2026-06-04 |
+| ADR-007 | License: Source-Available No-Resale over MIT                        | Accepted   | 2026-06-04 |
+| ADR-008 | package.json sync: in-place update preserving all fields            | Accepted   | 2026-06-04 |
+| ADR-009 | Conventional commits: scan on no-label PRs, labels always win       | Accepted   | 2026-06-04 |
+| ADR-010 | Notifications: built-in https, HTTPS-only, non-fatal on failure     | Accepted   | 2026-06-04 |
+| ADR-011 | Monorepo: shared bump type, per-package version files               | Accepted   | 2026-06-04 |
+| ADR-012 | Pre-release: 1-based numbering, manual construction over semver.inc | Accepted   | 2026-06-04 |
 
 ---
 
@@ -125,3 +126,13 @@
 - **Context:** Monorepo versioning options: (1) single shared version for all packages, (2) independent per-package versions bumped by the same bump type, (3) per-package labels with different bump types per package.
 - **Decision:** Option 2 — each package has its own `VERSION.md` and `CHANGELOG.md`, but all packages are bumped by the same bump type from the PR label. The first package's version is used as the canonical version for the git tag and release name.
 - **Consequences:** All packages in a mono-bump release are kept in version lockstep. Per-package independent bumping (e.g. api gets minor, web gets patch) is not supported — deferred to a future story. Path traversal is explicitly blocked at validation time.
+
+---
+
+## ADR-012 — Pre-release: 1-based numbering, manual construction over semver.inc
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** semver.inc with 'prerelease' identifier produces `.0` suffix (e.g. `1.2.4-alpha.0`). The stories specify 1-based (`alpha.1`). semver.inc also handles channel switching inconsistently.
+- **Decision:** Manually construct pre-release versions in `bumpPrerelease`: extract major/minor/patch from semver.parse, compute the new version string directly. Same-channel increments counter+1; different-channel or stable→prerelease starts at 1. release:none always wins — checked before failOnMultiple and before returning any label result.
+- **Consequences:** Pre-release format is always `X.Y.Z-channel.N` where N ≥ 1. No `.0` versions ever published. Switching channels keeps the same patch base (e.g. `1.2.4-alpha.3` → `1.2.4-beta.1`, not `1.2.5-beta.1`).

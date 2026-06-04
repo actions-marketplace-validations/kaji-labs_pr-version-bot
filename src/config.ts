@@ -7,6 +7,9 @@ export interface LabelConfig {
   minor: string;
   patch: string;
   none: string;
+  alpha?: string;
+  beta?: string;
+  rc?: string;
 }
 
 export interface BotConfig {
@@ -52,6 +55,9 @@ const DEFAULT_LABELS: LabelConfig = {
   minor: 'release:minor',
   patch: 'release:patch',
   none: 'release:none',
+  alpha: 'release:alpha',
+  beta: 'release:beta',
+  rc: 'release:rc',
 };
 
 export function loadConfig(configPath = '.versionbot.yml'): BotConfig {

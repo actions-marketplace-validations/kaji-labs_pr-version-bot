@@ -4,6 +4,60 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 7.3 — Docs and examples for pre-release versioning
+
+> Completed: 2026-06-04 | Epic 7 — Pre-release / RC Versions
+
+**Acceptance Criteria:**
+
+- [x] `docs/labels.md` updated with pre-release labels table, channel rules, stable promotion, custom label config + CLI commands
+- [x] `docs/configuration.md` updated with labels.alpha/beta/rc config rows
+- [x] `docs/versioning-policy.md` updated with version lifecycle (alpha→beta→rc→stable)
+- [x] `examples/prerelease.yml` created
+- [x] `docs/roadmap.md` updated — v2.1.0 marked delivered
+
+**Security Criteria:**
+
+- [x] No real tokens in examples
+
+---
+
+### ✅ Story 7.2 — Stable release from pre-release
+
+> Completed: 2026-06-04 | Epic 7 — Pre-release / RC Versions
+
+**Acceptance Criteria:**
+
+- [x] `release:patch` on `1.2.4-rc.3` → `1.2.4` (strips suffix)
+- [x] `release:minor` on `1.2.4-rc.3` → `1.3.0`
+- [x] `release:major` on `1.2.4-rc.3` → `2.0.0`
+- [x] 5 unit tests covering all promotion paths + stable unchanged + alpha promotion
+
+**Security Criteria:**
+
+- [x] Stable version never contains a hyphen or pre-release identifier
+
+---
+
+### ✅ Story 7.1 — Pre-release version bumping
+
+> Completed: 2026-06-04 | Epic 7 — Pre-release / RC Versions
+
+**Acceptance Criteria:**
+
+- [x] `release:alpha/beta/rc` → patch bumped, 1-based channel numbering
+- [x] Same channel increments; different channel keeps patch base, resets to 1
+- [x] Labels configurable via `.versionbot.yml` labels block (optional alpha/beta/rc fields)
+- [x] `BumpType` extended with `'alpha'|'beta'|'rc'`; `bumpPrerelease` function added
+- [x] `release:none` always wins over pre-release labels regardless of label order
+- [x] 8 bumpPrerelease tests + 6 label detection tests
+
+**Security Criteria:**
+
+- [x] Pre-release identifiers validated via semver.parse
+
+---
+
 ### ✅ Story 6.4 — Docs and examples for monorepo support
 
 > Completed: 2026-06-04 | Epic 6 — Monorepo Support

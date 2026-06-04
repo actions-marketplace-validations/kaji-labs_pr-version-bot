@@ -51,6 +51,9 @@ The config file is optional. The action works identically without it.
 | `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump               |
 | `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump               |
 | `labels.none`            | string                            | `release:none`                                 | Label name to skip release              |
+| `labels.alpha`           | string                            | `release:alpha`                                | Label for alpha pre-release             |
+| `labels.beta`            | string                            | `release:beta`                                 | Label for beta pre-release              |
+| `labels.rc`              | string                            | `release:rc`                                   | Label for release candidate             |
 
 ---
 

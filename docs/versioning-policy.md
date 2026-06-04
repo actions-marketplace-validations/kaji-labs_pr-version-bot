@@ -11,6 +11,27 @@ This action and the projects that use it follow [Semantic Versioning 2.0.0](http
 | `patch` | Bug fix, backwards-compatible                          | `1.2.3` → `1.2.4` |
 | `none`  | No release needed (docs, CI, chore PRs)                | version unchanged |
 
+## Pre-release versions
+
+Pre-release versions follow the format `MAJOR.MINOR.PATCH-CHANNEL.N` where `CHANNEL` is `alpha`, `beta`, or `rc` and `N` starts at `1`.
+
+### Version lifecycle
+
+```
+1.2.3 (stable)
+  → 1.2.4-alpha.1  (release:alpha — begin testing)
+  → 1.2.4-alpha.2  (release:alpha — another alpha)
+  → 1.2.4-beta.1   (release:beta — channel switch)
+  → 1.2.4-rc.1     (release:rc — release candidate)
+  → 1.2.4          (release:patch — promote to stable)
+```
+
+### Rules
+
+- Pre-release versions are published as GitHub Releases and git tags
+- Pre-release versions do NOT trigger the major version floating tag update (e.g. `v1` stays at the last stable release)
+- `release:none` always skips — even when combined with a pre-release label
+
 ## Rules
 
 - Version is always stored as a bare semver string in `VERSION.md` — no `v` prefix, no extra content

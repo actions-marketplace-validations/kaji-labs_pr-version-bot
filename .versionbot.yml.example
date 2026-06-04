@@ -35,3 +35,6 @@ labels:
   minor: release:minor
   patch: release:patch
   none: release:none
+  alpha: release:alpha
+  beta: release:beta
+  rc: release:rc

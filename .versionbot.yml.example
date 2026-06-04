@@ -19,6 +19,11 @@ commitMessageTemplate: 'chore(release): {tag}'
 syncPackageJson: false
 useConventionalCommits: false
 
+# Notifications (optional — store URLs in GitHub secrets, not here)
+# slackWebhookUrl: ''
+# discordWebhookUrl: ''
+# notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})'
+
 # Custom label names (optional — defaults shown)
 labels:
   major: release:major

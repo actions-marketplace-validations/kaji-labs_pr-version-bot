@@ -30,23 +30,26 @@ The config file is optional. The action works identically without it.
 
 **Accepted fields:**
 
-| Field                    | Type                              | Default                 | Description                            |
-| ------------------------ | --------------------------------- | ----------------------- | -------------------------------------- |
-| `versionFile`            | string                            | `VERSION.md`            | Path to semver file                    |
-| `changelogFile`          | string                            | `CHANGELOG.md`          | Path to changelog                      |
-| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                 | Bump type when no label present        |
-| `tagPrefix`              | string                            | `v`                     | Git tag prefix                         |
-| `createGithubRelease`    | boolean                           | `true`                  | Create a GitHub Release                |
-| `failOnMultipleLabels`   | boolean                           | `true`                  | Fail on multiple release labels        |
-| `dryRun`                 | boolean                           | `false`                 | Run without writing changes            |
-| `targetBranch`           | string                            | `main`                  | Branch to push release commit to       |
-| `commitMessageTemplate`  | string                            | `chore(release): {tag}` | Release commit message                 |
-| `syncPackageJson`        | boolean                           | `false`                 | Sync `version` in `package.json`       |
-| `useConventionalCommits` | boolean                           | `false`                 | Scan commits for conventional prefixes |
-| `labels.major`           | string                            | `release:major`         | Label name for major bump              |
-| `labels.minor`           | string                            | `release:minor`         | Label name for minor bump              |
-| `labels.patch`           | string                            | `release:patch`         | Label name for patch bump              |
-| `labels.none`            | string                            | `release:none`          | Label name to skip release             |
+| Field                    | Type                              | Default                                        | Description                            |
+| ------------------------ | --------------------------------- | ---------------------------------------------- | -------------------------------------- |
+| `versionFile`            | string                            | `VERSION.md`                                   | Path to semver file                    |
+| `changelogFile`          | string                            | `CHANGELOG.md`                                 | Path to changelog                      |
+| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                                        | Bump type when no label present        |
+| `tagPrefix`              | string                            | `v`                                            | Git tag prefix                         |
+| `createGithubRelease`    | boolean                           | `true`                                         | Create a GitHub Release                |
+| `failOnMultipleLabels`   | boolean                           | `true`                                         | Fail on multiple release labels        |
+| `dryRun`                 | boolean                           | `false`                                        | Run without writing changes            |
+| `targetBranch`           | string                            | `main`                                         | Branch to push release commit to       |
+| `commitMessageTemplate`  | string                            | `chore(release): {tag}`                        | Release commit message                 |
+| `syncPackageJson`        | boolean                           | `false`                                        | Sync `version` in `package.json`       |
+| `useConventionalCommits` | boolean                           | `false`                                        | Scan commits for conventional prefixes |
+| `slackWebhookUrl`        | string                            | `''`                                           | Slack webhook URL (HTTPS only)         |
+| `discordWebhookUrl`      | string                            | `''`                                           | Discord webhook URL (HTTPS only)       |
+| `notificationTemplate`   | string                            | `'🚀 Released {tag}: {prTitle} (#{prNumber})'` | Notification message template          |
+| `labels.major`           | string                            | `release:major`                                | Label name for major bump              |
+| `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump              |
+| `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump              |
+| `labels.none`            | string                            | `release:none`                                 | Label name to skip release             |
 
 ---
 
@@ -184,6 +187,47 @@ When multiple commits are found, the highest bump type wins.
 If no matching commits are found, falls back to `default-bump`.
 
 Requires `pull-requests: read` permission on the workflow token.
+
+---
+
+### `slack-webhook-url`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `''` (disabled)
+
+Slack incoming webhook URL. When provided, a message is posted to Slack after a successful release. Must use HTTPS. If the webhook request fails, a warning is logged and the release continues.
+
+Store the URL in a GitHub secret and pass it via `${{ secrets.SLACK_WEBHOOK_URL }}`.
+
+---
+
+### `discord-webhook-url`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `''` (disabled)
+
+Discord webhook URL. When provided, a release embed is posted to Discord after a successful release. Must use HTTPS. Failure is non-fatal.
+
+Store the URL in a GitHub secret: `${{ secrets.DISCORD_WEBHOOK_URL }}`.
+
+---
+
+### `notification-template`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `'🚀 Released {tag}: {prTitle} (#{prNumber})'`
+
+Message template used for both Slack and Discord notifications. Supports these placeholders:
+
+| Placeholder  | Value                                   |
+| ------------ | --------------------------------------- |
+| `{tag}`      | Git tag e.g. `v1.2.3`                   |
+| `{bump}`     | Bump type: `major`, `minor`, or `patch` |
+| `{prTitle}`  | PR title                                |
+| `{prNumber}` | PR number                               |
 
 ---
 

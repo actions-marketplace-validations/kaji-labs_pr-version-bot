@@ -4,7 +4,7 @@
   "description": "Reusable GitHub Action for automatic semantic versioning from merged pull requests",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/index.js",
     "lint": "eslint src tests",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -22,8 +22,8 @@
     "@eslint/js": "^10.0.0",
     "@types/node": "^25.0.0",
     "@types/semver": "^7.5.8",
-    "@vercel/ncc": "^0.38.1",
     "@vitest/coverage-v8": "^4.1.8",
+    "esbuild": "^0.28.0",
     "eslint": "^10.0.0",
     "prettier": "^3.3.0",
     "typescript": "^6.0.3",

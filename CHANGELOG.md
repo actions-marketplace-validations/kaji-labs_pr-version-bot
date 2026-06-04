@@ -1,3 +1,7 @@
+## [0.3.0] - 2026-06-04
+
+- minor: feat(epic-4): conventional commits bump detection (#16)
+
 ## [0.2.0] - 2026-06-04
 
 - minor: feat(epic-3): package.json version sync (#14)

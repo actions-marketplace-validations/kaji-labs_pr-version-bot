@@ -36711,7 +36711,7 @@ var require_dist_node2 = __commonJS({
         return template.replace(/\/$/, "");
       }
     }
-    function parse(options) {
+    function parse2(options) {
       let method = options.method.toUpperCase();
       let url = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
       let headers = Object.assign({}, options.headers);
@@ -36775,7 +36775,7 @@ var require_dist_node2 = __commonJS({
       );
     }
     function endpointWithDefaults(defaults, route, options) {
-      return parse(merge(defaults, route, options));
+      return parse2(merge(defaults, route, options));
     }
     function withDefaults(oldDefaults, newDefaults) {
       const DEFAULTS2 = merge(oldDefaults, newDefaults);
@@ -36784,7 +36784,7 @@ var require_dist_node2 = __commonJS({
         DEFAULTS: DEFAULTS2,
         defaults: withDefaults.bind(null, DEFAULTS2),
         merge: merge.bind(null, DEFAULTS2),
-        parse
+        parse: parse2
       });
     }
     var endpoint = withDefaults(null, DEFAULTS);
@@ -40669,7 +40669,7 @@ var require_parse3 = __commonJS({
   "node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse = (version, options, throwErrors = false) => {
+    var parse2 = (version, options, throwErrors = false) => {
       if (version instanceof SemVer) {
         return version;
       }
@@ -40682,7 +40682,7 @@ var require_parse3 = __commonJS({
         throw er;
       }
     };
-    module2.exports = parse;
+    module2.exports = parse2;
   }
 });
 
@@ -40690,9 +40690,9 @@ var require_parse3 = __commonJS({
 var require_valid = __commonJS({
   "node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var valid2 = (version, options) => {
-      const v = parse(version, options);
+      const v = parse2(version, options);
       return v ? v.version : null;
     };
     module2.exports = valid2;
@@ -40703,9 +40703,9 @@ var require_valid = __commonJS({
 var require_clean = __commonJS({
   "node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var clean = (version, options) => {
-      const s = parse(version.trim().replace(/^[=v]+/, ""), options);
+      const s = parse2(version.trim().replace(/^[=v]+/, ""), options);
       return s ? s.version : null;
     };
     module2.exports = clean;
@@ -40740,10 +40740,10 @@ var require_inc = __commonJS({
 var require_diff = __commonJS({
   "node_modules/semver/functions/diff.js"(exports2, module2) {
     "use strict";
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var diff = (version1, version2) => {
-      const v1 = parse(version1, null, true);
-      const v2 = parse(version2, null, true);
+      const v1 = parse2(version1, null, true);
+      const v2 = parse2(version2, null, true);
       const comparison = v1.compare(v2);
       if (comparison === 0) {
         return null;
@@ -40814,9 +40814,9 @@ var require_patch = __commonJS({
 var require_prerelease = __commonJS({
   "node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var prerelease = (version, options) => {
-      const parsed = parse(version, options);
+      const parsed = parse2(version, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     };
     module2.exports = prerelease;
@@ -41002,7 +41002,7 @@ var require_coerce = __commonJS({
   "node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var { safeRe: re, t } = require_re();
     var coerce = (version, options) => {
       if (version instanceof SemVer) {
@@ -41037,7 +41037,7 @@ var require_coerce = __commonJS({
       const patch = match[4] || "0";
       const prerelease = options.includePrerelease && match[5] ? `-${match[5]}` : "";
       const build = options.includePrerelease && match[6] ? `+${match[6]}` : "";
-      return parse(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse2(`${major}.${minor}.${patch}${prerelease}${build}`, options);
     };
     module2.exports = coerce;
   }
@@ -41047,7 +41047,7 @@ var require_coerce = __commonJS({
 var require_truncate = __commonJS({
   "node_modules/semver/functions/truncate.js"(exports2, module2) {
     "use strict";
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var constants3 = require_constants11();
     var SemVer = require_semver();
     var truncate = (version, truncation, options) => {
@@ -41059,7 +41059,7 @@ var require_truncate = __commonJS({
     };
     var cloneInputVersion = (version, options) => {
       const versionStringToParse = version instanceof SemVer ? version.version : version;
-      return parse(versionStringToParse, options);
+      return parse2(versionStringToParse, options);
     };
     var doTruncation = (version, truncation) => {
       if (isPrerelease(truncation)) {
@@ -42098,7 +42098,7 @@ var require_semver2 = __commonJS({
     var constants3 = require_constants11();
     var SemVer = require_semver();
     var identifiers = require_identifiers();
-    var parse = require_parse3();
+    var parse2 = require_parse3();
     var valid2 = require_valid();
     var clean = require_clean();
     var inc2 = require_inc();
@@ -42137,7 +42137,7 @@ var require_semver2 = __commonJS({
     var simplifyRange = require_simplify();
     var subset = require_subset();
     module2.exports = {
-      parse,
+      parse: parse2,
       valid: valid2,
       clean,
       inc: inc2,
@@ -43709,7 +43709,10 @@ var DEFAULT_LABEL_MAP = {
   major: "release:major",
   minor: "release:minor",
   patch: "release:patch",
-  none: "release:none"
+  none: "release:none",
+  alpha: "release:alpha",
+  beta: "release:beta",
+  rc: "release:rc"
 };
 function detectBump(labels, defaultBump, failOnMultiple, labelMap = DEFAULT_LABEL_MAP) {
   const lookup = {
@@ -43718,8 +43721,12 @@ function detectBump(labels, defaultBump, failOnMultiple, labelMap = DEFAULT_LABE
     [labelMap.patch]: "patch",
     [labelMap.none]: "none"
   };
+  if (labelMap.alpha) lookup[labelMap.alpha] = "alpha";
+  if (labelMap.beta) lookup[labelMap.beta] = "beta";
+  if (labelMap.rc) lookup[labelMap.rc] = "rc";
   const releaseLabels = labels.filter((l) => l in lookup);
   if (releaseLabels.length === 0) return defaultBump;
+  if (releaseLabels.some((l) => lookup[l] === "none")) return "none";
   if (releaseLabels.length > 1 && failOnMultiple) {
     throw new Error(`Multiple release labels found: ${releaseLabels.join(", ")}`);
   }
@@ -43740,9 +43747,34 @@ function readVersion(filePath) {
   return raw;
 }
 function bumpVersion(current, bump) {
+  const sv = semver.parse(current);
+  if (!sv) throw new Error(`Invalid semver: "${current}"`);
+  if (sv.prerelease.length > 0) {
+    const stableBase = `${sv.major}.${sv.minor}.${sv.patch}`;
+    if (bump === "patch") {
+      return stableBase;
+    }
+    const next2 = semver.inc(stableBase, bump);
+    if (!next2) throw new Error(`Failed to bump ${stableBase} by ${bump}`);
+    return next2;
+  }
   const next = semver.inc(current, bump);
   if (!next) throw new Error(`Failed to bump ${current} by ${bump}`);
   return next;
+}
+function bumpPrerelease(current, channel) {
+  const sv = semver.parse(current);
+  if (!sv) throw new Error(`Invalid semver: "${current}"`);
+  const isPrerelease = sv.prerelease.length >= 2;
+  const currentChannel = isPrerelease ? String(sv.prerelease[0]) : null;
+  const currentN = isPrerelease ? Number(sv.prerelease[1]) : 0;
+  if (currentChannel === channel) {
+    return `${sv.major}.${sv.minor}.${sv.patch}-${channel}.${currentN + 1}`;
+  }
+  if (isPrerelease) {
+    return `${sv.major}.${sv.minor}.${sv.patch}-${channel}.1`;
+  }
+  return `${sv.major}.${sv.minor}.${sv.patch + 1}-${channel}.1`;
 }
 function writeVersion(filePath, version) {
   fs3.writeFileSync(filePath, version + "\n", "utf8");
@@ -46166,7 +46198,10 @@ var DEFAULT_LABELS = {
   major: "release:major",
   minor: "release:minor",
   patch: "release:patch",
-  none: "release:none"
+  none: "release:none",
+  alpha: "release:alpha",
+  beta: "release:beta",
+  rc: "release:rc"
 };
 function loadConfig(configPath = ".versionbot.yml") {
   if (!fs5.existsSync(configPath)) return {};
@@ -46386,8 +46421,9 @@ async function run() {
       return;
     }
     const packageVersionFiles = config.packages.length > 0 ? resolvePackagePaths(config.packages, config.versionFile) : [config.versionFile];
+    const isPrereleaseChannel = (b) => b === "alpha" || b === "beta" || b === "rc";
     const current = readVersion(packageVersionFiles[0]);
-    const next = bumpVersion(current, bump);
+    const next = isPrereleaseChannel(bump) ? bumpPrerelease(current, bump) : bumpVersion(current, bump);
     const tag = `${config.tagPrefix}${next}`;
     const message = config.commitMessageTemplate.replace("{tag}", tag);
     info(`Current version: ${current}`);
@@ -46407,7 +46443,7 @@ async function run() {
     if (config.packages.length > 0) {
       for (const pkgVersionFile of packageVersionFiles) {
         const pkgCurrent = readVersion(pkgVersionFile);
-        const pkgNext = bumpVersion(pkgCurrent, bump);
+        const pkgNext = isPrereleaseChannel(bump) ? bumpPrerelease(pkgCurrent, bump) : bumpVersion(pkgCurrent, bump);
         writeVersion(pkgVersionFile, pkgNext);
         filesToCommit.push(pkgVersionFile);
         const pkgDir = pkgVersionFile.replace(/\/[^/]+$/, "");

@@ -35,9 +35,10 @@ Post a release summary to a configured webhook URL after each release.
 
 Support multiple independently-versioned packages. Configure via `packages` input or `.versionbot.yml`.
 
-## v2.1.0 — Pre-release / RC versions
+## v2.1.0 — Pre-release / RC versions ✅
 
-Support `release:prerelease` and `release:rc` labels for pre-release semver.
+Pre-release versioning via `release:alpha`, `release:beta`, `release:rc` labels.
+Channel promotion (`alpha.1` → `alpha.2`) and stable promotion (`rc.3` → `1.2.4`).
 
 ## v3.0.0 — GitHub Marketplace
 

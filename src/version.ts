@@ -16,6 +16,22 @@ export function readVersion(filePath: string): string {
 }
 
 export function bumpVersion(current: string, bump: Exclude<BumpType, 'none' | 'alpha' | 'beta' | 'rc'>): string {
+  const sv = semver.parse(current);
+  if (!sv) throw new Error(`Invalid semver: "${current}"`);
+
+  // When current is a pre-release, promote to stable correctly
+  if (sv.prerelease.length > 0) {
+    const stableBase = `${sv.major}.${sv.minor}.${sv.patch}`;
+    if (bump === 'patch') {
+      // Strip pre-release suffix — patch was already applied when pre-release started
+      return stableBase;
+    }
+    // For minor/major, bump from the stable base
+    const next = semver.inc(stableBase, bump);
+    if (!next) throw new Error(`Failed to bump ${stableBase} by ${bump}`);
+    return next;
+  }
+
   const next = semver.inc(current, bump);
   if (!next) throw new Error(`Failed to bump ${current} by ${bump}`);
   return next;

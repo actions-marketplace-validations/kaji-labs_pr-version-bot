@@ -49,8 +49,30 @@ describe('bumpVersion', () => {
     expect(bumpVersion('1.2.3', 'minor')).toBe('1.3.0');
   });
 
-  it('throws if semver.inc fails', () => {
-    expect(() => bumpVersion('invalid', 'patch')).toThrow('Failed to bump invalid by patch');
+  it('throws if input is not valid semver', () => {
+    expect(() => bumpVersion('invalid', 'patch')).toThrow('Invalid semver');
+  });
+
+  describe('bumpVersion from pre-release', () => {
+    it('strips pre-release suffix on patch (promotes to stable)', () => {
+      expect(bumpVersion('1.2.4-rc.3', 'patch')).toBe('1.2.4');
+    });
+
+    it('bumps minor from stable base when current is pre-release', () => {
+      expect(bumpVersion('1.2.4-rc.3', 'minor')).toBe('1.3.0');
+    });
+
+    it('bumps major from stable base when current is pre-release', () => {
+      expect(bumpVersion('1.2.4-rc.3', 'major')).toBe('2.0.0');
+    });
+
+    it('normal stable patch still works after pre-release changes', () => {
+      expect(bumpVersion('1.2.3', 'patch')).toBe('1.2.4');
+    });
+
+    it('strips alpha suffix on patch promotion', () => {
+      expect(bumpVersion('2.0.0-alpha.2', 'patch')).toBe('2.0.0');
+    });
   });
 });
 

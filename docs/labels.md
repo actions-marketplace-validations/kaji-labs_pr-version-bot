@@ -84,3 +84,24 @@ If `use-conventional-commits` is enabled, labels always take precedence.
 The conventional commit scan only runs when the PR has no release label.
 Use `release:none` to explicitly skip a release even when conventional
 commits would otherwise trigger one.
+
+---
+
+## PR template checkbox detection
+
+Instead of applying a label to the PR, you can drive versioning from your PR template checkboxes. Enable with `use-pr-template-labels: 'true'`.
+
+Add a release section to your PR template:
+
+```markdown
+## Release type
+
+- [ ] `release:major` — breaking change
+- [ ] `release:minor` — new feature, backwards compatible
+- [ ] `release:patch` — bug fix
+- [ ] `release:none` — no release needed
+```
+
+When the author checks one of these boxes before merging, the action reads the PR body and uses it to determine the bump. Unchecked boxes are ignored. The matching is substring-based, so the box text can include surrounding context.
+
+**Precedence:** actual PR label > checkbox > conventional commits > `default-bump`

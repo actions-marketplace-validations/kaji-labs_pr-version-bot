@@ -23,6 +23,15 @@
 - [ ] `dist/index.js` rebuilt and committed (`npm run build`)
 - [ ] Release label applied (`release:major`, `release:minor`, `release:patch`, or `release:none`)
 
+## Release type
+
+<!-- Check one. Only applies when use-pr-template-labels is enabled in .versionbot.yml -->
+
+- [ ] `release:major` — breaking change (removes or changes existing behaviour)
+- [ ] `release:minor` — new feature, backwards compatible
+- [ ] `release:patch` — bug fix or minor improvement
+- [ ] `release:none` — no release needed (docs, chore, etc.)
+
 ## Notes
 
 <!-- Anything reviewers should know -->

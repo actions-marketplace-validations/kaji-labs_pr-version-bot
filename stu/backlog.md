@@ -3,6 +3,7 @@
 ## Open Items
 
 ### B-007 — conventional.ts: conventional scan can silently downgrade defaultBump
+
 - **Logged:** 2026-06-04 by review agent
 - **Triggered by:** Story 4.1
 - **Priority:** Low

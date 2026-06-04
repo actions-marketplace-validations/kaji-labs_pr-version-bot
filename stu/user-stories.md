@@ -71,7 +71,7 @@ Optionally sync the `version` field in `package.json` alongside `VERSION.md` whe
 
 ## Epic 4 — Conventional Commits Fallback
 
-> Stories TBD after Epic 3 ships.
+> All 3 stories delivered. Moved to completed-user-stories.md.
 
 ## Epic 5 — Slack/Discord Notifications
 

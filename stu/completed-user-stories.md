@@ -4,6 +4,69 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 4.3 — Docs and examples for conventional commits
+
+> Completed: 2026-06-04 | Epic 4 — Conventional Commits Fallback
+
+**As a** user, **I want** documentation for the conventional commits feature.
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with `use-conventional-commits` input and `useConventionalCommits` config field with commit prefix table
+- [x] `docs/troubleshooting.md` updated with conventional commits troubleshooting (3 causes)
+- [x] `examples/conventional-commits.yml` created with `default-bump: none`
+- [x] `docs/labels.md` updated with labels vs conventional commits precedence note
+
+**Security Criteria:**
+
+- [x] No real tokens in examples
+
+---
+
+### ✅ Story 4.2 — Config file support for conventional commits
+
+> Completed: 2026-06-04 | Epic 4 — Conventional Commits Fallback
+
+**As a** user, **I want** to enable conventional commits in `.versionbot.yml`, so that I don't have to change my workflow.
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `useConventionalCommits: true/false`
+- [x] Workflow input overrides config file value
+- [x] `src/config.ts` updated: `BotConfig` and `ResolvedConfig` include `useConventionalCommits: boolean`
+- [x] `mergeConfig` handles new field correctly (default: `false`)
+- [x] Unit tests for config file path and input override
+
+**Security Criteria:**
+
+- [x] Default is `false` — no behaviour change for existing users
+
+---
+
+### ✅ Story 4.1 — Detect bump type from conventional commits
+
+> Completed: 2026-06-04 | Epic 4 — Conventional Commits Fallback
+
+**As a** user, **I want** the action to read commit messages and determine the version bump automatically, so that I don't need to apply a label to every PR.
+
+**Acceptance Criteria:**
+
+- [x] `feat:` or `feat(scope):` → `minor`
+- [x] `fix:` or `fix(scope):` → `patch`
+- [x] `feat!:`, `feat(scope)!:`, `fix!:`, `fix(scope)!:` → `major`
+- [x] `BREAKING CHANGE:` in commit body → `major`
+- [x] Multiple commits: highest bump wins, short-circuits on major
+- [x] Fetches up to 100 commits via `octokit.rest.pulls.listCommits`
+- [x] 15 unit tests in `tests/conventional.test.ts` (includes scoped `!` variants)
+- [x] Integration test in `tests/index.test.ts` verifies bump type flows through `bumpVersion`
+
+**Security Criteria:**
+
+- [x] Commit messages never logged in full
+- [x] Feature is opt-in via `use-conventional-commits: 'false'` default
+
+---
+
 ### ✅ Story 2.3 — Config file docs and examples
 
 > Completed: 2026-06-04 | Epic 2 — Config File Support

@@ -81,3 +81,13 @@
 - **Context:** MIT allows anyone to sell or commercialise the tool without restriction. The copyright holder wants to retain commercial rights while keeping the tool freely usable.
 - **Decision:** Custom Source-Available No-Resale License. Free for personal, educational, open-source, and internal business use. Selling, repackaging, or hosting as a paid product requires written permission from Rashay Daya.
 - **Consequences:** Not OSI-approved. Cannot be listed on GitHub Marketplace as "open source". CODEOWNERS restricts LICENSE changes to `@Rashay01`.
+
+---
+
+## ADR-009 — Conventional commits: scan on no-label PRs, labels always win
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** Conventional commit detection needs a trigger condition. Options: always scan commits, scan when no label, only scan when explicitly enabled.
+- **Decision:** Scan only when `useConventionalCommits: true` AND the PR has zero release labels. Labels always take precedence — this preserves the existing label-driven workflow for users who mix approaches. Opt-in default (`false`) ensures no behaviour change for existing users.
+- **Consequences:** Users relying purely on conventional commits must set `default-bump: none` to avoid falling back to patch. Documented in `examples/conventional-commits.yml`.

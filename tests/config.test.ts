@@ -106,4 +106,9 @@ describe('mergeConfig', () => {
     const result = mergeConfig({}, DEFAULT_INPUTS);
     expect(result.syncPackageJson).toBe(false);
   });
+
+  it('uses syncPackageJson from file config when input is empty', () => {
+    const result = mergeConfig({ syncPackageJson: true }, DEFAULT_INPUTS);
+    expect(result.syncPackageJson).toBe(true);
+  });
 });

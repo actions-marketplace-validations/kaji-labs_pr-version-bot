@@ -25,6 +25,7 @@ export interface BotConfig {
   discordWebhookUrl?: string;
   notificationTemplate?: string;
   labels?: Partial<LabelConfig>;
+  packages?: string[];
 }
 
 export interface ResolvedConfig {
@@ -43,6 +44,7 @@ export interface ResolvedConfig {
   discordWebhookUrl: string;
   notificationTemplate: string;
   labels: LabelConfig;
+  packages: string[];
 }
 
 const DEFAULT_LABELS: LabelConfig = {
@@ -101,5 +103,11 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
       ...DEFAULT_LABELS,
       ...fileConfig.labels,
     },
+    packages: inp('packages')
+      ? inp('packages')
+          .split(',')
+          .map((p) => p.trim())
+          .filter(Boolean)
+      : (fileConfig.packages ?? []),
   };
 }

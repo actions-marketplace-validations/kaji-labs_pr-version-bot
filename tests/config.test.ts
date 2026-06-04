@@ -21,6 +21,7 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'slack-webhook-url': '',
   'discord-webhook-url': '',
   'notification-template': '',
+  packages: '',
 };
 
 describe('loadConfig', () => {
@@ -146,5 +147,20 @@ describe('mergeConfig', () => {
     const result = mergeConfig({}, DEFAULT_INPUTS);
     expect(result.slackWebhookUrl).toBe('');
     expect(result.discordWebhookUrl).toBe('');
+  });
+
+  it('defaults packages to empty array', () => {
+    const result = mergeConfig({}, DEFAULT_INPUTS);
+    expect(result.packages).toEqual([]);
+  });
+
+  it('parses comma-separated packages input into array', () => {
+    const result = mergeConfig({}, { ...DEFAULT_INPUTS, packages: 'packages/api,packages/web' });
+    expect(result.packages).toEqual(['packages/api', 'packages/web']);
+  });
+
+  it('uses packages from file config when input is empty', () => {
+    const result = mergeConfig({ packages: ['packages/core'] }, DEFAULT_INPUTS);
+    expect(result.packages).toEqual(['packages/core']);
   });
 });

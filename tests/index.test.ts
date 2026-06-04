@@ -11,6 +11,7 @@ vi.mock('../src/config');
 vi.mock('../src/package-json');
 vi.mock('../src/conventional');
 vi.mock('../src/notify');
+vi.mock('../src/monorepo');
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -23,6 +24,7 @@ import * as configModule from '../src/config';
 import * as pkgModule from '../src/package-json';
 import * as conventionalModule from '../src/conventional';
 import * as notifyModule from '../src/notify';
+import * as monorepoModule from '../src/monorepo';
 
 function mockInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -78,6 +80,7 @@ describe('run', () => {
       slackWebhookUrl: '',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -85,6 +88,7 @@ describe('run', () => {
         none: 'release:none',
       },
     });
+    vi.mocked(monorepoModule.resolvePackagePaths).mockReturnValue([]);
     vi.mocked(notifyModule.sendSlackNotification).mockResolvedValue(undefined);
     vi.mocked(notifyModule.sendDiscordNotification).mockResolvedValue(undefined);
     vi.mocked(pkgModule.updatePackageVersion).mockReturnValue(true);
@@ -140,6 +144,7 @@ describe('run', () => {
       slackWebhookUrl: '',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -208,6 +213,7 @@ describe('run', () => {
       slackWebhookUrl: '',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -238,6 +244,7 @@ describe('run', () => {
       slackWebhookUrl: '',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -272,6 +279,7 @@ describe('run', () => {
       slackWebhookUrl: '',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -315,6 +323,7 @@ describe('run', () => {
       slackWebhookUrl: 'https://hooks.slack.com/test',
       discordWebhookUrl: '',
       notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: [],
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -329,5 +338,46 @@ describe('run', () => {
       expect.stringContaining('v1.1.0')
     );
     expect(notifyModule.sendDiscordNotification).not.toHaveBeenCalled();
+  });
+
+  it('bumps each package in monorepo mode', async () => {
+    mockMergedPR();
+    mockInputs();
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
+      useConventionalCommits: false,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      packages: ['packages/api', 'packages/web'],
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
+    vi.mocked(monorepoModule.resolvePackagePaths).mockReturnValue([
+      'packages/api/VERSION.md',
+      'packages/web/VERSION.md',
+    ]);
+    vi.mocked(versionModule.readVersion).mockReturnValue('1.0.0');
+    vi.mocked(versionModule.bumpVersion).mockReturnValue('1.0.1');
+
+    const { run } = await import('../src/index');
+    await run();
+
+    expect(versionModule.writeVersion).toHaveBeenCalledWith('packages/api/VERSION.md', '1.0.1');
+    expect(versionModule.writeVersion).toHaveBeenCalledWith('packages/web/VERSION.md', '1.0.1');
+    expect(changelogModule.prependEntry).toHaveBeenCalledTimes(2);
   });
 });

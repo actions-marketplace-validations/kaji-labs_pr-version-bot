@@ -9,6 +9,7 @@ import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
 import { detectBumpFromCommits } from './conventional';
 import { sendSlackNotification, sendDiscordNotification } from './notify';
+import { resolvePackagePaths } from './monorepo';
 
 export async function run(): Promise<void> {
   try {
@@ -65,7 +66,14 @@ export async function run(): Promise<void> {
       return;
     }
 
-    const current = readVersion(config.versionFile);
+    // Resolve package paths (empty = single-package mode)
+    const packageVersionFiles =
+      config.packages.length > 0
+        ? resolvePackagePaths(config.packages, config.versionFile)
+        : [config.versionFile];
+
+    // Use first package (or root) to determine the "canonical" next version for the tag
+    const current = readVersion(packageVersionFiles[0]);
     const next = bumpVersion(current, bump);
     const tag = `${config.tagPrefix}${next}`;
     const message = config.commitMessageTemplate.replace('{tag}', tag);
@@ -85,23 +93,47 @@ export async function run(): Promise<void> {
     }
 
     const date = new Date().toISOString().split('T')[0];
+    const filesToCommit: string[] = [];
 
-    writeVersion(config.versionFile, next);
+    if (config.packages.length > 0) {
+      // Monorepo: bump each package independently
+      for (const pkgVersionFile of packageVersionFiles) {
+        const pkgCurrent = readVersion(pkgVersionFile);
+        const pkgNext = bumpVersion(pkgCurrent, bump);
+        writeVersion(pkgVersionFile, pkgNext);
+        filesToCommit.push(pkgVersionFile);
 
-    if (config.syncPackageJson) {
-      updatePackageVersion('package.json', next);
+        // Changelog at package/CHANGELOG.md
+        const pkgDir = pkgVersionFile.replace(/\/[^/]+$/, '');
+        const pkgChangelogFile = `${pkgDir}/${config.changelogFile.replace(/.*\//, '')}`;
+        prependEntry(pkgChangelogFile, {
+          version: pkgNext,
+          date,
+          prTitle: pr.title as string,
+          prNumber: pr.number as number,
+          bump,
+        });
+        filesToCommit.push(pkgChangelogFile);
+      }
+    } else {
+      // Single-package mode (original behaviour)
+      writeVersion(config.versionFile, next);
+      filesToCommit.push(config.versionFile);
+
+      prependEntry(config.changelogFile, {
+        version: next,
+        date,
+        prTitle: pr.title as string,
+        prNumber: pr.number as number,
+        bump,
+      });
+      filesToCommit.push(config.changelogFile);
+
+      if (config.syncPackageJson) {
+        updatePackageVersion('package.json', next);
+        filesToCommit.push('package.json');
+      }
     }
-
-    prependEntry(config.changelogFile, {
-      version: next,
-      date,
-      prTitle: pr.title as string,
-      prNumber: pr.number as number,
-      bump,
-    });
-
-    const filesToCommit = [config.versionFile, config.changelogFile];
-    if (config.syncPackageJson) filesToCommit.push('package.json');
 
     await configureGit();
     await commitRelease(filesToCommit, message);

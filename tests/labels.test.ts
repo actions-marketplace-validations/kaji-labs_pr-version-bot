@@ -40,3 +40,36 @@ describe('detectBump', () => {
     expect(detectBump(['bug', 'release:patch', 'docs'], 'minor', true)).toBe('patch');
   });
 });
+
+describe('detectBump with custom label map', () => {
+  const customMap = {
+    major: 'breaking-change',
+    minor: 'feature',
+    patch: 'bugfix',
+    none: 'no-release',
+  };
+
+  it('detects major from custom label', () => {
+    expect(detectBump(['breaking-change'], 'patch', true, customMap)).toBe('major');
+  });
+
+  it('detects minor from custom label', () => {
+    expect(detectBump(['feature'], 'patch', true, customMap)).toBe('minor');
+  });
+
+  it('detects patch from custom label', () => {
+    expect(detectBump(['bugfix'], 'patch', true, customMap)).toBe('patch');
+  });
+
+  it('detects none from custom label', () => {
+    expect(detectBump(['no-release'], 'patch', true, customMap)).toBe('none');
+  });
+
+  it('returns defaultBump when custom labels not present', () => {
+    expect(detectBump(['release:patch'], 'minor', true, customMap)).toBe('minor');
+  });
+
+  it('default labels still work when no labelMap passed', () => {
+    expect(detectBump(['release:major'], 'patch', true)).toBe('major');
+  });
+});

@@ -33,7 +33,7 @@ export async function run(): Promise<void> {
     const config = mergeConfig(fileConfig, inputs);
 
     const labels = (pr.labels as Array<{ name: string }>).map((l) => l.name);
-    const bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels);
+    const bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
 
     if (bump === 'none') {
       core.info('release:none label — skipping release');

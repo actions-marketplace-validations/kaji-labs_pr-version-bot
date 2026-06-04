@@ -4,6 +4,64 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 10.3 — Docs and PR template example
+
+> Completed: 2026-06-04 | Epic 10 — PR Template Checkbox Label Detection
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with `use-pr-template-labels` row + checkbox detection section
+- [x] `docs/labels.md` updated with PR template checkbox detection section + 4-option example
+- [x] `.github/pull_request_template.md` updated with Release type section (4 checkboxes)
+- [x] `docs/troubleshooting.md` updated with "Checkbox not detected" section (3 causes)
+- [x] `.versionbot.yml.example` updated with `usePrTemplateLabels: false`
+
+**Security Criteria:**
+
+- [x] No real tokens in examples
+- [x] PR template shows all 4 release options including `release:none`
+
+---
+
+### ✅ Story 10.2 — Config file support
+
+> Completed: 2026-06-04 | Epic 10 — PR Template Checkbox Label Detection
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `usePrTemplateLabels: true/false`
+- [x] `use-pr-template-labels` input overrides config file value
+- [x] `BotConfig` and `ResolvedConfig` include `usePrTemplateLabels: boolean`
+- [x] Default `false` — no behaviour change for existing users
+- [x] 3 unit tests: default false, input true, fileConfig true
+
+**Security Criteria:**
+
+- [x] Default `false` — no behaviour change for existing users
+
+---
+
+### ✅ Story 10.1 — Detect bump type from PR body checkboxes
+
+> Completed: 2026-06-04 | Epic 10 — PR Template Checkbox Label Detection
+
+**Acceptance Criteria:**
+
+- [x] `use-pr-template-labels` input (default `'false'`)
+- [x] `src/pr-template.ts`: `detectBumpFromPrBody(body, labelConfig, failOnMultiple)` — scans for `- [x]` / `* [x]` (case-insensitive), substring match against configured label values
+- [x] Precedence: PR label > PR body checkbox > conventional commits > default-bump
+- [x] `release:none` always wins over other checkbox matches
+- [x] `failOnMultiple` throws on multiple bump matches
+- [x] Returns `null` (falls through) when no match found
+- [x] 12 unit tests: single match, no match, null/empty body, unchecked ignored, case-insensitive [X], asterisk bullets, substring match, release:none wins, failOnMultiple throw
+
+**Security Criteria:**
+
+- [x] Only the matched label name is logged — PR body content never logged in full
+- [x] Feature is strictly opt-in
+
+---
+
 ### ✅ Story 7.3 — Docs and examples for pre-release versioning
 
 > Completed: 2026-06-04 | Epic 7 — Pre-release / RC Versions

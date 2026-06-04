@@ -1,3 +1,7 @@
+## [0.2.0] - 2026-06-04
+
+- minor: feat(epic-3): package.json version sync (#14)
+
 ## [0.1.0] - 2026-06-04
 
 - minor: feat(epic-2): .versionbot.yml config file support (#11)

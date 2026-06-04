@@ -101,6 +101,23 @@ inputs:
     required: false
     default: ''
 
+  generate-badge:
+    description: >
+      When 'true', writes a Shields.io-compatible badge JSON file to badge-file
+      after each successful release.
+    required: false
+    default: 'false'
+
+  badge-color:
+    description: Color for the version badge (any valid Shields.io color string)
+    required: false
+    default: orange
+
+  badge-file:
+    description: Path where the badge JSON file is written
+    required: false
+    default: .badges/version.json
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

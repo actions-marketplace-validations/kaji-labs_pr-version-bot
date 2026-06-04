@@ -22,6 +22,9 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'discord-webhook-url': '',
   'notification-template': '',
   packages: '',
+  'generate-badge': '',
+  'badge-color': '',
+  'badge-file': '',
 };
 
 describe('loadConfig', () => {
@@ -167,5 +170,30 @@ describe('mergeConfig', () => {
   it('uses packages YAML array from file config when input is empty', () => {
     const result = mergeConfig({ packages: ['packages/api', 'packages/web'] }, DEFAULT_INPUTS);
     expect(result.packages).toEqual(['packages/api', 'packages/web']);
+  });
+
+  it('resolves generateBadge from input', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'generate-badge': 'true' });
+    expect(r.generateBadge).toBe(true);
+  });
+
+  it('resolves generateBadge default to false', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.generateBadge).toBe(false);
+  });
+
+  it('resolves badgeColor from input', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'badge-color': 'blue' });
+    expect(r.badgeColor).toBe('blue');
+  });
+
+  it('resolves badgeColor default to orange', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.badgeColor).toBe('orange');
+  });
+
+  it('resolves badgeFile default', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.badgeFile).toBe('.badges/version.json');
   });
 });

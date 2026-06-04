@@ -11,6 +11,7 @@ import { updatePackageVersion } from './package-json';
 import { detectBumpFromCommits } from './conventional';
 import { sendSlackNotification, sendDiscordNotification } from './notify';
 import { resolvePackagePaths } from './monorepo';
+import { generateBadgeJson, writeBadgeFile } from './badge';
 
 export async function run(): Promise<void> {
   try {
@@ -34,6 +35,9 @@ export async function run(): Promise<void> {
       'commit-message-template': core.getInput('commit-message-template'),
       'sync-package-json': core.getInput('sync-package-json'),
       'use-conventional-commits': core.getInput('use-conventional-commits'),
+      'generate-badge': core.getInput('generate-badge'),
+      'badge-color': core.getInput('badge-color'),
+      'badge-file': core.getInput('badge-file'),
     };
 
     const fileConfig = loadConfig();
@@ -123,6 +127,12 @@ export async function run(): Promise<void> {
         });
         filesToCommit.push(pkgChangelogFile);
       }
+
+      if (config.generateBadge) {
+        const badge = generateBadgeJson(tag, config.badgeColor);
+        writeBadgeFile(config.badgeFile, badge);
+        filesToCommit.push(config.badgeFile);
+      }
     } else {
       // Single-package mode (original behaviour)
       writeVersion(config.versionFile, next);
@@ -140,6 +150,12 @@ export async function run(): Promise<void> {
       if (config.syncPackageJson) {
         updatePackageVersion('package.json', next);
         filesToCommit.push('package.json');
+      }
+
+      if (config.generateBadge) {
+        const badge = generateBadgeJson(tag, config.badgeColor);
+        writeBadgeFile(config.badgeFile, badge);
+        filesToCommit.push(config.badgeFile);
       }
     }
 

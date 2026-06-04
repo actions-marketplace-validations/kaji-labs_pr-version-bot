@@ -1,3 +1,7 @@
+## [0.7.1] - 2026-06-04
+
+- patch: fix: badge endpoint, README VERSIONBOT markers, release.yml auto-sync (#24)
+
 ## [0.7.0] - 2026-06-04
 
 - minor: feat(epic-9): release badge JSON + README block auto-update (#22)

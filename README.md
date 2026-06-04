@@ -1,7 +1,7 @@
 # PR Version Bot
 
-[![CI](https://github.com/YOUR_ORG/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/pr-version-bot/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/YOUR_ORG/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/YOUR_ORG/pr-version-bot/actions/workflows/codeql.yml)
+[![CI](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > Reusable GitHub Action for automatic semantic versioning from merged pull requests.

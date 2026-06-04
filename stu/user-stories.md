@@ -61,14 +61,14 @@ Allow per-repo configuration via a `.versionbot.yml` file, so users can customis
 
 **AC:**
 
-- [ ] `docs/configuration.md` updated with config file section
-- [ ] `.versionbot.yml.example` added to repo root showing all options
-- [ ] `examples/with-config-file.yml` workflow example added
-- [ ] `docs/troubleshooting.md` updated with config file error cases
+- [x] `docs/configuration.md` updated with config file section
+- [x] `.versionbot.yml.example` added to repo root showing all options
+- [x] `examples/with-config-file.yml` workflow example added
+- [x] `docs/troubleshooting.md` updated with config file error cases
 
 **SC:**
 
-- [ ] Example config file contains no real tokens or org names
+- [x] Example config file contains no real tokens or org names
 
 ---
 

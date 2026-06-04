@@ -4,6 +4,65 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 3.3 — Docs for package.json sync
+
+> Completed: 2026-06-04 | Epic 3 — package.json Version Sync
+
+**As a** user, **I want** documentation for the package.json sync feature.
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with `sync-package-json` input and `syncPackageJson` config key
+- [x] `docs/troubleshooting.md` updated with package.json sync error section
+- [x] `examples/nodejs-with-package-json.yml` created
+
+**Security Criteria:**
+
+- [x] No real tokens in examples
+
+---
+
+### ✅ Story 3.2 — Config file support for sync-package-json
+
+> Completed: 2026-06-04 | Epic 3 — package.json Version Sync
+
+**As a** user, **I want** to enable package.json sync in `.versionbot.yml`, so that I don't have to change my workflow.
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `syncPackageJson: true/false`
+- [x] Workflow input overrides config file value
+- [x] `src/config.ts` updated: `BotConfig` and `ResolvedConfig` include `syncPackageJson: boolean`
+- [x] `mergeConfig` handles new field correctly (default: `false`)
+- [x] Unit tests updated
+
+**Security Criteria:**
+
+- [x] Default is `false` — no unintended package.json modifications for existing users
+
+---
+
+### ✅ Story 3.1 — Detect and update package.json version
+
+> Completed: 2026-06-04 | Epic 3 — package.json Version Sync
+
+**As a** Node.js project user, **I want** the action to update my `package.json` version automatically, so that my npm package version stays in sync with my releases.
+
+**Acceptance Criteria:**
+
+- [x] New input `sync-package-json` (default: `'false'`)
+- [x] When `'true'`, action reads `package.json`, updates `version` field to match new semver, writes it back
+- [x] `package.json` committed alongside `VERSION.md` and `CHANGELOG.md` in the release commit
+- [x] If `package.json` does not exist, action logs a warning and continues (does not fail)
+- [x] Unit tests: sync enabled with valid package.json, missing file (warning), disabled (no-op), fields preserved, core.warning assertion
+
+**Security Criteria:**
+
+- [x] `package.json` version always treated as string, never float
+- [x] No other fields in `package.json` modified
+
+---
+
 ### ✅ Story 2.3 — Config file docs and examples
 
 > Completed: 2026-06-04 | Epic 2 — Config File Support

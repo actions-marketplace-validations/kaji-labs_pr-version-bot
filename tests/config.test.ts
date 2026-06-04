@@ -212,4 +212,44 @@ describe('mergeConfig', () => {
   it('resolves readmeStartMarker default', () => {
     expect(mergeConfig({}, DEFAULT_INPUTS).readmeStartMarker).toBe('<!-- VERSIONBOT:START -->');
   });
+
+  it('resolves generateBadge from fileConfig', () => {
+    expect(mergeConfig({ generateBadge: true }, DEFAULT_INPUTS).generateBadge).toBe(true);
+  });
+
+  it('resolves badgeColor from fileConfig', () => {
+    expect(mergeConfig({ badgeColor: 'blue' }, DEFAULT_INPUTS).badgeColor).toBe('blue');
+  });
+
+  it('resolves badgeFile from fileConfig', () => {
+    expect(mergeConfig({ badgeFile: 'custom/badge.json' }, DEFAULT_INPUTS).badgeFile).toBe(
+      'custom/badge.json'
+    );
+  });
+
+  it('input overrides fileConfig for generateBadge', () => {
+    const result = mergeConfig(
+      { generateBadge: false },
+      { ...DEFAULT_INPUTS, 'generate-badge': 'true' }
+    );
+    expect(result.generateBadge).toBe(true);
+  });
+
+  it('resolves updateReadme from fileConfig', () => {
+    expect(mergeConfig({ updateReadme: true }, DEFAULT_INPUTS).updateReadme).toBe(true);
+  });
+
+  it('resolves readmeFile from fileConfig', () => {
+    expect(mergeConfig({ readmeFile: 'docs/README.md' }, DEFAULT_INPUTS).readmeFile).toBe(
+      'docs/README.md'
+    );
+  });
+
+  it('input overrides fileConfig for readmeFile', () => {
+    const result = mergeConfig(
+      { readmeFile: 'docs/README.md' },
+      { ...DEFAULT_INPUTS, 'readme-file': 'OTHER.md' }
+    );
+    expect(result.readmeFile).toBe('OTHER.md');
+  });
 });

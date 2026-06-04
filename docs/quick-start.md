@@ -67,3 +67,44 @@ Apply a `release:patch` label to your next PR and merge it. The action will:
 4. Commit both files
 5. Create tag `v1.0.1`
 6. Publish a GitHub Release
+
+## Version badge
+
+Add a Shields.io-powered version badge to your README by enabling `generate-badge`:
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    generate-badge: 'true'
+```
+
+This writes `.badges/version.json` after each release. Use the following Shields.io endpoint URL in your README:
+
+```markdown
+![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/YOUR_ORG/YOUR_REPO/main/.badges/version.json)
+```
+
+Replace `YOUR_ORG/YOUR_REPO` with your repository's full name.
+
+## README auto-sync
+
+Enable auto-update of your README on each release by adding markers and enabling `update-readme`:
+
+1. Add these markers to your README where you want the version block:
+
+```markdown
+<!-- VERSIONBOT:START -->
+<!-- VERSIONBOT:END -->
+```
+
+2. Enable the feature in your workflow:
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    update-readme: 'true'
+```
+
+The action will replace the content between the markers with an auto-generated block showing the current version and install instructions.

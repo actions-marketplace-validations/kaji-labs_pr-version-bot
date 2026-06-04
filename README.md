@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml)
+[![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/kaji-labs/pr-version-bot/main/.badges/version.json)](https://github.com/kaji-labs/pr-version-bot/releases)
 [![License: Source-Available](https://img.shields.io/badge/License-Source--Available-blue.svg)](LICENSE)
 
 > Reusable GitHub Action for automatic semantic versioning from merged pull requests.
@@ -31,6 +32,8 @@ Create these labels in your repository:
 
 ## Example workflow
 
+<!-- VERSIONBOT:START -->
+
 ```yaml
 name: Release
 
@@ -56,6 +59,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+<!-- VERSIONBOT:END -->
 
 ## Inputs
 

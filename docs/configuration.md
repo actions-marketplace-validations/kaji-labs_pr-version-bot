@@ -30,30 +30,37 @@ The config file is optional. The action works identically without it.
 
 **Accepted fields:**
 
-| Field                    | Type                              | Default                                        | Description                             |
-| ------------------------ | --------------------------------- | ---------------------------------------------- | --------------------------------------- |
-| `versionFile`            | string                            | `VERSION.md`                                   | Path to semver file                     |
-| `changelogFile`          | string                            | `CHANGELOG.md`                                 | Path to changelog                       |
-| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                                        | Bump type when no label present         |
-| `tagPrefix`              | string                            | `v`                                            | Git tag prefix                          |
-| `createGithubRelease`    | boolean                           | `true`                                         | Create a GitHub Release                 |
-| `failOnMultipleLabels`   | boolean                           | `true`                                         | Fail on multiple release labels         |
-| `dryRun`                 | boolean                           | `false`                                        | Run without writing changes             |
-| `targetBranch`           | string                            | `main`                                         | Branch to push release commit to        |
-| `commitMessageTemplate`  | string                            | `chore(release): {tag}`                        | Release commit message                  |
-| `syncPackageJson`        | boolean                           | `false`                                        | Sync `version` in `package.json`        |
-| `useConventionalCommits` | boolean                           | `false`                                        | Scan commits for conventional prefixes  |
-| `slackWebhookUrl`        | string                            | `''`                                           | Slack webhook URL (HTTPS only)          |
-| `discordWebhookUrl`      | string                            | `''`                                           | Discord webhook URL (HTTPS only)        |
-| `notificationTemplate`   | string                            | `'🚀 Released {tag}: {prTitle} (#{prNumber})'` | Notification message template           |
-| `packages`               | string[]                          | `[]`                                           | Package paths for monorepo (YAML array) |
-| `labels.major`           | string                            | `release:major`                                | Label name for major bump               |
-| `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump               |
-| `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump               |
-| `labels.none`            | string                            | `release:none`                                 | Label name to skip release              |
-| `labels.alpha`           | string                            | `release:alpha`                                | Label for alpha pre-release             |
-| `labels.beta`            | string                            | `release:beta`                                 | Label for beta pre-release              |
-| `labels.rc`              | string                            | `release:rc`                                   | Label for release candidate             |
+| Field                    | Type                              | Default                                        | Description                                    |
+| ------------------------ | --------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| `versionFile`            | string                            | `VERSION.md`                                   | Path to semver file                            |
+| `changelogFile`          | string                            | `CHANGELOG.md`                                 | Path to changelog                              |
+| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                                        | Bump type when no label present                |
+| `tagPrefix`              | string                            | `v`                                            | Git tag prefix                                 |
+| `createGithubRelease`    | boolean                           | `true`                                         | Create a GitHub Release                        |
+| `failOnMultipleLabels`   | boolean                           | `true`                                         | Fail on multiple release labels                |
+| `dryRun`                 | boolean                           | `false`                                        | Run without writing changes                    |
+| `targetBranch`           | string                            | `main`                                         | Branch to push release commit to               |
+| `commitMessageTemplate`  | string                            | `chore(release): {tag}`                        | Release commit message                         |
+| `syncPackageJson`        | boolean                           | `false`                                        | Sync `version` in `package.json`               |
+| `useConventionalCommits` | boolean                           | `false`                                        | Scan commits for conventional prefixes         |
+| `slackWebhookUrl`        | string                            | `''`                                           | Slack webhook URL (HTTPS only)                 |
+| `discordWebhookUrl`      | string                            | `''`                                           | Discord webhook URL (HTTPS only)               |
+| `notificationTemplate`   | string                            | `'🚀 Released {tag}: {prTitle} (#{prNumber})'` | Notification message template                  |
+| `packages`               | string[]                          | `[]`                                           | Package paths for monorepo (YAML array)        |
+| `labels.major`           | string                            | `release:major`                                | Label name for major bump                      |
+| `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump                      |
+| `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump                      |
+| `labels.none`            | string                            | `release:none`                                 | Label name to skip release                     |
+| `labels.alpha`           | string                            | `release:alpha`                                | Label for alpha pre-release                    |
+| `labels.beta`            | string                            | `release:beta`                                 | Label for beta pre-release                     |
+| `labels.rc`              | string                            | `release:rc`                                   | Label for release candidate                    |
+| `generateBadge`          | boolean                           | `false`                                        | Generate Shields.io badge JSON on release      |
+| `badgeColor`             | string                            | `orange`                                       | Color for the version badge                    |
+| `badgeFile`              | string                            | `.badges/version.json`                         | Path where badge JSON is written               |
+| `updateReadme`           | boolean                           | `false`                                        | Update README block between markers on release |
+| `readmeFile`             | string                            | `README.md`                                    | Path to README file to update                  |
+| `readmeStartMarker`      | string                            | `<!-- VERSIONBOT:START -->`                    | Start marker for README block                  |
+| `readmeEndMarker`        | string                            | `<!-- VERSIONBOT:END -->`                      | End marker for README block                    |
 
 ---
 
@@ -253,6 +260,95 @@ Each path must contain its own `VERSION.md`. The changelog is updated at `{packa
 ```
 
 **Restrictions:** Paths must be relative to the repo root. Path traversal (`..`) is not allowed.
+
+---
+
+### `generate-badge`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'false'`
+
+When `'true'`, generates a Shields.io endpoint badge JSON file after each release. The file is written to the path specified in `badge-file` (default: `.badges/version.json`). The badge displays the current version with the color specified in `badge-color`.
+
+Use the badge in your README with a Shields.io endpoint URL:
+
+```markdown
+![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/YOUR_ORG/YOUR_REPO/main/.badges/version.json)
+```
+
+---
+
+### `badge-color`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `orange`
+
+Color used for the version badge. Accepts any Shields.io color string (e.g. `blue`, `green`, `red`, `orange`, `yellow`, `brightgreen`).
+
+---
+
+### `badge-file`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `.badges/version.json`
+
+Path where the badge JSON file is written. The directory is created if it does not exist.
+
+---
+
+### `update-readme`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'false'`
+
+When `'true'`, updates the README file between VERSIONBOT markers on each release. The markers must be added manually to your README (see "Setting up README auto-sync" below). The action replaces the content between the markers with an auto-generated block showing the current version, a pinned install snippet, and the major version alias.
+
+---
+
+### `readme-file`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `README.md`
+
+Path to the README file to update. Only used when `update-readme` is `'true'`.
+
+---
+
+### `readme-start-marker`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `<!-- VERSIONBOT:START -->`
+
+Start marker for the README block. Only used when `update-readme` is `'true'`. The marker text must match exactly in your README file.
+
+---
+
+### `readme-end-marker`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `<!-- VERSIONBOT:END -->`
+
+End marker for the README block. Only used when `update-readme` is `'true'`. The marker text must match exactly in your README file.
+
+---
+
+## Setting up README auto-sync
+
+Add the following markers to your README where you want the version block to appear:
+
+```markdown
+<!-- VERSIONBOT:START -->
+<!-- VERSIONBOT:END -->
+```
+
+On every release, PR Version Bot will replace the content between these markers with an auto-generated block showing the current version, a pinned install snippet, and the major version alias.
 
 ---
 

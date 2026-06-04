@@ -101,6 +101,14 @@ inputs:
     required: false
     default: ''
 
+  use-pr-template-labels:
+    description: >
+      When 'true', scans the PR body for checked Markdown checkboxes matching
+      configured label names to determine bump type. Precedence: PR label >
+      PR body checkbox > conventional commits > default-bump.
+    required: false
+    default: 'false'
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

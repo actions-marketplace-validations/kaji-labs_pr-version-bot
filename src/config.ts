@@ -29,6 +29,7 @@ export interface BotConfig {
   notificationTemplate?: string;
   labels?: Partial<LabelConfig>;
   packages?: string[];
+  usePrTemplateLabels?: boolean;
 }
 
 export interface ResolvedConfig {
@@ -48,6 +49,7 @@ export interface ResolvedConfig {
   notificationTemplate: string;
   labels: LabelConfig;
   packages: string[];
+  usePrTemplateLabels: boolean;
 }
 
 const DEFAULT_LABELS: LabelConfig = {
@@ -115,5 +117,8 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
           .map((p) => p.trim())
           .filter(Boolean)
       : (fileConfig.packages ?? []),
+    usePrTemplateLabels: inp('use-pr-template-labels')
+      ? inp('use-pr-template-labels') === 'true'
+      : (fileConfig.usePrTemplateLabels ?? false),
   };
 }

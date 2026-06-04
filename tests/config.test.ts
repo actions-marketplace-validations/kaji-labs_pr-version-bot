@@ -18,6 +18,7 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'commit-message-template': '',
   'sync-package-json': '',
   'use-conventional-commits': '',
+  'use-pr-template-labels': '',
   'slack-webhook-url': '',
   'discord-webhook-url': '',
   'notification-template': '',
@@ -167,5 +168,21 @@ describe('mergeConfig', () => {
   it('uses packages YAML array from file config when input is empty', () => {
     const result = mergeConfig({ packages: ['packages/api', 'packages/web'] }, DEFAULT_INPUTS);
     expect(result.packages).toEqual(['packages/api', 'packages/web']);
+  });
+
+  it('resolves usePrTemplateLabels default to false', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).usePrTemplateLabels).toBe(false);
+  });
+
+  it('resolves usePrTemplateLabels from input', () => {
+    expect(
+      mergeConfig({}, { ...DEFAULT_INPUTS, 'use-pr-template-labels': 'true' }).usePrTemplateLabels
+    ).toBe(true);
+  });
+
+  it('resolves usePrTemplateLabels from fileConfig', () => {
+    expect(mergeConfig({ usePrTemplateLabels: true }, DEFAULT_INPUTS).usePrTemplateLabels).toBe(
+      true
+    );
   });
 });

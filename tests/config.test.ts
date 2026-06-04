@@ -25,6 +25,10 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'generate-badge': '',
   'badge-color': '',
   'badge-file': '',
+  'update-readme': '',
+  'readme-file': '',
+  'readme-start-marker': '',
+  'readme-end-marker': '',
 };
 
 describe('loadConfig', () => {
@@ -195,5 +199,17 @@ describe('mergeConfig', () => {
   it('resolves badgeFile default', () => {
     const r = mergeConfig({}, DEFAULT_INPUTS);
     expect(r.badgeFile).toBe('.badges/version.json');
+  });
+
+  it('resolves updateReadme default to false', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).updateReadme).toBe(false);
+  });
+
+  it('resolves readmeFile default', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).readmeFile).toBe('README.md');
+  });
+
+  it('resolves readmeStartMarker default', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).readmeStartMarker).toBe('<!-- VERSIONBOT:START -->');
   });
 });

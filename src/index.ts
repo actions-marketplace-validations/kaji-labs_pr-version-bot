@@ -12,6 +12,7 @@ import { detectBumpFromCommits } from './conventional';
 import { sendSlackNotification, sendDiscordNotification } from './notify';
 import { resolvePackagePaths } from './monorepo';
 import { generateBadgeJson, writeBadgeFile } from './badge';
+import { applyReadmeUpdate, extractMajorAlias } from './readme';
 
 export async function run(): Promise<void> {
   try {
@@ -38,6 +39,10 @@ export async function run(): Promise<void> {
       'generate-badge': core.getInput('generate-badge'),
       'badge-color': core.getInput('badge-color'),
       'badge-file': core.getInput('badge-file'),
+      'update-readme': core.getInput('update-readme'),
+      'readme-file': core.getInput('readme-file'),
+      'readme-start-marker': core.getInput('readme-start-marker'),
+      'readme-end-marker': core.getInput('readme-end-marker'),
     };
 
     const fileConfig = loadConfig();
@@ -156,6 +161,25 @@ export async function run(): Promise<void> {
         const badge = generateBadgeJson(tag, config.badgeColor);
         writeBadgeFile(config.badgeFile, badge);
         filesToCommit.push(config.badgeFile);
+      }
+    }
+
+    if (config.updateReadme) {
+      const { owner, repo } = github.context.repo;
+      const repoFullName = `${owner}/${repo}`;
+      const majorAlias = extractMajorAlias(tag, config.tagPrefix);
+      const updated = applyReadmeUpdate(
+        config.readmeFile,
+        config.readmeStartMarker,
+        config.readmeEndMarker,
+        repoFullName,
+        tag,
+        majorAlias
+      );
+      if (updated) {
+        filesToCommit.push(config.readmeFile);
+      } else {
+        core.info('VERSIONBOT markers not found in README — skipping');
       }
     }
 

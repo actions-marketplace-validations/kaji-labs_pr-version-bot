@@ -32,6 +32,10 @@ export interface BotConfig {
   generateBadge?: boolean;
   badgeColor?: string;
   badgeFile?: string;
+  updateReadme?: boolean;
+  readmeFile?: string;
+  readmeStartMarker?: string;
+  readmeEndMarker?: string;
 }
 
 export interface ResolvedConfig {
@@ -54,6 +58,10 @@ export interface ResolvedConfig {
   generateBadge: boolean;
   badgeColor: string;
   badgeFile: string;
+  updateReadme: boolean;
+  readmeFile: string;
+  readmeStartMarker: string;
+  readmeEndMarker: string;
 }
 
 const DEFAULT_LABELS: LabelConfig = {
@@ -126,5 +134,13 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
       : (fileConfig.generateBadge ?? false),
     badgeColor: inp('badge-color') || fileConfig.badgeColor || 'orange',
     badgeFile: inp('badge-file') || fileConfig.badgeFile || '.badges/version.json',
+    updateReadme: inp('update-readme')
+      ? inp('update-readme') === 'true'
+      : (fileConfig.updateReadme ?? false),
+    readmeFile: inp('readme-file') || fileConfig.readmeFile || 'README.md',
+    readmeStartMarker:
+      inp('readme-start-marker') || fileConfig.readmeStartMarker || '<!-- VERSIONBOT:START -->',
+    readmeEndMarker:
+      inp('readme-end-marker') || fileConfig.readmeEndMarker || '<!-- VERSIONBOT:END -->',
   };
 }

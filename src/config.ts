@@ -49,16 +49,15 @@ export function loadConfig(configPath = '.versionbot.yml'): BotConfig {
   const parsed = yaml.load(raw);
 
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new Error(`Invalid .versionbot.yml: expected a mapping, got ${Array.isArray(parsed) ? 'array' : typeof parsed}`);
+    throw new Error(
+      `Invalid .versionbot.yml: expected a mapping, got ${Array.isArray(parsed) ? 'array' : typeof parsed}`
+    );
   }
 
   return parsed as BotConfig;
 }
 
-export function mergeConfig(
-  fileConfig: BotConfig,
-  inputs: Record<string, string>
-): ResolvedConfig {
+export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string>): ResolvedConfig {
   const inp = (key: string) => inputs[key] || '';
 
   return {
@@ -68,18 +67,14 @@ export function mergeConfig(
     tagPrefix: inp('tag-prefix') || fileConfig.tagPrefix || 'v',
     createGithubRelease: inp('create-github-release')
       ? inp('create-github-release') !== 'false'
-      : fileConfig.createGithubRelease ?? true,
+      : (fileConfig.createGithubRelease ?? true),
     failOnMultipleLabels: inp('fail-on-multiple-labels')
       ? inp('fail-on-multiple-labels') !== 'false'
-      : fileConfig.failOnMultipleLabels ?? true,
-    dryRun: inp('dry-run')
-      ? inp('dry-run') === 'true'
-      : fileConfig.dryRun ?? false,
+      : (fileConfig.failOnMultipleLabels ?? true),
+    dryRun: inp('dry-run') ? inp('dry-run') === 'true' : (fileConfig.dryRun ?? false),
     targetBranch: inp('target-branch') || fileConfig.targetBranch || 'main',
     commitMessageTemplate:
-      inp('commit-message-template') ||
-      fileConfig.commitMessageTemplate ||
-      'chore(release): {tag}',
+      inp('commit-message-template') || fileConfig.commitMessageTemplate || 'chore(release): {tag}',
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels,

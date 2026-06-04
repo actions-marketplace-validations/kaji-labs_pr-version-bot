@@ -12,12 +12,12 @@
 
 ---
 
-### B-005 — Dependencies: @actions/core v3 incompatible with @vercel/ncc
+### B-003 — git.ts: commitRelease called with empty files array
 
-- **Logged:** 2026-06-04 by dependency upgrade
-- **Triggered by:** Dependabot PR #7
+- **Logged:** 2026-06-04 by review agent
+- **Triggered by:** Story 1.6
 - **Priority:** Low
-- **Description:** `@actions/core` v3.x uses ESM exports which `@vercel/ncc` (0.38.x) cannot bundle — fails with "Package path . is not exported". Pinned at `^1.11.1`. Revisit when `@vercel/ncc` adds full ESM package support, or when we migrate the build to a bundler that handles ESM (e.g. esbuild directly). No security vulnerability in v1.x — this is purely a version upgrade.
+- **Description:** `commitRelease([])` would run `git commit -m ...` with nothing staged. Git would error with "nothing to commit". Internal function — callers are responsible for passing non-empty file lists. Consider adding a guard: `if (files.length === 0) return;` or throw explicitly. Not a risk in current usage since index.ts always passes `[versionFile, changelogFile]`.
 - **Status:** Open
 
 ---
@@ -32,26 +32,24 @@
 
 ---
 
-### B-003 — git.ts: commitRelease called with empty files array
+### B-006 — config.ts: LabelMapConfig and LabelConfig are duplicate interfaces
 
 - **Logged:** 2026-06-04 by review agent
-- **Triggered by:** Story 1.6
+- **Triggered by:** Story 2.2
 - **Priority:** Low
-- **Description:** `commitRelease([])` would run `git commit -m ...` with nothing staged. Git would error with "nothing to commit". Internal function — callers are responsible for passing non-empty file lists. Consider adding a guard: `if (files.length === 0) return;` or throw explicitly. Not a risk in current usage since index.ts always passes `[versionFile, changelogFile]`.
-- **Status:** Open
-
----
-
-### B-002 — Dependencies: esbuild moderate vulnerability in vitest/vite
-
-- **Logged:** 2026-06-04 by scaffold agent
-- **Triggered by:** Story 1.1
-- **Priority:** Low
-- **Description:** `esbuild <=0.24.2` (via vitest/vite) has a moderate GHSA-67mh-4wv8-2f99 vulnerability allowing websites to send requests to the dev server. Fix requires upgrading vitest to v4 (breaking change). This is dev-only — the esbuild dev server is never exposed in CI or production. Revisit when vitest v4 API stabilises and migration guide is available.
+- **Description:** `src/labels.ts` exports `LabelMapConfig` and `src/config.ts` exports `LabelConfig` — both are `{ major, minor, patch, none: string }`. Avoiding circular deps (config imports BumpType from labels) meant keeping them separate. Consider extracting shared types to `src/types.ts` to eliminate the duplication.
 - **Status:** Open
 
 ---
 
 ## Closed Items
 
-<!-- Resolved items moved here (never deleted) -->
+### B-002 — Dependencies: esbuild moderate vulnerability in vitest/vite
+
+- **Closed:** 2026-06-04 (Epic 2 — upgraded vitest to v4.1.8 which bundles esbuild 0.25+, resolving GHSA-67mh-4wv8-2f99. Also migrated build from ncc to esbuild directly.)
+
+---
+
+### B-005 — Dependencies: @actions/core v3 incompatible with @vercel/ncc
+
+- **Closed:** 2026-06-04 (Epic 2 — replaced `@vercel/ncc` with `esbuild` as the bundler. esbuild handles @actions/core v3 ESM exports correctly. Build now produces 1.7MB dist/index.js cleanly.)

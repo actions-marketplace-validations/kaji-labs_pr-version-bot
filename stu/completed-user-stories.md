@@ -4,6 +4,68 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 2.3 — Config file docs and examples
+
+> Completed: 2026-06-04 | Epic 2 — Config File Support
+
+**As a** user, **I want** documentation and an example config file, **so that** I can adopt config-file support quickly.
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with config file section
+- [x] `.versionbot.yml.example` added to repo root showing all options
+- [x] `examples/with-config-file.yml` workflow example added
+- [x] `docs/troubleshooting.md` updated with config file error cases
+
+**Security Criteria:**
+
+- [x] Example config file contains no real tokens or org names
+
+---
+
+### ✅ Story 2.2 — Label name customisation
+
+> Completed: 2026-06-04 | Epic 2 — Config File Support
+
+**As a** user, **I want** to customise the release label names, **so that** I can use my own label conventions.
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports a `labels` block with major/minor/patch/none keys
+- [x] Custom label names work end-to-end through `detectBump`
+- [x] Default label names (`release:major` etc.) used when `labels` block absent
+- [x] `detectBump` gains optional 4th `labelMap` parameter — fully backward-compatible
+- [x] 6 unit tests for custom labels, non-matching fallback, and backward-compat
+
+**Security Criteria:**
+
+- [x] Label names validated as non-empty strings via TypeScript interface
+
+---
+
+### ✅ Story 2.1 — Config file schema and loader
+
+> Completed: 2026-06-04 | Epic 2 — Config File Support
+
+**As a** user, **I want** to configure the action via a `.versionbot.yml` file, **so that** I don't have to pass every option as a workflow input.
+
+**Acceptance Criteria:**
+
+- [x] Action reads `.versionbot.yml` from repo root if it exists
+- [x] Config file supports all 9 non-token inputs
+- [x] Workflow inputs override config file values
+- [x] Config file is optional — action works identically when absent
+- [x] Invalid config (bad YAML, non-object root) throws descriptive error
+- [x] `src/config.ts` handles loading and merging
+- [x] 11 unit tests: file present/absent, partial config, invalid YAML, boolean string conversion, input override
+
+**Security Criteria:**
+
+- [x] Config file never logged in full
+- [x] `github-token` never accepted in config file — must stay as workflow input
+
+---
+
 ### ✅ Story 1.13 — Documentation
 
 > Completed: 2026-06-04 | Epic 1 — MVP

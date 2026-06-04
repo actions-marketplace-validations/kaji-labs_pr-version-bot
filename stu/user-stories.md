@@ -8,73 +8,66 @@
 
 ## Epic 2 — Config File Support (.versionbot.yml)
 
-Allow per-repo configuration via a `.versionbot.yml` file, so users can customise the action without touching their workflow YAML.
-
-### Story 2.1 — Config file schema and loader
-
-> As a user, I want to configure the action via a `.versionbot.yml` file, so that I don't have to pass every option as a workflow input.
-
-**AC:**
-
-- [ ] Action reads `.versionbot.yml` from the repo root if it exists
-- [ ] Config file supports all 9 non-token inputs: `versionFile`, `changelogFile`, `defaultBump`, `tagPrefix`, `createGithubRelease`, `failOnMultipleLabels`, `dryRun`, `targetBranch`, `commitMessageTemplate`
-- [ ] Workflow inputs override config file values (inputs take precedence)
-- [ ] Config file is optional — action works identically when file is absent
-- [ ] Invalid config file (bad YAML, unknown keys) throws a descriptive error
-- [ ] `src/config.ts` module handles loading and merging
-- [ ] Unit tests cover: file present, file absent, partial config, invalid YAML, input override
-
-**SC:**
-
-- [ ] Config file never logged in full (could contain sensitive paths)
-- [ ] No secrets or tokens accepted in config file (github-token must stay as workflow input)
-
----
-
-### Story 2.2 — Label name customisation
-
-> As a user, I want to customise the release label names, so that I can use my own label conventions.
-
-**AC:**
-
-- [ ] `.versionbot.yml` supports a `labels` block:
-  ```yaml
-  labels:
-    major: breaking-change
-    minor: feature
-    patch: bugfix
-    none: no-release
-  ```
-- [ ] Custom label names work end-to-end (detectBump uses configured names)
-- [ ] Default label names (`release:major` etc.) used when `labels` block absent
-- [ ] Unit tests cover custom labels, partial labels block, default fallback
-
-**SC:**
-
-- [ ] Label names validated as non-empty strings
-
----
-
-### Story 2.3 — Config file docs and examples
-
-> As a user, I want documentation and an example config file, so that I can adopt config-file support quickly.
-
-**AC:**
-
-- [x] `docs/configuration.md` updated with config file section
-- [x] `.versionbot.yml.example` added to repo root showing all options
-- [x] `examples/with-config-file.yml` workflow example added
-- [x] `docs/troubleshooting.md` updated with config file error cases
-
-**SC:**
-
-- [x] Example config file contains no real tokens or org names
+> All 3 stories delivered. Moved to completed-user-stories.md.
 
 ---
 
 ## Epic 3 — package.json Version Sync
 
-> Stories TBD after Epic 2 ships.
+Optionally sync the `version` field in `package.json` alongside `VERSION.md` when a release is created.
+
+### Story 3.1 — Detect and update package.json version
+
+> As a Node.js project user, I want the action to update my `package.json` version automatically, so that my npm package version stays in sync with my releases.
+
+**AC:**
+
+- [ ] New input `sync-package-json` (default: `'false'`)
+- [ ] When `'true'`, action reads `package.json`, updates `version` field to match new semver, writes it back
+- [ ] `package.json` committed alongside `VERSION.md` and `CHANGELOG.md` in the release commit
+- [ ] If `package.json` does not exist, action logs a warning and continues (does not fail)
+- [ ] Unit tests cover: sync enabled with valid package.json, sync enabled with missing file, sync disabled (no-op)
+
+**SC:**
+
+- [ ] `package.json` never read as float — version always treated as string
+- [ ] No other fields in `package.json` modified
+
+---
+
+### Story 3.2 — Config file support for sync-package-json
+
+> As a user, I want to enable package.json sync in `.versionbot.yml`, so that I don't have to change my workflow.
+
+**AC:**
+
+- [ ] `.versionbot.yml` supports `syncPackageJson: true/false`
+- [ ] Workflow input overrides config file value
+- [ ] `src/config.ts` updated: `BotConfig` and `ResolvedConfig` include `syncPackageJson: boolean`
+- [ ] `mergeConfig` handles new field correctly (default: `false`)
+- [ ] Unit tests updated
+
+**SC:**
+
+- [ ] Default is `false` — no unintended package.json modifications for existing users
+
+---
+
+### Story 3.3 — Docs for package.json sync
+
+> As a user, I want documentation for the package.json sync feature.
+
+**AC:**
+
+- [ ] `docs/configuration.md` updated with `sync-package-json` input and `syncPackageJson` config key
+- [ ] `docs/troubleshooting.md` updated with common package.json sync errors
+- [ ] `examples/nodejs-with-package-json.yml` created
+
+**SC:**
+
+- [ ] No real tokens in examples
+
+---
 
 ## Epic 4 — Conventional Commits Fallback
 

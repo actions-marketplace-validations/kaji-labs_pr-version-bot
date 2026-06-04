@@ -56,6 +56,13 @@ inputs:
     required: false
     default: 'chore(release): {tag}'
 
+  sync-package-json:
+    description: >
+      When 'true', updates the version field in package.json to match the new semver.
+      If package.json does not exist, a warning is logged and the step is skipped.
+    required: false
+    default: 'false'
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

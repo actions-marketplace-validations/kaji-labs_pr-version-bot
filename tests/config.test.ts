@@ -123,4 +123,9 @@ describe('mergeConfig', () => {
     const result = mergeConfig({}, DEFAULT_INPUTS);
     expect(result.useConventionalCommits).toBe(false);
   });
+
+  it('uses useConventionalCommits from file config when input is empty', () => {
+    const result = mergeConfig({ useConventionalCommits: true }, DEFAULT_INPUTS);
+    expect(result.useConventionalCommits).toBe(true);
+  });
 });

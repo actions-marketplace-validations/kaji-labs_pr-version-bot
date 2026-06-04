@@ -40190,11 +40190,11 @@ var require_github = __commonJS({
     var Context = __importStar(require_context());
     var utils_1 = require_utils4();
     exports2.context = new Context.Context();
-    function getOctokit2(token, options, ...additionalPlugins) {
+    function getOctokit3(token, options, ...additionalPlugins) {
       const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
       return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
     }
-    exports2.getOctokit = getOctokit2;
+    exports2.getOctokit = getOctokit3;
   }
 });
 
@@ -42017,7 +42017,7 @@ var require_subset = __commonJS({
         }
         return true;
       }
-      let higher, lower;
+      let higher2, lower;
       let hasDomLT, hasDomGT;
       let needDomLTPre = lt && !options.includePrerelease && lt.semver.prerelease.length ? lt.semver : false;
       let needDomGTPre = gt && !options.includePrerelease && gt.semver.prerelease.length ? gt.semver : false;
@@ -42034,8 +42034,8 @@ var require_subset = __commonJS({
             }
           }
           if (c.operator === ">" || c.operator === ">=") {
-            higher = higherGT(gt, c, options);
-            if (higher === c && higher !== gt) {
+            higher2 = higherGT(gt, c, options);
+            if (higher2 === c && higher2 !== gt) {
               return false;
             }
           } else if (gt.operator === ">=" && !c.test(gt.semver)) {
@@ -46192,6 +46192,7 @@ function mergeConfig(fileConfig, inputs) {
     targetBranch: inp("target-branch") || fileConfig.targetBranch || "main",
     commitMessageTemplate: inp("commit-message-template") || fileConfig.commitMessageTemplate || "chore(release): {tag}",
     syncPackageJson: inp("sync-package-json") ? inp("sync-package-json") === "true" : fileConfig.syncPackageJson ?? false,
+    useConventionalCommits: inp("use-conventional-commits") ? inp("use-conventional-commits") === "true" : fileConfig.useConventionalCommits ?? false,
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels
@@ -46224,6 +46225,35 @@ function updatePackageVersion(filePath, version) {
   return true;
 }
 
+// src/conventional.ts
+var BUMP_PRIORITY = {
+  major: 3,
+  minor: 2,
+  patch: 1
+};
+function higher(a, b) {
+  if (a === null) return b;
+  return BUMP_PRIORITY[a] >= BUMP_PRIORITY[b] ? a : b;
+}
+function detectFromMessage(message) {
+  if (/BREAKING CHANGE:/m.test(message)) return "major";
+  if (/^(\w+)(\(.+\))?!:/.test(message)) return "major";
+  if (/^feat(\(.+\))?:/.test(message)) return "minor";
+  if (/^fix(\(.+\))?:/.test(message)) return "patch";
+  return null;
+}
+function detectBumpFromCommits(commitMessages) {
+  let result = null;
+  for (const message of commitMessages) {
+    const bump = detectFromMessage(message);
+    if (bump !== null) {
+      result = higher(result, bump);
+      if (result === "major") break;
+    }
+  }
+  return result;
+}
+
 // src/index.ts
 async function run() {
   try {
@@ -46243,12 +46273,30 @@ async function run() {
       "dry-run": getInput("dry-run"),
       "target-branch": getInput("target-branch"),
       "commit-message-template": getInput("commit-message-template"),
-      "sync-package-json": getInput("sync-package-json")
+      "sync-package-json": getInput("sync-package-json"),
+      "use-conventional-commits": getInput("use-conventional-commits")
     };
     const fileConfig = loadConfig();
     const config = mergeConfig(fileConfig, inputs);
     const labels = pr.labels.map((l) => l.name);
-    const bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
+    const releaseLabels = labels.filter((l) => Object.values(config.labels).includes(l));
+    let bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
+    if (releaseLabels.length === 0 && config.useConventionalCommits) {
+      const octokit = github2.getOctokit(token);
+      const { owner, repo } = github2.context.repo;
+      const commits = await octokit.rest.pulls.listCommits({
+        owner,
+        repo,
+        pull_number: pr.number,
+        per_page: 100
+      });
+      const messages = commits.data.map((c) => c.commit.message);
+      const conventionalBump = detectBumpFromCommits(messages);
+      if (conventionalBump !== null) {
+        bump = conventionalBump;
+        info(`Conventional commits detected bump: ${bump}`);
+      }
+    }
     if (bump === "none") {
       info("release:none label \u2014 skipping release");
       setOutput("bump", "none");

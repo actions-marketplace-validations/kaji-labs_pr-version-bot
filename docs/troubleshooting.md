@@ -87,3 +87,25 @@
 **Cause 2:** `package.json` is not in the repo root.
 
 **Fix:** The action looks for `package.json` in the repository root only. If your `package.json` is in a subdirectory, this feature is not supported in this version — see the roadmap for monorepo support (Epic 6).
+
+---
+
+## Conventional commits not detected
+
+**Symptom:** Bump type falls back to `default-bump` even though PR commits use `feat:` or `fix:` prefixes.
+
+**Cause 1:** `use-conventional-commits` is not set to `'true'` (default is `'false'`).
+
+**Fix:** Add `use-conventional-commits: 'true'` to your workflow or `useConventionalCommits: true` to `.versionbot.yml`.
+
+---
+
+**Cause 2:** A release label is present on the PR.
+
+**Fix:** Labels always take precedence over commit scanning. Remove the label or use `release:none` to skip.
+
+---
+
+**Cause 3:** The workflow is missing `pull-requests: read` permission.
+
+**Fix:** Add `pull-requests: read` to your workflow permissions block.

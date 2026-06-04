@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run PR Version Bot
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-file: VERSION.md
+          changelog-file: CHANGELOG.md
+          default-bump: patch

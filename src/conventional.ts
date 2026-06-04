@@ -6,7 +6,10 @@ const BUMP_PRIORITY: Record<Exclude<BumpType, 'none'>, number> = {
   patch: 1,
 };
 
-function higher(a: Exclude<BumpType, 'none'> | null, b: Exclude<BumpType, 'none'>): Exclude<BumpType, 'none'> {
+function higher(
+  a: Exclude<BumpType, 'none'> | null,
+  b: Exclude<BumpType, 'none'>
+): Exclude<BumpType, 'none'> {
   if (a === null) return b;
   return BUMP_PRIORITY[a] >= BUMP_PRIORITY[b] ? a : b;
 }

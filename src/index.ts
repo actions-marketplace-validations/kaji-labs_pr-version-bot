@@ -37,9 +37,7 @@ export async function run(): Promise<void> {
     const config = mergeConfig(fileConfig, inputs);
 
     const labels = (pr.labels as Array<{ name: string }>).map((l) => l.name);
-    const releaseLabels = labels.filter((l) =>
-      Object.values(config.labels).includes(l)
-    );
+    const releaseLabels = labels.filter((l) => Object.values(config.labels).includes(l));
     let bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
 
     if (releaseLabels.length === 0 && config.useConventionalCommits) {

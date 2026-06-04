@@ -35,7 +35,9 @@ describe('detectBumpFromCommits', () => {
   });
 
   it('returns major for feat(scope)!: scoped breaking change', () => {
-    expect(detectBumpFromCommits(['feat(config)!: rename versionFile to version-file'])).toBe('major');
+    expect(detectBumpFromCommits(['feat(config)!: rename versionFile to version-file'])).toBe(
+      'major'
+    );
   });
 
   it('returns major for fix(scope)!: scoped breaking fix', () => {
@@ -43,7 +45,9 @@ describe('detectBumpFromCommits', () => {
   });
 
   it('returns major for BREAKING CHANGE in body', () => {
-    expect(detectBumpFromCommits(['feat: new api\n\nBREAKING CHANGE: removed old input'])).toBe('major');
+    expect(detectBumpFromCommits(['feat: new api\n\nBREAKING CHANGE: removed old input'])).toBe(
+      'major'
+    );
   });
 
   it('major wins over minor in multiple commits', () => {
@@ -59,6 +63,8 @@ describe('detectBumpFromCommits', () => {
   });
 
   it('ignores chore, docs, style, test prefixes', () => {
-    expect(detectBumpFromCommits(['chore: update', 'docs: readme', 'style: format', 'test: add tests'])).toBeNull();
+    expect(
+      detectBumpFromCommits(['chore: update', 'docs: readme', 'style: format', 'test: add tests'])
+    ).toBeNull();
   });
 });

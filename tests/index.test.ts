@@ -253,13 +253,20 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
       useConventionalCommits: true,
-      labels: { major: 'release:major', minor: 'release:minor', patch: 'release:patch', none: 'release:none' },
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
     });
     vi.mocked(labelsModule.detectBump).mockReturnValue('none');
     vi.mocked(conventionalModule.detectBumpFromCommits).mockReturnValue('minor');
 
     // Mock the octokit listCommits call
-    const mockListCommits = vi.fn().mockResolvedValue({ data: [{ commit: { message: 'feat: new feature' } }] });
+    const mockListCommits = vi
+      .fn()
+      .mockResolvedValue({ data: [{ commit: { message: 'feat: new feature' } }] });
     vi.mocked(github.getOctokit).mockReturnValue({
       rest: { pulls: { listCommits: mockListCommits } },
     } as unknown as ReturnType<typeof github.getOctokit>);

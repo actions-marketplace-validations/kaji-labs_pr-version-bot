@@ -138,3 +138,23 @@
 **Cause 3:** The webhook request returned a non-2xx response (check the workflow logs for the warning).
 
 **Fix:** Verify the webhook URL is still valid and the Slack app or Discord webhook has not been deleted or revoked.
+
+---
+
+## Monorepo: Package VERSION file not found
+
+**Symptom:** Action fails with `Package VERSION file not found: packages/api/VERSION.md`.
+
+**Cause:** The configured package path does not contain a `VERSION.md` file.
+
+**Fix:** Ensure each package in your `packages` list has a `VERSION.md` at its root (e.g. `packages/api/VERSION.md`). Create one with the initial version if it doesn't exist.
+
+---
+
+## Monorepo: Path traversal error
+
+**Symptom:** Action fails with `Package path contains path traversal`.
+
+**Cause:** One of the configured package paths contains `..` or starts with `/`.
+
+**Fix:** Use only relative paths from the repo root, e.g. `packages/api` not `../api` or `/workspace/api`.

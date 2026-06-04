@@ -92,6 +92,15 @@ inputs:
     required: false
     default: '🚀 Released {tag}: {prTitle} (#{prNumber})'
 
+  packages:
+    description: >
+      Comma-separated list of package paths for monorepo support
+      (e.g. 'packages/api,packages/web'). Each package must contain
+      its own VERSION.md. When set, all packages are bumped together
+      in a single release commit.
+    required: false
+    default: ''
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

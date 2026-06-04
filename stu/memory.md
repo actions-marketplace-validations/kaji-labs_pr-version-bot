@@ -14,6 +14,7 @@
 | ADR-008 | package.json sync: in-place update preserving all fields           | Accepted   | 2026-06-04 |
 | ADR-009 | Conventional commits: scan on no-label PRs, labels always win      | Accepted   | 2026-06-04 |
 | ADR-010 | Notifications: built-in https, HTTPS-only, non-fatal on failure    | Accepted   | 2026-06-04 |
+| ADR-011 | Monorepo: shared bump type, per-package version files              | Accepted   | 2026-06-04 |
 
 ---
 
@@ -114,3 +115,13 @@
 - **Context:** Webhook notifications need an HTTP client. Options: (1) add a library like `node-fetch` or `axios`, (2) use Node.js built-in `https`, (3) use `@actions/http-client`. Adding a library increases bundle size and attack surface. `@actions/http-client` pulls in `undici` (already a vulnerability). Built-in `https` requires more code but has no deps.
 - **Decision:** Use Node.js built-in `https`. Enforce HTTPS-only (reject `http://` URLs at call time). Treat non-2xx responses as non-fatal warnings — the release is already published, notification failure should not roll it back.
 - **Consequences:** Webhook URLs must start with `https://`. Failures log a warning with the status code but do not expose the URL. No new runtime dependencies.
+
+---
+
+## ADR-011 — Monorepo: shared bump type, per-package version files
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** Monorepo versioning options: (1) single shared version for all packages, (2) independent per-package versions bumped by the same bump type, (3) per-package labels with different bump types per package.
+- **Decision:** Option 2 — each package has its own `VERSION.md` and `CHANGELOG.md`, but all packages are bumped by the same bump type from the PR label. The first package's version is used as the canonical version for the git tag and release name.
+- **Consequences:** All packages in a mono-bump release are kept in version lockstep. Per-package independent bumping (e.g. api gets minor, web gets patch) is not supported — deferred to a future story. Path traversal is explicitly blocked at validation time.

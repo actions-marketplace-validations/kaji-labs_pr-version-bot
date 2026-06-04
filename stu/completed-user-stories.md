@@ -4,6 +4,86 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 6.4 — Docs and examples for monorepo support
+
+> Completed: 2026-06-04 | Epic 6 — Monorepo Support
+
+**As a** user, **I want** clear documentation for the monorepo feature so I can configure it in minutes.
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with `packages` input and config file field
+- [x] `docs/troubleshooting.md` updated with package VERSION not found + path traversal errors
+- [x] `examples/monorepo.yml` created showing a 3-package setup
+- [x] `.versionbot.yml.example` updated with `packages` field (commented out)
+- [x] `docs/roadmap.md` updated to mark v2.0.0 monorepo as delivered ✅
+
+**Security Criteria:**
+
+- [x] No real org names beyond `kaji-labs` and no real paths beyond `packages/*` placeholders
+
+---
+
+### ✅ Story 6.3 — Config file support for packages
+
+> Completed: 2026-06-04 | Epic 6 — Monorepo Support
+
+**As a** user, **I want** to configure the packages list in `.versionbot.yml`.
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `packages: [packages/api, packages/web]` (YAML array)
+- [x] Workflow input `packages` overrides config file value (comma-separated string → array)
+- [x] `src/config.ts`: BotConfig `packages?: string[]`, ResolvedConfig `packages: string[]` (default `[]`)
+- [x] Unit tests: YAML array from file, comma-separated input, empty default
+
+**Security Criteria:**
+
+- [x] Empty or missing `packages` defaults to `[]` — single-package mode unchanged
+
+---
+
+### ✅ Story 6.2 — Per-package CHANGELOG.md updates
+
+> Completed: 2026-06-04 | Epic 6 — Monorepo Support
+
+**As a** monorepo maintainer, **I want** each package to have its own CHANGELOG.md updated on release.
+
+**Acceptance Criteria:**
+
+- [x] Monorepo mode prepends to `{package}/CHANGELOG.md` for each package with its own version
+- [x] Creates `{package}/CHANGELOG.md` if it does not exist
+- [x] All package CHANGELOG files included in the release commit
+- [x] Single-package mode (packages=[]) still updates root CHANGELOG — unchanged
+
+**Security Criteria:**
+
+- [x] Changelog entries use relative package paths only
+
+---
+
+### ✅ Story 6.1 — Multi-package version bumping
+
+> Completed: 2026-06-04 | Epic 6 — Monorepo Support
+
+**As a** monorepo maintainer, **I want** the action to bump the version for each configured package path.
+
+**Acceptance Criteria:**
+
+- [x] `packages` input (comma-separated) — each path gets its own VERSION.md bumped
+- [x] All packages bumped by the same bump type in a single release commit
+- [x] Single-package behaviour completely unchanged when `packages` is empty
+- [x] Missing package VERSION.md → descriptive error with the path
+- [x] `src/monorepo.ts`: `validateNoPaths` (traversal + empty guard), `resolvePackagePaths`
+- [x] 8 unit tests including path traversal cases
+
+**Security Criteria:**
+
+- [x] Path traversal (`..`, absolute paths) rejected with error
+- [x] All package paths validated as non-empty relative paths
+
+---
+
 ### ✅ Story 5.4 — Docs and examples for notifications
 
 > Completed: 2026-06-04 | Epic 5 — Slack/Discord Notifications

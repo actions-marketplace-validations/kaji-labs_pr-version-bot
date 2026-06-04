@@ -24,6 +24,11 @@ useConventionalCommits: false
 # discordWebhookUrl: ''
 # notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})'
 
+# Monorepo support (optional)
+# packages:
+#   - packages/api
+#   - packages/web
+
 # Custom label names (optional — defaults shown)
 labels:
   major: release:major

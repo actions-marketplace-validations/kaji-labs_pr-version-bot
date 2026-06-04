@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml)
+[![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/kaji-labs/pr-version-bot/main/.badges/version.json)](https://github.com/kaji-labs/pr-version-bot/releases)
 [![License: Source-Available](https://img.shields.io/badge/License-Source--Available-blue.svg)](LICENSE)
 
 > Reusable GitHub Action for automatic semantic versioning from merged pull requests.
@@ -29,6 +30,26 @@ Create these labels in your repository:
 | `release:patch` | `1.0.0` → `1.0.1`      |
 | `release:none`  | Skips release entirely |
 
+## Install
+
+<!-- VERSIONBOT:START -->
+
+> Current stable release: **v0.7.1**
+
+**Pinned version (recommended):**
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v0.7.1
+```
+
+**Major version alias:**
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v0
+```
+
+<!-- VERSIONBOT:END -->
+
 ## Example workflow
 
 ```yaml
@@ -48,11 +69,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v1
+      - uses: kaji-labs/pr-version-bot@v0.6.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

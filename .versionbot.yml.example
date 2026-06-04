@@ -39,3 +39,12 @@ labels:
   alpha: release:alpha
   beta: release:beta
   rc: release:rc
+
+# Badge and README auto-sync (optional)
+# generate-badge: false
+# badge-color: orange
+# badge-file: .badges/version.json
+# update-readme: false
+# readme-file: README.md
+# readme-start-marker: '<!-- VERSIONBOT:START -->'
+# readme-end-marker: '<!-- VERSIONBOT:END -->'

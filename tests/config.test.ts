@@ -23,6 +23,13 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'discord-webhook-url': '',
   'notification-template': '',
   packages: '',
+  'generate-badge': '',
+  'badge-color': '',
+  'badge-file': '',
+  'update-readme': '',
+  'readme-file': '',
+  'readme-start-marker': '',
+  'readme-end-marker': '',
 };
 
 describe('loadConfig', () => {
@@ -184,5 +191,82 @@ describe('mergeConfig', () => {
     expect(mergeConfig({ usePrTemplateLabels: true }, DEFAULT_INPUTS).usePrTemplateLabels).toBe(
       true
     );
+  });
+
+  it('resolves generateBadge from input', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'generate-badge': 'true' });
+    expect(r.generateBadge).toBe(true);
+  });
+
+  it('resolves generateBadge default to false', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.generateBadge).toBe(false);
+  });
+
+  it('resolves badgeColor from input', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'badge-color': 'blue' });
+    expect(r.badgeColor).toBe('blue');
+  });
+
+  it('resolves badgeColor default to orange', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.badgeColor).toBe('orange');
+  });
+
+  it('resolves badgeFile default', () => {
+    const r = mergeConfig({}, DEFAULT_INPUTS);
+    expect(r.badgeFile).toBe('.badges/version.json');
+  });
+
+  it('resolves updateReadme default to false', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).updateReadme).toBe(false);
+  });
+
+  it('resolves readmeFile default', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).readmeFile).toBe('README.md');
+  });
+
+  it('resolves readmeStartMarker default', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).readmeStartMarker).toBe('<!-- VERSIONBOT:START -->');
+  });
+
+  it('resolves generateBadge from fileConfig', () => {
+    expect(mergeConfig({ generateBadge: true }, DEFAULT_INPUTS).generateBadge).toBe(true);
+  });
+
+  it('resolves badgeColor from fileConfig', () => {
+    expect(mergeConfig({ badgeColor: 'blue' }, DEFAULT_INPUTS).badgeColor).toBe('blue');
+  });
+
+  it('resolves badgeFile from fileConfig', () => {
+    expect(mergeConfig({ badgeFile: 'custom/badge.json' }, DEFAULT_INPUTS).badgeFile).toBe(
+      'custom/badge.json'
+    );
+  });
+
+  it('input overrides fileConfig for generateBadge', () => {
+    const result = mergeConfig(
+      { generateBadge: false },
+      { ...DEFAULT_INPUTS, 'generate-badge': 'true' }
+    );
+    expect(result.generateBadge).toBe(true);
+  });
+
+  it('resolves updateReadme from fileConfig', () => {
+    expect(mergeConfig({ updateReadme: true }, DEFAULT_INPUTS).updateReadme).toBe(true);
+  });
+
+  it('resolves readmeFile from fileConfig', () => {
+    expect(mergeConfig({ readmeFile: 'docs/README.md' }, DEFAULT_INPUTS).readmeFile).toBe(
+      'docs/README.md'
+    );
+  });
+
+  it('input overrides fileConfig for readmeFile', () => {
+    const result = mergeConfig(
+      { readmeFile: 'docs/README.md' },
+      { ...DEFAULT_INPUTS, 'readme-file': 'OTHER.md' }
+    );
+    expect(result.readmeFile).toBe('OTHER.md');
   });
 });

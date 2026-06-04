@@ -62,6 +62,69 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 9.3 — Config file support and docs for badge/README sync
+
+> Completed: 2026-06-04 | Epic 9 — Release Badge & README Auto-Sync
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports all 7 new fields; inputs override config values
+- [x] 7 fileConfig tests + input-override tests in `tests/config.test.ts`
+- [x] `docs/configuration.md` updated with all 7 new inputs + VERSIONBOT markers setup guide
+- [x] `docs/quick-start.md` updated with badge and README auto-sync sections
+- [x] `examples/with-version-badge.yml` created
+- [x] `.versionbot.yml.example` updated with all 7 fields (commented out)
+- [x] `README.md` updated with Shields.io endpoint badge + VERSIONBOT markers around install snippet
+
+**Security Criteria:**
+
+- [x] No real API keys, tokens, or org-specific URLs hardcoded in docs or examples
+- [x] Badge JSON schema follows Shields.io endpoint spec exactly
+
+---
+
+### ✅ Story 9.2 — README block auto-update
+
+> Completed: 2026-06-04 | Epic 9 — Release Badge & README Auto-Sync
+
+**Acceptance Criteria:**
+
+- [x] `update-readme` input (default `'false'`)
+- [x] `src/readme.ts`: `updateReadmeBlock` replaces content between markers; returns null when markers absent
+- [x] `extractMajorAlias`: `v1.2.3` → `v1`
+- [x] `applyReadmeUpdate`: reads file, calls updateReadmeBlock, writes; returns false when markers absent
+- [x] Markers not found → `core.info` and skip, no failure
+- [x] `readme-file`, `readme-start-marker`, `readme-end-marker` inputs
+- [x] README committed in same release commit in both single-package and monorepo paths
+- [x] 7 unit tests: replacement, null returns, custom markers, content preservation
+
+**Security Criteria:**
+
+- [x] README update never removes content outside the marked block
+
+---
+
+### ✅ Story 9.1 — Dynamic version badge JSON generation
+
+> Completed: 2026-06-04 | Epic 9 — Release Badge & README Auto-Sync
+
+**Acceptance Criteria:**
+
+- [x] `generate-badge` input (default `'false'`)
+- [x] `src/badge.ts`: `generateBadgeJson(tag, color)` returns Shields.io-compatible JSON; `writeBadgeFile(path, badge)` creates directory + writes
+- [x] `message` = `tagPrefix + version`; `color` via `badge-color` input (default `orange`)
+- [x] `badge-file` input (default `.badges/version.json`)
+- [x] Badge directory created with `mkdirSync(..., { recursive: true })`
+- [x] Badge file committed alongside VERSION.md + CHANGELOG.md in both paths
+- [x] Not written during dry-run
+- [x] 6 unit tests
+
+**Security Criteria:**
+
+- [x] Badge file contains only version string and color — no sensitive data
+
+---
+
 ### ✅ Story 7.3 — Docs and examples for pre-release versioning
 
 > Completed: 2026-06-04 | Epic 7 — Pre-release / RC Versions

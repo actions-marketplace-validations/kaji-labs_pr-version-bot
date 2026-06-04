@@ -1,3 +1,5 @@
+# Publishes a release, generates a Shields.io badge JSON, and updates the
+# README install snippet between VERSIONBOT markers on every merged PR.
 name: Release
 
 on:
@@ -11,22 +13,16 @@ permissions:
 
 jobs:
   release:
-    name: Release
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
-
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run PR Version Bot
-        uses: ./
+      - uses: kaji-labs/pr-version-bot@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          version-file: VERSION.md
-          changelog-file: CHANGELOG.md
-          default-bump: patch
           generate-badge: 'true'
+          badge-color: orange
           update-readme: 'true'

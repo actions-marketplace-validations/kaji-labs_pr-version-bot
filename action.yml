@@ -109,6 +109,46 @@ inputs:
     required: false
     default: 'false'
 
+  generate-badge:
+    description: >
+      When 'true', writes a Shields.io-compatible badge JSON file to badge-file
+      after each successful release.
+    required: false
+    default: 'false'
+
+  badge-color:
+    description: Color for the version badge (any valid Shields.io color string)
+    required: false
+    default: orange
+
+  badge-file:
+    description: Path where the badge JSON file is written
+    required: false
+    default: .badges/version.json
+
+  update-readme:
+    description: >
+      When 'true', updates the section of readme-file between
+      readme-start-marker and readme-end-marker with the latest version
+      install snippet.
+    required: false
+    default: 'false'
+
+  readme-file:
+    description: Path to the README file to update
+    required: false
+    default: README.md
+
+  readme-start-marker:
+    description: Start marker for the README block to replace
+    required: false
+    default: '<!-- VERSIONBOT:START -->'
+
+  readme-end-marker:
+    description: End marker for the README block to replace
+    required: false
+    default: '<!-- VERSIONBOT:END -->'
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

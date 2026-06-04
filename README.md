@@ -62,7 +62,7 @@ jobs:
 | Input | Default | Description |
 |---|---|---|
 | `github-token` | `${{ github.token }}` | GitHub token for API access |
-| `version-file` | `VERSION` | Path to semver file |
+| `version-file` | `VERSION.md` | Path to semver file |
 | `changelog-file` | `CHANGELOG.md` | Path to changelog |
 | `default-bump` | `patch` | Bump type when no label present |
 | `tag-prefix` | `v` | Git tag prefix |

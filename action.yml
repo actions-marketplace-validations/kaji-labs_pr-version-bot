@@ -1,0 +1,74 @@
+name: PR Version Bot
+description: Automatic semantic versioning from merged pull request labels
+
+branding:
+  icon: tag
+  color: orange
+
+inputs:
+  github-token:
+    description: GitHub token for API access and git push
+    required: true
+    default: ${{ github.token }}
+
+  version-file:
+    description: Path to the file containing the current semver
+    required: false
+    default: VERSION.md
+
+  changelog-file:
+    description: Path to the changelog file
+    required: false
+    default: CHANGELOG.md
+
+  default-bump:
+    description: Bump type when no release label is present (major, minor, patch)
+    required: false
+    default: patch
+
+  tag-prefix:
+    description: Prefix for git tags
+    required: false
+    default: v
+
+  create-github-release:
+    description: Whether to create a GitHub Release
+    required: false
+    default: 'true'
+
+  fail-on-multiple-labels:
+    description: Fail if PR has more than one release label
+    required: false
+    default: 'true'
+
+  dry-run:
+    description: Run without writing any changes
+    required: false
+    default: 'false'
+
+  target-branch:
+    description: Branch to push release commit to
+    required: false
+    default: main
+
+  commit-message-template:
+    description: Commit message template — use {tag} as placeholder
+    required: false
+    default: 'chore(release): {tag}'
+
+outputs:
+  version:
+    description: New semantic version (e.g. 1.2.3)
+
+  tag:
+    description: Created git tag (e.g. v1.2.3)
+
+  bump:
+    description: Bump type applied — major, minor, patch, or none
+
+  skipped:
+    description: true if the release was skipped (release:none label)
+
+runs:
+  using: node20
+  main: dist/index.js

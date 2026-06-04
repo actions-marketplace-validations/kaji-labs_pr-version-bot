@@ -1,0 +1,6 @@
+# CODEOWNERS
+# Defines required reviewers for specific files.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Only the copyright holder may approve changes to the license
+/LICENSE @YOUR_GITHUB_USERNAME

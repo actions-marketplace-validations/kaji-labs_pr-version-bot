@@ -96,4 +96,19 @@ describe('mergeConfig', () => {
     const result = mergeConfig({}, { ...DEFAULT_INPUTS, 'fail-on-multiple-labels': 'false' });
     expect(result.failOnMultipleLabels).toBe(false);
   });
+
+  it("resolves sync-package-json: 'true' string to boolean true", () => {
+    const result = mergeConfig({}, { ...DEFAULT_INPUTS, 'sync-package-json': 'true' });
+    expect(result.syncPackageJson).toBe(true);
+  });
+
+  it('defaults syncPackageJson to false', () => {
+    const result = mergeConfig({}, DEFAULT_INPUTS);
+    expect(result.syncPackageJson).toBe(false);
+  });
+
+  it('uses syncPackageJson from file config when input is empty', () => {
+    const result = mergeConfig({ syncPackageJson: true }, DEFAULT_INPUTS);
+    expect(result.syncPackageJson).toBe(true);
+  });
 });

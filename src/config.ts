@@ -19,6 +19,7 @@ export interface BotConfig {
   dryRun?: boolean;
   targetBranch?: string;
   commitMessageTemplate?: string;
+  syncPackageJson?: boolean;
   labels?: Partial<LabelConfig>;
 }
 
@@ -32,6 +33,7 @@ export interface ResolvedConfig {
   dryRun: boolean;
   targetBranch: string;
   commitMessageTemplate: string;
+  syncPackageJson: boolean;
   labels: LabelConfig;
 }
 
@@ -75,6 +77,9 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
     targetBranch: inp('target-branch') || fileConfig.targetBranch || 'main',
     commitMessageTemplate:
       inp('commit-message-template') || fileConfig.commitMessageTemplate || 'chore(release): {tag}',
+    syncPackageJson: inp('sync-package-json')
+      ? inp('sync-package-json') === 'true'
+      : (fileConfig.syncPackageJson ?? false),
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels,

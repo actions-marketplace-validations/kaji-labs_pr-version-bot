@@ -16,6 +16,7 @@ failOnMultipleLabels: true
 dryRun: false
 targetBranch: main
 commitMessageTemplate: 'chore(release): {tag}'
+syncPackageJson: false
 
 # Custom label names (optional — defaults shown)
 labels:

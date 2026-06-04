@@ -6,6 +6,7 @@ import { prependEntry } from './changelog';
 import { configureGit, commitRelease, createTag } from './git';
 import { createRelease } from './github-release';
 import { loadConfig, mergeConfig } from './config';
+import { updatePackageVersion } from './package-json';
 
 export async function run(): Promise<void> {
   try {
@@ -27,6 +28,7 @@ export async function run(): Promise<void> {
       'dry-run': core.getInput('dry-run'),
       'target-branch': core.getInput('target-branch'),
       'commit-message-template': core.getInput('commit-message-template'),
+      'sync-package-json': core.getInput('sync-package-json'),
     };
 
     const fileConfig = loadConfig();
@@ -64,6 +66,11 @@ export async function run(): Promise<void> {
     const date = new Date().toISOString().split('T')[0];
 
     writeVersion(config.versionFile, next);
+
+    if (config.syncPackageJson) {
+      updatePackageVersion('package.json', next);
+    }
+
     prependEntry(config.changelogFile, {
       version: next,
       date,
@@ -72,8 +79,11 @@ export async function run(): Promise<void> {
       bump,
     });
 
+    const filesToCommit = [config.versionFile, config.changelogFile];
+    if (config.syncPackageJson) filesToCommit.push('package.json');
+
     await configureGit();
-    await commitRelease([config.versionFile, config.changelogFile], message);
+    await commitRelease(filesToCommit, message);
     await createTag(tag);
 
     if (config.createGithubRelease) {

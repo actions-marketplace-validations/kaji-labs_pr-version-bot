@@ -8,6 +8,7 @@ vi.mock('../src/changelog');
 vi.mock('../src/git');
 vi.mock('../src/github-release');
 vi.mock('../src/config');
+vi.mock('../src/package-json');
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -17,6 +18,7 @@ import * as changelogModule from '../src/changelog';
 import * as gitModule from '../src/git';
 import * as releaseModule from '../src/github-release';
 import * as configModule from '../src/config';
+import * as pkgModule from '../src/package-json';
 
 function mockInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -67,6 +69,7 @@ describe('run', () => {
       dryRun: false,
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -74,6 +77,7 @@ describe('run', () => {
         none: 'release:none',
       },
     });
+    vi.mocked(pkgModule.updatePackageVersion).mockReturnValue(true);
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
     vi.mocked(versionModule.readVersion).mockReturnValue('1.0.0');
     vi.mocked(versionModule.bumpVersion).mockReturnValue('1.1.0');
@@ -120,6 +124,7 @@ describe('run', () => {
       dryRun: true,
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -183,6 +188,7 @@ describe('run', () => {
       dryRun: false,
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -193,5 +199,35 @@ describe('run', () => {
     const { run } = await import('../src/index');
     await run();
     expect(releaseModule.createRelease).not.toHaveBeenCalled();
+  });
+
+  it('includes package.json in commit when syncPackageJson is true', async () => {
+    mockMergedPR();
+    mockInputs();
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: true,
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
+    const { run } = await import('../src/index');
+    await run();
+    expect(pkgModule.updatePackageVersion).toHaveBeenCalledWith('package.json', '1.1.0');
+    expect(gitModule.commitRelease).toHaveBeenCalledWith(
+      ['VERSION.md', 'CHANGELOG.md', 'package.json'],
+      'chore(release): v1.1.0'
+    );
   });
 });

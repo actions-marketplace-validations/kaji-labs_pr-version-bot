@@ -41,6 +41,7 @@ The config file is optional. The action works identically without it.
 | `dryRun`                | boolean                           | `false`                 | Run without writing changes      |
 | `targetBranch`          | string                            | `main`                  | Branch to push release commit to |
 | `commitMessageTemplate` | string                            | `chore(release): {tag}` | Release commit message           |
+| `syncPackageJson`       | boolean                           | `false`                 | Sync `version` in `package.json` |
 | `labels.major`          | string                            | `release:major`         | Label name for major bump        |
 | `labels.minor`          | string                            | `release:minor`         | Label name for minor bump        |
 | `labels.patch`          | string                            | `release:patch`         | Label name for patch bump        |
@@ -147,6 +148,18 @@ Branch the release commit is pushed to.
 - **Default:** `chore(release): {tag}`
 
 Template for the release commit message. Use `{tag}` as a placeholder for the tag name (e.g. `v1.2.3`).
+
+---
+
+### `sync-package-json`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'false'`
+
+When `'true'`, the action reads `package.json` from the repo root and updates its `version` field to match the new semver. The updated `package.json` is committed alongside `VERSION.md` and `CHANGELOG.md`.
+
+If `package.json` does not exist, a warning is logged and the step is skipped without failing the action.
 
 ---
 

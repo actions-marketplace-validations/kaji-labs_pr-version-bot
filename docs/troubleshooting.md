@@ -71,3 +71,19 @@
 **Cause:** The file contains invalid YAML syntax, or the root value is not a mapping (e.g. a list or plain string).
 
 **Fix:** Validate your config file with a YAML linter. The root must be a YAML mapping (key-value pairs), not a list or scalar. See `.versionbot.yml.example` for a valid reference.
+
+---
+
+## package.json version not updating
+
+**Symptom:** Release completes but `package.json` version is unchanged.
+
+**Cause 1:** `sync-package-json` input is not set to `'true'` (default is `'false'`).
+
+**Fix:** Add `sync-package-json: 'true'` to your workflow or `syncPackageJson: true` to `.versionbot.yml`.
+
+---
+
+**Cause 2:** `package.json` is not in the repo root.
+
+**Fix:** The action looks for `package.json` in the repository root only. If your `package.json` is in a subdirectory, this feature is not supported in this version — see the roadmap for monorepo support (Epic 6).

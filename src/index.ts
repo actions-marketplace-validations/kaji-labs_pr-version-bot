@@ -8,6 +8,7 @@ import { createRelease } from './github-release';
 import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
 import { detectBumpFromCommits } from './conventional';
+import { sendSlackNotification, sendDiscordNotification } from './notify';
 
 export async function run(): Promise<void> {
   try {
@@ -113,6 +114,19 @@ export async function run(): Promise<void> {
         next,
         `${bump}: ${pr.title as string} (#${pr.number as number})`
       );
+    }
+
+    const notifMessage = config.notificationTemplate
+      .replace('{tag}', tag)
+      .replace('{bump}', bump)
+      .replace('{prTitle}', pr.title as string)
+      .replace('{prNumber}', String(pr.number));
+
+    if (config.slackWebhookUrl) {
+      await sendSlackNotification(config.slackWebhookUrl, notifMessage);
+    }
+    if (config.discordWebhookUrl) {
+      await sendDiscordNotification(config.discordWebhookUrl, notifMessage, tag);
     }
 
     core.setOutput('version', next);

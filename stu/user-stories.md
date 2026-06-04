@@ -99,3 +99,232 @@ Support pre-release and release-candidate versioning via dedicated labels, allow
 ## Epic 8 — GitHub Marketplace Release
 
 > Stories TBD after Epic 7 ships.
+
+---
+
+## Epic 9 — Release Badge & README Auto-Sync
+
+Automatically generate a dynamic version badge JSON file and update a designated README block with the latest version, install snippet, and major version alias on every release. Gives the repo a professional, always-current appearance with zero manual effort.
+
+### Story 9.1 — Dynamic version badge JSON generation
+
+> As a repo maintainer, I want the action to generate a Shields.io-compatible badge JSON file on release, so that my README always shows the current version without manual updates.
+
+**AC:**
+
+- [ ] New input `generate-badge` (default: `'false'`)
+- [ ] When `'true'`, action writes `/.badges/version.json` after a successful release with:
+  ```json
+  { "schemaVersion": 1, "label": "version", "message": "v1.2.3", "color": "orange" }
+  ```
+- [ ] `message` uses the `tag-prefix` + new version (e.g. `v1.2.3`)
+- [ ] `color` configurable via `badge-color` input (default: `'orange'`)
+- [ ] Badge file committed alongside `VERSION.md` and `CHANGELOG.md` in the release commit
+- [ ] Badge file path configurable via `badge-file` input (default: `.badges/version.json`)
+- [ ] New `src/badge.ts` module exports `generateBadgeJson(tag, color)` and `writeBadgeFile(path, json)`
+- [ ] Unit tests: correct JSON shape, custom color, custom path, not written in dry-run
+
+**SC:**
+
+- [ ] Badge file never contains sensitive information — only version string and color
+- [ ] Badge directory created if it does not exist
+
+---
+
+### Story 9.2 — README block auto-update
+
+> As a repo maintainer, I want the action to update a marked section of my README on every release, so that the install snippet always shows the latest pinned version.
+
+**AC:**
+
+- [ ] New input `update-readme` (default: `'false'`)
+- [ ] When `'true'`, action reads README (default: `README.md`, configurable via `readme-file` input)
+- [ ] Replaces content between `<!-- VERSIONBOT:START -->` and `<!-- VERSIONBOT:END -->` with a generated block:
+
+  ````markdown
+  <!-- VERSIONBOT:START -->
+
+  > Current stable release: **v1.2.3**
+
+  **Pinned version (recommended):**
+
+  ```yaml
+  - uses: kaji-labs/pr-version-bot@v1.2.3
+  ```
+  ````
+
+  **Major version alias:**
+
+  ```yaml
+  - uses: kaji-labs/pr-version-bot@v1
+  ```
+
+  <!-- VERSIONBOT:END -->
+
+  ```
+
+  ```
+
+- [ ] If markers are not found in the README, logs `core.info` and skips — does not fail
+- [ ] Marker strings configurable via `readme-start-marker` and `readme-end-marker` inputs
+- [ ] README file committed in the same release commit
+- [ ] Unit tests: markers present and replaced, markers absent (no-op), custom markers, not written in dry-run
+
+**SC:**
+
+- [ ] README update never removes content outside the marked block
+- [ ] Generated block contains no sensitive information
+
+---
+
+### Story 9.3 — Config file support and docs
+
+> As a user, I want to configure badge and README sync in `.versionbot.yml`, and have clear documentation on how to set up the markers.
+
+**AC:**
+
+- [ ] `.versionbot.yml` supports: `generateBadge`, `badgeColor`, `badgeFile`, `updateReadme`, `readmeFile`, `readmeStartMarker`, `readmeEndMarker`
+- [ ] Workflow inputs override config file values for all 7 new fields
+- [ ] `src/config.ts` updated with all fields in `BotConfig`, `ResolvedConfig`, and `mergeConfig`
+- [ ] Unit tests for each field: config file path, input override, default values
+- [ ] `docs/configuration.md` updated with all 7 new inputs
+- [ ] `docs/quick-start.md` updated with badge setup example
+- [ ] `examples/with-version-badge.yml` created showing badge + README sync
+- [ ] `.versionbot.yml.example` updated with new fields (commented out)
+- [ ] README for this repo updated with: live badge URL using the generated `.badges/version.json`, and VERSIONBOT markers around the install snippet
+
+**SC:**
+
+- [ ] No real API keys, tokens, or org-specific URLs hardcoded in docs or examples
+- [ ] Badge JSON schema follows Shields.io endpoint spec exactly (`schemaVersion`, `label`, `message`, `color`)
+
+---
+
+## Epic 10 — PR Template Checkbox Label Detection
+
+Optionally detect the release bump type from checked checkboxes in the PR body, so teams can drive versioning from their existing PR template without applying separate labels. Falls back gracefully to all existing logic if the feature is disabled or no matching checkboxes are found.
+
+### Story 10.1 — Detect bump type from PR body checkboxes
+
+> As a team using a PR template, I want checked checkboxes in the PR body to automatically determine the version bump, so that I don't need to apply a separate label.
+
+**AC:**
+
+- [ ] New input `use-pr-template-labels` (default: `'false'`)
+- [ ] When `'true'`, action reads `pr.body` and scans for checked Markdown checkboxes (`- [x]` or `* [x]`, case-insensitive)
+- [ ] Matches checkbox text against the configured label names (from `config.labels`: `major`, `minor`, `patch`, `none`)
+- [ ] Matching is substring — e.g. a checkbox containing `release:minor` matches the `minor` label
+- [ ] **Precedence:** actual PR label > PR body checkbox > conventional commits > `default-bump`
+- [ ] If multiple matching checkboxes found and `fail-on-multiple-labels: 'true'` → fails with error
+- [ ] If no matching checkbox found → falls through to next precedence level
+- [ ] New `src/pr-template.ts` exports `detectBumpFromPrBody(body: string, labelConfig: LabelConfig): BumpType | null`
+- [ ] Unit tests: single match, no match (null), multiple matches + failOnMultiple, case-insensitive, unchecked boxes ignored
+
+**SC:**
+
+- [ ] PR body content never logged in full — only the matched label name is logged
+- [ ] Feature is strictly opt-in — no behaviour change for existing users when disabled
+
+---
+
+### Story 10.2 — Config file support
+
+> As a user, I want to enable PR template label detection in `.versionbot.yml`, so that I don't have to edit my workflow.
+
+**AC:**
+
+- [ ] `.versionbot.yml` supports `usePrTemplateLabels: true/false`
+- [ ] Workflow input `use-pr-template-labels` overrides config file value
+- [ ] `src/config.ts` updated: `BotConfig` and `ResolvedConfig` include `usePrTemplateLabels: boolean`
+- [ ] `mergeConfig` handles new field (default: `false`)
+- [ ] Unit tests: config file path, input override, default false
+
+**SC:**
+
+- [ ] Default is `false` — no behaviour change for existing users
+
+---
+
+### Story 10.3 — Docs and PR template example
+
+> As a user, I want documentation and a PR template example so I can set up checkbox-driven releases in minutes.
+
+**AC:**
+
+- [ ] `docs/configuration.md` updated with `use-pr-template-labels` input
+- [ ] `docs/labels.md` updated with PR template checkbox section explaining how checkboxes map to bump types
+- [ ] `.github/pull_request_template.md` updated to include a release type section with the four release checkboxes
+- [ ] `docs/troubleshooting.md` updated with checkbox not detected section (3 common causes)
+- [ ] `.versionbot.yml.example` updated with `usePrTemplateLabels: false`
+
+**SC:**
+
+- [ ] No real tokens in examples
+- [ ] PR template example shows all 4 release options including `release:none`
+
+---
+
+## Epic 11 — Branch Protection Compatibility
+
+Handle repos where `main` is protected and direct pushes are not allowed. The action currently commits `VERSION.md` and `CHANGELOG.md` directly to the target branch, which fails when branch protection rules require PRs or signed commits.
+
+### Story 11.1 — Detect branch protection and fail clearly
+
+> As a user with branch protection enabled, I want the action to detect that it cannot push directly to main and fail with a clear, actionable error message, so I understand exactly what to fix.
+
+**AC:**
+
+- [ ] When `git push` fails due to branch protection, action catches the error and re-throws with a descriptive message explaining that direct pushes to the target branch are blocked and suggesting the `use-release-pr` option (Story 11.2)
+- [ ] Error message includes the target branch name and a link to the docs
+- [ ] Unit tests: push failure wraps error with helpful message
+
+**SC:**
+
+- [ ] Error message never includes the GITHUB_TOKEN or any credential
+
+---
+
+### Story 11.2 — Release PR mode
+
+> As a user with branch protection, I want the action to open a release PR instead of pushing directly to main, so that the release commit goes through the normal PR review flow.
+
+**AC:**
+
+- [ ] New input `use-release-pr` (default: `'false'`)
+- [ ] When `'true'`, instead of committing directly to the target branch:
+  1. Creates a new branch `release/{tag}` (e.g. `release/v1.2.3`)
+  2. Commits `VERSION.md`, `CHANGELOG.md` (and any other release files) to that branch
+  3. Opens a PR from `release/{tag}` → `target-branch` via GitHub API
+  4. PR title: `chore(release): {tag}` (uses `commit-message-template`)
+  5. PR body: auto-generated with the CHANGELOG entry for this release
+  6. PR is created with `release:none` label so it does NOT trigger another release on merge
+  7. Git tag is created pointing to the release branch commit (not main)
+- [ ] Action outputs `release-pr-url` with the URL of the created PR
+- [ ] Action skips `createTag` and `createRelease` until the release PR is merged (or they happen immediately depending on `tag-on-release-pr` input — default `'true'` for immediate tag)
+- [ ] Unit tests: release branch created, PR opened, release:none label applied, tag created on branch
+
+**SC:**
+
+- [ ] Release PR branch name never contains special characters beyond `/`, `.`, `-`
+- [ ] `GITHUB_TOKEN` requires `pull-requests: write` permission when `use-release-pr` is enabled
+- [ ] Release PR always gets `release:none` label to prevent recursive release triggering
+
+---
+
+### Story 11.3 — Config file support and docs
+
+> As a user, I want to configure release PR mode in `.versionbot.yml` and have clear documentation on setting it up with branch protection.
+
+**AC:**
+
+- [ ] `.versionbot.yml` supports `useReleasePr: true/false` and `tagOnReleasePr: true/false`
+- [ ] `src/config.ts` updated with both new fields
+- [ ] `docs/configuration.md` updated with `use-release-pr` and `tag-on-release-pr` inputs
+- [ ] `docs/troubleshooting.md` updated with branch protection section explaining both approaches
+- [ ] `examples/with-branch-protection.yml` created showing `use-release-pr: 'true'` with `pull-requests: write` permission
+- [ ] `docs/quick-start.md` updated with branch protection note
+
+**SC:**
+
+- [ ] Examples clearly show the `pull-requests: write` permission requirement
+- [ ] No real tokens or org names beyond `kaji-labs` in examples

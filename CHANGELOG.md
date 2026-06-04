@@ -1,3 +1,7 @@
+## [0.1.0] - 2026-06-04
+
+- minor: feat(epic-2): .versionbot.yml config file support (#11)
+
 ## [0.0.2] - 2026-06-04
 
 - patch: chore(deps): Bump @actions/core from 1.11.1 to 3.0.1 (#7)

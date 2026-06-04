@@ -1,3 +1,7 @@
+## [0.5.0] - 2026-06-04
+
+- minor: feat(epic-6): monorepo multi-package version bumping (#18)
+
 ## [0.4.0] - 2026-06-04
 
 - minor: feat(epic-5): Slack and Discord release notifications (#17)

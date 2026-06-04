@@ -16,6 +16,8 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'dry-run': '',
   'target-branch': '',
   'commit-message-template': '',
+  'sync-package-json': '',
+  'use-conventional-commits': '',
 };
 
 describe('loadConfig', () => {
@@ -110,5 +112,20 @@ describe('mergeConfig', () => {
   it('uses syncPackageJson from file config when input is empty', () => {
     const result = mergeConfig({ syncPackageJson: true }, DEFAULT_INPUTS);
     expect(result.syncPackageJson).toBe(true);
+  });
+
+  it("resolves use-conventional-commits: 'true' string to boolean true", () => {
+    const result = mergeConfig({}, { ...DEFAULT_INPUTS, 'use-conventional-commits': 'true' });
+    expect(result.useConventionalCommits).toBe(true);
+  });
+
+  it('defaults useConventionalCommits to false', () => {
+    const result = mergeConfig({}, DEFAULT_INPUTS);
+    expect(result.useConventionalCommits).toBe(false);
+  });
+
+  it('uses useConventionalCommits from file config when input is empty', () => {
+    const result = mergeConfig({ useConventionalCommits: true }, DEFAULT_INPUTS);
+    expect(result.useConventionalCommits).toBe(true);
   });
 });

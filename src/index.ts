@@ -7,6 +7,7 @@ import { configureGit, commitRelease, createTag } from './git';
 import { createRelease } from './github-release';
 import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
+import { detectBumpFromCommits } from './conventional';
 
 export async function run(): Promise<void> {
   try {
@@ -29,13 +30,32 @@ export async function run(): Promise<void> {
       'target-branch': core.getInput('target-branch'),
       'commit-message-template': core.getInput('commit-message-template'),
       'sync-package-json': core.getInput('sync-package-json'),
+      'use-conventional-commits': core.getInput('use-conventional-commits'),
     };
 
     const fileConfig = loadConfig();
     const config = mergeConfig(fileConfig, inputs);
 
     const labels = (pr.labels as Array<{ name: string }>).map((l) => l.name);
-    const bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
+    const releaseLabels = labels.filter((l) => Object.values(config.labels).includes(l));
+    let bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
+
+    if (releaseLabels.length === 0 && config.useConventionalCommits) {
+      const octokit = github.getOctokit(token);
+      const { owner, repo } = github.context.repo;
+      const commits = await octokit.rest.pulls.listCommits({
+        owner,
+        repo,
+        pull_number: pr.number as number,
+        per_page: 100,
+      });
+      const messages = commits.data.map((c) => c.commit.message);
+      const conventionalBump = detectBumpFromCommits(messages);
+      if (conventionalBump !== null) {
+        bump = conventionalBump;
+        core.info(`Conventional commits detected bump: ${bump}`);
+      }
+    }
 
     if (bump === 'none') {
       core.info('release:none label — skipping release');

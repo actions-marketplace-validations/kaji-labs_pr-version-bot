@@ -81,6 +81,12 @@ Use commit message prefixes to infer the bump type when no release label is pres
 
 ---
 
+## Epic 4 — Conventional Commits Fallback
+
+> All 3 stories delivered. Moved to completed-user-stories.md.
+
+---
+
 ## Epic 5 — Slack/Discord Notifications
 
 Send a release summary notification to Slack or Discord when a release is created.

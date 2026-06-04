@@ -63,6 +63,14 @@ inputs:
     required: false
     default: 'false'
 
+  use-conventional-commits:
+    description: >
+      When 'true', scans PR commit messages for conventional commit prefixes
+      (feat, fix, BREAKING CHANGE) to determine bump type when no release label
+      is present. Requires pull-requests: read permission.
+    required: false
+    default: 'false'
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

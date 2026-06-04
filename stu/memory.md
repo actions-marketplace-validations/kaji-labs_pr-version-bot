@@ -12,6 +12,7 @@
 | ADR-006 | Configuration: optional .versionbot.yml file with input precedence | Accepted   | 2026-06-04 |
 | ADR-007 | License: Source-Available No-Resale over MIT                       | Accepted   | 2026-06-04 |
 | ADR-008 | package.json sync: in-place update preserving all fields           | Accepted   | 2026-06-04 |
+| ADR-009 | Conventional commits: scan on no-label PRs, labels always win      | Accepted   | 2026-06-04 |
 
 ---
 
@@ -92,3 +93,13 @@
 - **Context:** When syncing `package.json`, options were: (1) update only the `version` field in-place, (2) regenerate the file from scratch, (3) use `npm version` CLI. Option 1 preserves formatting intent and field order. Option 2 loses comments and ordering. Option 3 adds a dependency on npm being available.
 - **Decision:** Parse JSON, update only the `version` key, re-serialise with `JSON.stringify(pkg, null, 2) + '\n'`. Preserves all existing fields. Feature is opt-in (`sync-package-json: 'false'` default).
 - **Consequences:** File ordering and key order preserved. JSON comments (non-standard) are lost on write. Missing `package.json` logs a warning and skips gracefully — does not fail the release.
+
+---
+
+## ADR-009 — Conventional commits: scan on no-label PRs, labels always win
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** Conventional commit detection needs a trigger condition. Options: always scan commits, scan when no label, only scan when explicitly enabled.
+- **Decision:** Scan only when `useConventionalCommits: true` AND the PR has zero release labels. Labels always take precedence — this preserves the existing label-driven workflow for users who mix approaches. Opt-in default (`false`) ensures no behaviour change for existing users.
+- **Consequences:** Users relying purely on conventional commits must set `default-bump: none` to avoid falling back to patch. Documented in `examples/conventional-commits.yml`.

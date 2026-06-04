@@ -28,3 +28,10 @@ gh label create "release:minor" --color "0075ca" --description "New feature"
 gh label create "release:patch" --color "e4e669" --description "Bug fix"
 gh label create "release:none"  --color "cfd3d7" --description "Skip release"
 ```
+
+## Labels vs conventional commits
+
+If `use-conventional-commits` is enabled, labels always take precedence.
+The conventional commit scan only runs when the PR has no release label.
+Use `release:none` to explicitly skip a release even when conventional
+commits would otherwise trigger one.

@@ -17,6 +17,7 @@ dryRun: false
 targetBranch: main
 commitMessageTemplate: 'chore(release): {tag}'
 syncPackageJson: false
+useConventionalCommits: false
 
 # Custom label names (optional — defaults shown)
 labels:

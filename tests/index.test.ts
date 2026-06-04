@@ -9,6 +9,7 @@ vi.mock('../src/git');
 vi.mock('../src/github-release');
 vi.mock('../src/config');
 vi.mock('../src/package-json');
+vi.mock('../src/conventional');
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -19,6 +20,7 @@ import * as gitModule from '../src/git';
 import * as releaseModule from '../src/github-release';
 import * as configModule from '../src/config';
 import * as pkgModule from '../src/package-json';
+import * as conventionalModule from '../src/conventional';
 
 function mockInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -70,6 +72,7 @@ describe('run', () => {
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
+      useConventionalCommits: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -78,6 +81,7 @@ describe('run', () => {
       },
     });
     vi.mocked(pkgModule.updatePackageVersion).mockReturnValue(true);
+    vi.mocked(conventionalModule.detectBumpFromCommits).mockReturnValue(null);
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
     vi.mocked(versionModule.readVersion).mockReturnValue('1.0.0');
     vi.mocked(versionModule.bumpVersion).mockReturnValue('1.1.0');
@@ -125,6 +129,7 @@ describe('run', () => {
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
+      useConventionalCommits: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -189,6 +194,7 @@ describe('run', () => {
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
+      useConventionalCommits: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -215,6 +221,7 @@ describe('run', () => {
       targetBranch: 'main',
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: true,
+      useConventionalCommits: false,
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -229,5 +236,45 @@ describe('run', () => {
       ['VERSION.md', 'CHANGELOG.md', 'package.json'],
       'chore(release): v1.1.0'
     );
+  });
+
+  it('uses conventional commits when no release label and useConventionalCommits enabled', async () => {
+    mockMergedPR([]); // no labels
+    mockInputs();
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'none',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
+      useConventionalCommits: true,
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
+    vi.mocked(labelsModule.detectBump).mockReturnValue('none');
+    vi.mocked(conventionalModule.detectBumpFromCommits).mockReturnValue('minor');
+
+    // Mock the octokit listCommits call
+    const mockListCommits = vi
+      .fn()
+      .mockResolvedValue({ data: [{ commit: { message: 'feat: new feature' } }] });
+    vi.mocked(github.getOctokit).mockReturnValue({
+      rest: { pulls: { listCommits: mockListCommits } },
+    } as unknown as ReturnType<typeof github.getOctokit>);
+
+    const { run } = await import('../src/index');
+    await run();
+    expect(conventionalModule.detectBumpFromCommits).toHaveBeenCalled();
+    expect(versionModule.bumpVersion).toHaveBeenCalledWith('1.0.0', 'minor');
+    expect(versionModule.writeVersion).toHaveBeenCalledWith('VERSION.md', '1.1.0');
   });
 });

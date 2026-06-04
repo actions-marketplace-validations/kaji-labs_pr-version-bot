@@ -163,4 +163,9 @@ describe('mergeConfig', () => {
     const result = mergeConfig({ packages: ['packages/core'] }, DEFAULT_INPUTS);
     expect(result.packages).toEqual(['packages/core']);
   });
+
+  it('uses packages YAML array from file config when input is empty', () => {
+    const result = mergeConfig({ packages: ['packages/api', 'packages/web'] }, DEFAULT_INPUTS);
+    expect(result.packages).toEqual(['packages/api', 'packages/web']);
+  });
 });

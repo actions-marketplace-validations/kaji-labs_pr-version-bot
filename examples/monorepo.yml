@@ -1,0 +1,26 @@
+# Bumps all configured packages together on every merged PR.
+# Each package must have its own VERSION.md at its root.
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: kaji-labs/pr-version-bot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          packages: 'packages/api,packages/web,packages/sdk'

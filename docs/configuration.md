@@ -30,26 +30,27 @@ The config file is optional. The action works identically without it.
 
 **Accepted fields:**
 
-| Field                    | Type                              | Default                                        | Description                            |
-| ------------------------ | --------------------------------- | ---------------------------------------------- | -------------------------------------- |
-| `versionFile`            | string                            | `VERSION.md`                                   | Path to semver file                    |
-| `changelogFile`          | string                            | `CHANGELOG.md`                                 | Path to changelog                      |
-| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                                        | Bump type when no label present        |
-| `tagPrefix`              | string                            | `v`                                            | Git tag prefix                         |
-| `createGithubRelease`    | boolean                           | `true`                                         | Create a GitHub Release                |
-| `failOnMultipleLabels`   | boolean                           | `true`                                         | Fail on multiple release labels        |
-| `dryRun`                 | boolean                           | `false`                                        | Run without writing changes            |
-| `targetBranch`           | string                            | `main`                                         | Branch to push release commit to       |
-| `commitMessageTemplate`  | string                            | `chore(release): {tag}`                        | Release commit message                 |
-| `syncPackageJson`        | boolean                           | `false`                                        | Sync `version` in `package.json`       |
-| `useConventionalCommits` | boolean                           | `false`                                        | Scan commits for conventional prefixes |
-| `slackWebhookUrl`        | string                            | `''`                                           | Slack webhook URL (HTTPS only)         |
-| `discordWebhookUrl`      | string                            | `''`                                           | Discord webhook URL (HTTPS only)       |
-| `notificationTemplate`   | string                            | `'🚀 Released {tag}: {prTitle} (#{prNumber})'` | Notification message template          |
-| `labels.major`           | string                            | `release:major`                                | Label name for major bump              |
-| `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump              |
-| `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump              |
-| `labels.none`            | string                            | `release:none`                                 | Label name to skip release             |
+| Field                    | Type                              | Default                                        | Description                             |
+| ------------------------ | --------------------------------- | ---------------------------------------------- | --------------------------------------- |
+| `versionFile`            | string                            | `VERSION.md`                                   | Path to semver file                     |
+| `changelogFile`          | string                            | `CHANGELOG.md`                                 | Path to changelog                       |
+| `defaultBump`            | `major`\|`minor`\|`patch`\|`none` | `patch`                                        | Bump type when no label present         |
+| `tagPrefix`              | string                            | `v`                                            | Git tag prefix                          |
+| `createGithubRelease`    | boolean                           | `true`                                         | Create a GitHub Release                 |
+| `failOnMultipleLabels`   | boolean                           | `true`                                         | Fail on multiple release labels         |
+| `dryRun`                 | boolean                           | `false`                                        | Run without writing changes             |
+| `targetBranch`           | string                            | `main`                                         | Branch to push release commit to        |
+| `commitMessageTemplate`  | string                            | `chore(release): {tag}`                        | Release commit message                  |
+| `syncPackageJson`        | boolean                           | `false`                                        | Sync `version` in `package.json`        |
+| `useConventionalCommits` | boolean                           | `false`                                        | Scan commits for conventional prefixes  |
+| `slackWebhookUrl`        | string                            | `''`                                           | Slack webhook URL (HTTPS only)          |
+| `discordWebhookUrl`      | string                            | `''`                                           | Discord webhook URL (HTTPS only)        |
+| `notificationTemplate`   | string                            | `'🚀 Released {tag}: {prTitle} (#{prNumber})'` | Notification message template           |
+| `packages`               | string[]                          | `[]`                                           | Package paths for monorepo (YAML array) |
+| `labels.major`           | string                            | `release:major`                                | Label name for major bump               |
+| `labels.minor`           | string                            | `release:minor`                                | Label name for minor bump               |
+| `labels.patch`           | string                            | `release:patch`                                | Label name for patch bump               |
+| `labels.none`            | string                            | `release:none`                                 | Label name to skip release              |
 
 ---
 
@@ -231,6 +232,27 @@ Message template used for both Slack and Discord notifications. Supports these p
 
 ---
 
+### `packages`
+
+- **Type:** string (comma-separated paths)
+- **Required:** no
+- **Default:** `''` (single-package mode)
+
+Comma-separated list of package paths for monorepo support. When set, the action bumps the version and updates the changelog for each package in a single release commit.
+
+Each path must contain its own `VERSION.md`. The changelog is updated at `{package}/CHANGELOG.md`.
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    packages: 'packages/api,packages/web,packages/sdk'
+```
+
+**Restrictions:** Paths must be relative to the repo root. Path traversal (`..`) is not allowed.
+
+---
+
 ## Outputs
 
 ### `version`
@@ -253,7 +275,7 @@ Bump type applied: `major`, `minor`, `patch`, or `none`.
 
 ```yaml
 - id: version
-  uses: YOUR_ORG/pr-version-bot@v1
+  uses: kaji-labs/pr-version-bot@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
 

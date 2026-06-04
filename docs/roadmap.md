@@ -31,9 +31,9 @@ Use commit message prefixes (`feat:`, `fix:`, `BREAKING CHANGE:`) to infer bump 
 
 Post a release summary to a configured webhook URL after each release.
 
-## v2.0.0 — Monorepo support
+## v2.0.0 — Monorepo support ✅
 
-Support multiple independently-versioned packages in a single repo.
+Support multiple independently-versioned packages. Configure via `packages` input or `.versionbot.yml`.
 
 ## v2.1.0 — Pre-release / RC versions
 

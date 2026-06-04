@@ -2,11 +2,11 @@
 
 ## ADR Index
 
-| ID | Title | Status | Date |
-|---|---|---|---|
-| ADR-001 | Runtime: TypeScript compiled to dist/index.js via ncc | Accepted | 2026-06-04 |
-| ADR-002 | Version trigger: PR labels over conventional commits | Accepted | 2026-06-04 |
-| ADR-003 | Releases: GitHub Releases API via octokit | Accepted | 2026-06-04 |
+| ID      | Title                                                       | Status   | Date       |
+| ------- | ----------------------------------------------------------- | -------- | ---------- |
+| ADR-001 | Runtime: TypeScript compiled to dist/index.js via ncc       | Accepted | 2026-06-04 |
+| ADR-002 | Version trigger: PR labels over conventional commits        | Accepted | 2026-06-04 |
+| ADR-003 | Releases: GitHub Releases API via octokit                   | Accepted | 2026-06-04 |
 | ADR-004 | Module: CommonJS (not ESM) for GitHub Actions compatibility | Accepted | 2026-06-04 |
 
 ---

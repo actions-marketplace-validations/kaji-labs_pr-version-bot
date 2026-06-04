@@ -27,6 +27,7 @@
 **Cause:** `VERSION.md` contains something other than a valid semver string. Common causes: `v1.0.0` with a `v` prefix, trailing spaces, blank file, or a markdown heading.
 
 **Fix:** Ensure `VERSION.md` contains exactly a bare semver on a single line:
+
 ```
 1.0.0
 ```

@@ -35,6 +35,7 @@ npm run format
 ## Commit standards
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` new feature
 - `fix:` bug fix
 - `chore:` maintenance

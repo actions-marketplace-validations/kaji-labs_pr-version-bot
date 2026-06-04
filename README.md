@@ -22,12 +22,12 @@ See [docs/quick-start.md](docs/quick-start.md) — full setup in under 5 minutes
 
 Create these labels in your repository:
 
-| Label | Effect |
-|---|---|
-| `release:major` | `1.0.0` → `2.0.0` |
-| `release:minor` | `1.0.0` → `1.1.0` |
-| `release:patch` | `1.0.0` → `1.0.1` |
-| `release:none` | Skips release entirely |
+| Label           | Effect                 |
+| --------------- | ---------------------- |
+| `release:major` | `1.0.0` → `2.0.0`      |
+| `release:minor` | `1.0.0` → `1.1.0`      |
+| `release:patch` | `1.0.0` → `1.0.1`      |
+| `release:none`  | Skips release entirely |
 
 ## Example workflow
 
@@ -59,27 +59,27 @@ jobs:
 
 ## Inputs
 
-| Input | Default | Description |
-|---|---|---|
-| `github-token` | `${{ github.token }}` | GitHub token for API access |
-| `version-file` | `VERSION.md` | Path to semver file |
-| `changelog-file` | `CHANGELOG.md` | Path to changelog |
-| `default-bump` | `patch` | Bump type when no label present |
-| `tag-prefix` | `v` | Git tag prefix |
-| `create-github-release` | `true` | Create a GitHub Release |
-| `fail-on-multiple-labels` | `true` | Fail if multiple release labels found |
-| `dry-run` | `false` | Run without writing changes |
-| `target-branch` | `main` | Branch to push release commit to |
-| `commit-message-template` | `chore(release): {tag}` | Release commit message |
+| Input                     | Default                 | Description                           |
+| ------------------------- | ----------------------- | ------------------------------------- |
+| `github-token`            | `${{ github.token }}`   | GitHub token for API access           |
+| `version-file`            | `VERSION.md`            | Path to semver file                   |
+| `changelog-file`          | `CHANGELOG.md`          | Path to changelog                     |
+| `default-bump`            | `patch`                 | Bump type when no label present       |
+| `tag-prefix`              | `v`                     | Git tag prefix                        |
+| `create-github-release`   | `true`                  | Create a GitHub Release               |
+| `fail-on-multiple-labels` | `true`                  | Fail if multiple release labels found |
+| `dry-run`                 | `false`                 | Run without writing changes           |
+| `target-branch`           | `main`                  | Branch to push release commit to      |
+| `commit-message-template` | `chore(release): {tag}` | Release commit message                |
 
 ## Outputs
 
-| Output | Description |
-|---|---|
-| `version` | New version e.g. `1.2.3` |
-| `tag` | Created tag e.g. `v1.2.3` |
-| `bump` | `major`, `minor`, `patch`, or `none` |
-| `skipped` | `true` if release was skipped |
+| Output    | Description                          |
+| --------- | ------------------------------------ |
+| `version` | New version e.g. `1.2.3`             |
+| `tag`     | Created tag e.g. `v1.2.3`            |
+| `bump`    | `major`, `minor`, `patch`, or `none` |
+| `skipped` | `true` if release was skipped        |
 
 ## Documentation
 

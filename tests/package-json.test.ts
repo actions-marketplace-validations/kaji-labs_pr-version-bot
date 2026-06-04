@@ -56,9 +56,7 @@ describe('updatePackageVersion', () => {
     const result = updatePackageVersion('package.json', '2.0.0');
 
     expect(result).toBe(true);
-    const written = JSON.parse(
-      (vi.mocked(fs.writeFileSync).mock.calls[0][1] as string).trimEnd()
-    );
+    const written = JSON.parse((vi.mocked(fs.writeFileSync).mock.calls[0][1] as string).trimEnd());
     expect(written.version).toBe('2.0.0');
     expect(written.name).toBe('my-app');
   });
@@ -68,22 +66,23 @@ describe('updatePackageVersion', () => {
     const result = updatePackageVersion('package.json', '2.0.0');
     expect(result).toBe(false);
     expect(fs.writeFileSync).not.toHaveBeenCalled();
-    expect(core.warning).toHaveBeenCalledWith(
-      expect.stringContaining('package.json not found')
-    );
+    expect(core.warning).toHaveBeenCalledWith(expect.stringContaining('package.json not found'));
   });
 
   it('does not modify any field other than version', () => {
-    const pkg = JSON.stringify({ name: 'app', version: '0.1.0', private: true, scripts: { build: 'tsc' } });
+    const pkg = JSON.stringify({
+      name: 'app',
+      version: '0.1.0',
+      private: true,
+      scripts: { build: 'tsc' },
+    });
     vi.mocked(fs.existsSync).mockReturnValue(true);
     vi.mocked(fs.readFileSync).mockReturnValue(pkg);
     vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
 
     updatePackageVersion('package.json', '1.0.0');
 
-    const written = JSON.parse(
-      (vi.mocked(fs.writeFileSync).mock.calls[0][1] as string).trimEnd()
-    );
+    const written = JSON.parse((vi.mocked(fs.writeFileSync).mock.calls[0][1] as string).trimEnd());
     expect(written.name).toBe('app');
     expect(written.private).toBe(true);
     expect(written.scripts).toEqual({ build: 'tsc' });

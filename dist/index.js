@@ -42244,12 +42244,12 @@ var require_io_util = __commonJS({
     var _a;
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getCmdPath = exports2.tryGetExecutablePath = exports2.isRooted = exports2.isDirectory = exports2.exists = exports2.READONLY = exports2.UV_FS_O_EXLOCK = exports2.IS_WINDOWS = exports2.unlink = exports2.symlink = exports2.stat = exports2.rmdir = exports2.rm = exports2.rename = exports2.readlink = exports2.readdir = exports2.open = exports2.mkdir = exports2.lstat = exports2.copyFile = exports2.chmod = void 0;
-    var fs6 = __importStar(require("fs"));
+    var fs7 = __importStar(require("fs"));
     var path = __importStar(require("path"));
-    _a = fs6.promises, exports2.chmod = _a.chmod, exports2.copyFile = _a.copyFile, exports2.lstat = _a.lstat, exports2.mkdir = _a.mkdir, exports2.open = _a.open, exports2.readdir = _a.readdir, exports2.readlink = _a.readlink, exports2.rename = _a.rename, exports2.rm = _a.rm, exports2.rmdir = _a.rmdir, exports2.stat = _a.stat, exports2.symlink = _a.symlink, exports2.unlink = _a.unlink;
+    _a = fs7.promises, exports2.chmod = _a.chmod, exports2.copyFile = _a.copyFile, exports2.lstat = _a.lstat, exports2.mkdir = _a.mkdir, exports2.open = _a.open, exports2.readdir = _a.readdir, exports2.readlink = _a.readlink, exports2.rename = _a.rename, exports2.rm = _a.rm, exports2.rmdir = _a.rmdir, exports2.stat = _a.stat, exports2.symlink = _a.symlink, exports2.unlink = _a.unlink;
     exports2.IS_WINDOWS = process.platform === "win32";
     exports2.UV_FS_O_EXLOCK = 268435456;
-    exports2.READONLY = fs6.constants.O_RDONLY;
+    exports2.READONLY = fs7.constants.O_RDONLY;
     function exists2(fsPath) {
       return __awaiter2(this, void 0, void 0, function* () {
         try {
@@ -43693,6 +43693,9 @@ function setFailed(message) {
 }
 function error(message, properties = {}) {
   issueCommand("error", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+function warning(message, properties = {}) {
+  issueCommand("warning", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 function info(message) {
   process.stdout.write(message + os4.EOL);
@@ -46188,11 +46191,37 @@ function mergeConfig(fileConfig, inputs) {
     dryRun: inp("dry-run") ? inp("dry-run") === "true" : fileConfig.dryRun ?? false,
     targetBranch: inp("target-branch") || fileConfig.targetBranch || "main",
     commitMessageTemplate: inp("commit-message-template") || fileConfig.commitMessageTemplate || "chore(release): {tag}",
+    syncPackageJson: inp("sync-package-json") ? inp("sync-package-json") === "true" : fileConfig.syncPackageJson ?? false,
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels
     }
   };
+}
+
+// src/package-json.ts
+var fs6 = __toESM(require("fs"));
+function readPackageJson(filePath) {
+  if (!fs6.existsSync(filePath)) return null;
+  const raw = fs6.readFileSync(filePath, "utf8");
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error(`Failed to parse package.json at ${filePath}`);
+  }
+}
+function writePackageJson(filePath, pkg) {
+  fs6.writeFileSync(filePath, JSON.stringify(pkg, null, 2) + "\n", "utf8");
+}
+function updatePackageVersion(filePath, version) {
+  const pkg = readPackageJson(filePath);
+  if (pkg === null) {
+    warning(`package.json not found at ${filePath} \u2014 skipping package.json version sync`);
+    return false;
+  }
+  pkg["version"] = version;
+  writePackageJson(filePath, pkg);
+  return true;
 }
 
 // src/index.ts
@@ -46213,7 +46242,8 @@ async function run() {
       "fail-on-multiple-labels": getInput("fail-on-multiple-labels"),
       "dry-run": getInput("dry-run"),
       "target-branch": getInput("target-branch"),
-      "commit-message-template": getInput("commit-message-template")
+      "commit-message-template": getInput("commit-message-template"),
+      "sync-package-json": getInput("sync-package-json")
     };
     const fileConfig = loadConfig();
     const config = mergeConfig(fileConfig, inputs);
@@ -46243,6 +46273,9 @@ async function run() {
     }
     const date = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
     writeVersion(config.versionFile, next);
+    if (config.syncPackageJson) {
+      updatePackageVersion("package.json", next);
+    }
     prependEntry(config.changelogFile, {
       version: next,
       date,
@@ -46250,8 +46283,10 @@ async function run() {
       prNumber: pr.number,
       bump
     });
+    const filesToCommit = [config.versionFile, config.changelogFile];
+    if (config.syncPackageJson) filesToCommit.push("package.json");
     await configureGit();
-    await commitRelease([config.versionFile, config.changelogFile], message);
+    await commitRelease(filesToCommit, message);
     await createTag(tag);
     if (config.createGithubRelease) {
       await createRelease(

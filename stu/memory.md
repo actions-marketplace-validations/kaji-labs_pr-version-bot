@@ -13,6 +13,7 @@
 | ADR-007 | License: Source-Available No-Resale over MIT                       | Accepted   | 2026-06-04 |
 | ADR-008 | package.json sync: in-place update preserving all fields           | Accepted   | 2026-06-04 |
 | ADR-009 | Conventional commits: scan on no-label PRs, labels always win      | Accepted   | 2026-06-04 |
+| ADR-010 | Notifications: built-in https, HTTPS-only, non-fatal on failure    | Accepted   | 2026-06-04 |
 
 ---
 
@@ -103,3 +104,13 @@
 - **Context:** Conventional commit detection needs a trigger condition. Options: always scan commits, scan when no label, only scan when explicitly enabled.
 - **Decision:** Scan only when `useConventionalCommits: true` AND the PR has zero release labels. Labels always take precedence — this preserves the existing label-driven workflow for users who mix approaches. Opt-in default (`false`) ensures no behaviour change for existing users.
 - **Consequences:** Users relying purely on conventional commits must set `default-bump: none` to avoid falling back to patch. Documented in `examples/conventional-commits.yml`.
+
+---
+
+## ADR-010 — Notifications: built-in https, HTTPS-only, non-fatal on failure
+
+- **Status:** Accepted
+- **Date:** 2026-06-04
+- **Context:** Webhook notifications need an HTTP client. Options: (1) add a library like `node-fetch` or `axios`, (2) use Node.js built-in `https`, (3) use `@actions/http-client`. Adding a library increases bundle size and attack surface. `@actions/http-client` pulls in `undici` (already a vulnerability). Built-in `https` requires more code but has no deps.
+- **Decision:** Use Node.js built-in `https`. Enforce HTTPS-only (reject `http://` URLs at call time). Treat non-2xx responses as non-fatal warnings — the release is already published, notification failure should not roll it back.
+- **Consequences:** Webhook URLs must start with `https://`. Failures log a warning with the status code but do not expose the URL. No new runtime dependencies.

@@ -18,6 +18,9 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'commit-message-template': '',
   'sync-package-json': '',
   'use-conventional-commits': '',
+  'slack-webhook-url': '',
+  'discord-webhook-url': '',
+  'notification-template': '',
 };
 
 describe('loadConfig', () => {
@@ -127,5 +130,21 @@ describe('mergeConfig', () => {
   it('uses useConventionalCommits from file config when input is empty', () => {
     const result = mergeConfig({ useConventionalCommits: true }, DEFAULT_INPUTS);
     expect(result.useConventionalCommits).toBe(true);
+  });
+
+  it('uses notification template from file config when input is empty', () => {
+    const result = mergeConfig({ notificationTemplate: 'Released {tag}!' }, DEFAULT_INPUTS);
+    expect(result.notificationTemplate).toBe('Released {tag}!');
+  });
+
+  it('defaults notificationTemplate to emoji template', () => {
+    const result = mergeConfig({}, DEFAULT_INPUTS);
+    expect(result.notificationTemplate).toBe('🚀 Released {tag}: {prTitle} (#{prNumber})');
+  });
+
+  it('defaults slackWebhookUrl and discordWebhookUrl to empty string', () => {
+    const result = mergeConfig({}, DEFAULT_INPUTS);
+    expect(result.slackWebhookUrl).toBe('');
+    expect(result.discordWebhookUrl).toBe('');
   });
 });

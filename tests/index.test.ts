@@ -10,6 +10,7 @@ vi.mock('../src/github-release');
 vi.mock('../src/config');
 vi.mock('../src/package-json');
 vi.mock('../src/conventional');
+vi.mock('../src/notify');
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -21,6 +22,7 @@ import * as releaseModule from '../src/github-release';
 import * as configModule from '../src/config';
 import * as pkgModule from '../src/package-json';
 import * as conventionalModule from '../src/conventional';
+import * as notifyModule from '../src/notify';
 
 function mockInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -73,6 +75,9 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
       useConventionalCommits: false,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -80,6 +85,8 @@ describe('run', () => {
         none: 'release:none',
       },
     });
+    vi.mocked(notifyModule.sendSlackNotification).mockResolvedValue(undefined);
+    vi.mocked(notifyModule.sendDiscordNotification).mockResolvedValue(undefined);
     vi.mocked(pkgModule.updatePackageVersion).mockReturnValue(true);
     vi.mocked(conventionalModule.detectBumpFromCommits).mockReturnValue(null);
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
@@ -130,6 +137,9 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
       useConventionalCommits: false,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -195,6 +205,9 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
       useConventionalCommits: false,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -222,6 +235,9 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: true,
       useConventionalCommits: false,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -253,6 +269,9 @@ describe('run', () => {
       commitMessageTemplate: 'chore(release): {tag}',
       syncPackageJson: false,
       useConventionalCommits: true,
+      slackWebhookUrl: '',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
       labels: {
         major: 'release:major',
         minor: 'release:minor',
@@ -276,5 +295,39 @@ describe('run', () => {
     expect(conventionalModule.detectBumpFromCommits).toHaveBeenCalled();
     expect(versionModule.bumpVersion).toHaveBeenCalledWith('1.0.0', 'minor');
     expect(versionModule.writeVersion).toHaveBeenCalledWith('VERSION.md', '1.1.0');
+  });
+
+  it('sends Slack notification when slackWebhookUrl is configured', async () => {
+    mockMergedPR();
+    mockInputs();
+    vi.mocked(configModule.mergeConfig).mockReturnValue({
+      versionFile: 'VERSION.md',
+      changelogFile: 'CHANGELOG.md',
+      defaultBump: 'patch',
+      tagPrefix: 'v',
+      createGithubRelease: true,
+      failOnMultipleLabels: true,
+      dryRun: false,
+      targetBranch: 'main',
+      commitMessageTemplate: 'chore(release): {tag}',
+      syncPackageJson: false,
+      useConventionalCommits: false,
+      slackWebhookUrl: 'https://hooks.slack.com/test',
+      discordWebhookUrl: '',
+      notificationTemplate: '🚀 Released {tag}: {prTitle} (#{prNumber})',
+      labels: {
+        major: 'release:major',
+        minor: 'release:minor',
+        patch: 'release:patch',
+        none: 'release:none',
+      },
+    });
+    const { run } = await import('../src/index');
+    await run();
+    expect(notifyModule.sendSlackNotification).toHaveBeenCalledWith(
+      'https://hooks.slack.com/test',
+      expect.stringContaining('v1.1.0')
+    );
+    expect(notifyModule.sendDiscordNotification).not.toHaveBeenCalled();
   });
 });

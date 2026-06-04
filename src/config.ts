@@ -21,6 +21,9 @@ export interface BotConfig {
   commitMessageTemplate?: string;
   syncPackageJson?: boolean;
   useConventionalCommits?: boolean;
+  slackWebhookUrl?: string;
+  discordWebhookUrl?: string;
+  notificationTemplate?: string;
   labels?: Partial<LabelConfig>;
 }
 
@@ -36,6 +39,9 @@ export interface ResolvedConfig {
   commitMessageTemplate: string;
   syncPackageJson: boolean;
   useConventionalCommits: boolean;
+  slackWebhookUrl: string;
+  discordWebhookUrl: string;
+  notificationTemplate: string;
   labels: LabelConfig;
 }
 
@@ -85,6 +91,12 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
     useConventionalCommits: inp('use-conventional-commits')
       ? inp('use-conventional-commits') === 'true'
       : (fileConfig.useConventionalCommits ?? false),
+    slackWebhookUrl: inp('slack-webhook-url') || fileConfig.slackWebhookUrl || '',
+    discordWebhookUrl: inp('discord-webhook-url') || fileConfig.discordWebhookUrl || '',
+    notificationTemplate:
+      inp('notification-template') ||
+      fileConfig.notificationTemplate ||
+      '🚀 Released {tag}: {prTitle} (#{prNumber})',
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels,

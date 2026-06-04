@@ -109,3 +109,32 @@
 **Cause 3:** The workflow is missing `pull-requests: read` permission.
 
 **Fix:** Add `pull-requests: read` to your workflow permissions block.
+
+---
+
+## Slack or Discord notification not sending
+
+**Symptom:** Release completes but no Slack/Discord message appears.
+
+**Cause 1:** `slack-webhook-url` or `discord-webhook-url` is not configured.
+
+**Fix:** Add the URL as a GitHub secret and pass it to the action:
+
+```yaml
+- uses: kaji-labs/pr-version-bot@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+---
+
+**Cause 2:** The webhook URL uses HTTP instead of HTTPS.
+
+**Fix:** Ensure the webhook URL starts with `https://`. The action rejects HTTP URLs with an error.
+
+---
+
+**Cause 3:** The webhook request returned a non-2xx response (check the workflow logs for the warning).
+
+**Fix:** Verify the webhook URL is still valid and the Slack app or Discord webhook has not been deleted or revoked.

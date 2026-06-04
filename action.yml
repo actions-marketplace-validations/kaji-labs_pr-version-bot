@@ -71,6 +71,27 @@ inputs:
     required: false
     default: 'false'
 
+  slack-webhook-url:
+    description: >
+      Slack incoming webhook URL. When provided, a notification is posted
+      to Slack after a successful release. Must use HTTPS.
+    required: false
+    default: ''
+
+  discord-webhook-url:
+    description: >
+      Discord webhook URL. When provided, a release embed is posted to
+      Discord after a successful release. Must use HTTPS.
+    required: false
+    default: ''
+
+  notification-template:
+    description: >
+      Message template for notifications. Supports placeholders:
+      {tag}, {bump}, {prTitle}, {prNumber}.
+    required: false
+    default: '🚀 Released {tag}: {prTitle} (#{prNumber})'
+
 outputs:
   version:
     description: New semantic version (e.g. 1.2.3)

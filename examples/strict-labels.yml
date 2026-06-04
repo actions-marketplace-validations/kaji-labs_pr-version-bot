@@ -1,0 +1,26 @@
+# Strict mode — requires an explicit release label, skips if none present
+name: Release (strict)
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: YOUR_ORG/pr-version-bot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-multiple-labels: 'true'
+          default-bump: none

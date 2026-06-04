@@ -1,0 +1,29 @@
+# Dry run — logs what would happen without making changes
+name: Release (dry run)
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: version
+        uses: YOUR_ORG/pr-version-bot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: 'true'
+
+      - name: Show planned release
+        run: echo "Would release ${{ steps.version.outputs.tag }}"

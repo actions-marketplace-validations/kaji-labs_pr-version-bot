@@ -89,6 +89,7 @@ jobs:
 - [Architecture](docs/architecture.md)
 - [Roadmap](docs/roadmap.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Versioning Policy](docs/versioning-policy.md)
 
 ## Contributing
 

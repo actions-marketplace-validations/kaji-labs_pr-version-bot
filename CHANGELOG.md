@@ -1,3 +1,7 @@
+## [0.4.0] - 2026-06-04
+
+- minor: feat(epic-5): Slack and Discord release notifications (#17)
+
 ## [0.3.0] - 2026-06-04
 
 - minor: feat(epic-4): conventional commits bump detection (#16)

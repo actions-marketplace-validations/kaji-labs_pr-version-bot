@@ -4,6 +4,90 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 5.4 — Docs and examples for notifications
+
+> Completed: 2026-06-04 | Epic 5 — Slack/Discord Notifications
+
+**As a** user, **I want** clear documentation for the notification feature so I can set it up quickly.
+
+**Acceptance Criteria:**
+
+- [x] `docs/configuration.md` updated with `slack-webhook-url`, `discord-webhook-url`, `notification-template` inputs and placeholder table
+- [x] `docs/troubleshooting.md` updated with notification failure troubleshooting (3 causes)
+- [x] `examples/with-slack-notifications.yml` created
+- [x] `examples/with-discord-notifications.yml` created
+- [x] `.versionbot.yml.example` updated with notification fields commented out
+
+**Security Criteria:**
+
+- [x] No real webhook URLs in examples
+- [x] Examples show storing URL in GitHub secrets
+
+---
+
+### ✅ Story 5.3 — Config file support and notification template
+
+> Completed: 2026-06-04 | Epic 5 — Slack/Discord Notifications
+
+**As a** user, **I want** to configure notification webhooks in `.versionbot.yml` and customise the message format.
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `slackWebhookUrl`, `discordWebhookUrl`, `notificationTemplate` fields
+- [x] `notification-template` input (default: `'🚀 Released {tag}: {prTitle} (#{prNumber})'`)
+- [x] `src/config.ts` updated with all three new fields in BotConfig + ResolvedConfig + mergeConfig
+- [x] Workflow inputs override config file values
+- [x] 3 unit tests for config file path and defaults
+
+**Security Criteria:**
+
+- [x] Webhook URLs never committed by the action
+- [x] Placeholders `{tag}`, `{bump}`, `{prTitle}`, `{prNumber}` all supported
+
+---
+
+### ✅ Story 5.2 — Discord webhook notification
+
+> Completed: 2026-06-04 | Epic 5 — Slack/Discord Notifications
+
+**As a** team using Discord, **I want** the action to post a release embed to our Discord server.
+
+**Acceptance Criteria:**
+
+- [x] `discord-webhook-url` input — POSTs embed after successful release
+- [x] Discord payload: `{ embeds: [{ title: "Released {tag}", description: message, color: 5763719 }] }`
+- [x] Not sent when `skipped=true` or dry-run
+- [x] Non-2xx response → `core.warning`, does not fail release
+- [x] 4 unit tests: success, non-2xx warning, HTTP rejection
+
+**Security Criteria:**
+
+- [x] Webhook URL never logged
+- [x] HTTPS only — HTTP URLs rejected with error
+
+---
+
+### ✅ Story 5.1 — Slack webhook notification
+
+> Completed: 2026-06-04 | Epic 5 — Slack/Discord Notifications
+
+**As a** team using Slack, **I want** the action to post a release message to our Slack channel.
+
+**Acceptance Criteria:**
+
+- [x] `slack-webhook-url` input — POSTs `{ text: message }` after successful release
+- [x] Not sent when `skipped=true` or dry-run (dispatch after early returns in index.ts)
+- [x] Non-2xx response → `core.warning`, does not fail release
+- [x] No new runtime deps — uses Node.js built-in `https`
+- [x] 4 unit tests: success, non-2xx warning, HTTP rejection, payload structure
+
+**Security Criteria:**
+
+- [x] Webhook URL never logged — only status code in warning
+- [x] HTTPS only — HTTP URLs rejected
+
+---
+
 ### ✅ Story 4.3 — Docs and examples for conventional commits
 
 > Completed: 2026-06-04 | Epic 4 — Conventional Commits Fallback

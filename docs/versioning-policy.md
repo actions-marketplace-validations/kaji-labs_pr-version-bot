@@ -4,12 +4,12 @@ This action and the projects that use it follow [Semantic Versioning 2.0.0](http
 
 ## Bump types
 
-| Type | When to use | Example |
-|---|---|---|
+| Type    | When to use                                            | Example           |
+| ------- | ------------------------------------------------------ | ----------------- |
 | `major` | Breaking change — existing workflows may need updating | `1.2.3` → `2.0.0` |
-| `minor` | New feature, backwards-compatible | `1.2.3` → `1.3.0` |
-| `patch` | Bug fix, backwards-compatible | `1.2.3` → `1.2.4` |
-| `none` | No release needed (docs, CI, chore PRs) | version unchanged |
+| `minor` | New feature, backwards-compatible                      | `1.2.3` → `1.3.0` |
+| `patch` | Bug fix, backwards-compatible                          | `1.2.3` → `1.2.4` |
+| `none`  | No release needed (docs, CI, chore PRs)                | version unchanged |
 
 ## Rules
 

@@ -6,12 +6,12 @@ PR Version Bot reads the following labels from merged pull requests.
 
 Create these labels in your GitHub repository before using the action.
 
-| Label | Colour | Bump | Example |
-|---|---|---|---|
-| `release:major` | `#d93f0b` (red) | Breaking change | `1.2.3` → `2.0.0` |
-| `release:minor` | `#0075ca` (blue) | New feature | `1.2.3` → `1.3.0` |
-| `release:patch` | `#e4e669` (yellow) | Bug fix | `1.2.3` → `1.2.4` |
-| `release:none` | `#cfd3d7` (grey) | No release | version unchanged |
+| Label           | Colour             | Bump            | Example           |
+| --------------- | ------------------ | --------------- | ----------------- |
+| `release:major` | `#d93f0b` (red)    | Breaking change | `1.2.3` → `2.0.0` |
+| `release:minor` | `#0075ca` (blue)   | New feature     | `1.2.3` → `1.3.0` |
+| `release:patch` | `#e4e669` (yellow) | Bug fix         | `1.2.3` → `1.2.4` |
+| `release:none`  | `#cfd3d7` (grey)   | No release      | version unchanged |
 
 ## Behaviour
 

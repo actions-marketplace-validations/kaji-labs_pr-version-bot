@@ -14,59 +14,59 @@
 
 ## File Map
 
-| File | Created in | Responsibility |
-|---|---|---|
-| `package.json` | Task 1 | Dependencies, scripts |
-| `tsconfig.json` | Task 1 | TypeScript compiler config |
-| `vitest.config.ts` | Task 1 | Test runner + coverage thresholds |
-| `eslint.config.js` | Task 1 | Lint rules |
-| `prettier.config.js` | Task 1 | Format rules |
-| `VERSION.md` | Task 1 | Current semver (starts at `0.0.0`) |
-| `CHANGELOG.md` | Task 1 | Release history (starts empty) |
-| `LICENSE` | Task 1 | MIT license text |
-| `SECURITY.md` | Task 1 | Vulnerability reporting policy |
-| `CONTRIBUTING.md` | Task 1 | How to contribute |
-| `CODE_OF_CONDUCT.md` | Task 1 | Contributor Covenant |
-| `stu/user-stories.md` | Task 1 | Active story queue with AC + SC |
-| `stu/completed-user-stories.md` | Task 1 | Archive of finished stories |
-| `stu/memory.md` | Task 1 | ADR log |
-| `stu/backlog.md` | Task 1 | Tech debt log |
-| `stu/backend-feature-requests.md` | Task 1 | BFR log (N/A for MVP) |
-| `action.yml` | Task 2 | Action metadata, inputs, outputs, branding |
-| `src/labels.ts` | Task 3 | Detect bump type from PR label strings |
-| `tests/labels.test.ts` | Task 3 | Unit tests for labels |
-| `src/version.ts` | Task 4 | Read/write VERSION file, apply semver bump |
-| `tests/version.test.ts` | Task 4 | Unit tests for version |
-| `src/changelog.ts` | Task 5 | Prepend entry to CHANGELOG.md |
-| `tests/changelog.test.ts` | Task 5 | Unit tests for changelog |
-| `src/git.ts` | Task 6 | Git operations: configure, commit, tag, push |
-| `tests/git.test.ts` | Task 6 | Unit tests for git (mocked exec) |
-| `src/github-release.ts` | Task 7 | Create GitHub Release via Octokit |
-| `tests/github-release.test.ts` | Task 7 | Unit tests (mocked octokit) |
-| `src/index.ts` | Task 8 | Entry point — wires all modules, dry-run, outputs |
-| `tests/index.test.ts` | Task 8 | Integration-style unit tests (all deps mocked) |
-| `.github/workflows/ci.yml` | Task 9 | CI: lint, typecheck, test, build, dist check |
-| `.github/workflows/codeql.yml` | Task 10 | CodeQL security scan |
-| `.github/dependabot.yml` | Task 10 | Weekly npm updates |
-| `.github/workflows/release.yml` | Task 11 | Release: action uses itself |
-| `.github/ISSUE_TEMPLATE/bug.yml` | Task 12 | Bug report template |
-| `.github/ISSUE_TEMPLATE/feature.yml` | Task 12 | Feature request template |
-| `.github/ISSUE_TEMPLATE/question.yml` | Task 12 | Question template |
-| `.github/pull_request_template.md` | Task 12 | PR template |
-| `README.md` | Task 13 | Main documentation |
-| `docs/quick-start.md` | Task 13 | 5-minute setup guide |
-| `docs/configuration.md` | Task 13 | All inputs/outputs documented |
-| `docs/labels.md` | Task 13 | Label reference |
-| `docs/architecture.md` | Task 13 | Mermaid data-flow diagram |
-| `docs/roadmap.md` | Task 13 | MVP → v2.x roadmap |
-| `docs/versioning-policy.md` | Task 13 | major/minor/patch definitions |
-| `docs/troubleshooting.md` | Task 13 | Common errors and fixes |
-| `docs/adrs/ADR-001-use-semver.md` | Task 13 | ADR: semver choice |
-| `docs/adrs/ADR-002-use-pr-labels.md` | Task 13 | ADR: label-driven bumps |
-| `docs/adrs/ADR-003-use-github-releases.md` | Task 13 | ADR: GitHub Releases |
-| `examples/basic.yml` | Task 13 | Basic workflow example |
-| `examples/strict-labels.yml` | Task 13 | Strict labels example |
-| `examples/dry-run.yml` | Task 13 | Dry-run example |
+| File                                       | Created in | Responsibility                                    |
+| ------------------------------------------ | ---------- | ------------------------------------------------- |
+| `package.json`                             | Task 1     | Dependencies, scripts                             |
+| `tsconfig.json`                            | Task 1     | TypeScript compiler config                        |
+| `vitest.config.ts`                         | Task 1     | Test runner + coverage thresholds                 |
+| `eslint.config.js`                         | Task 1     | Lint rules                                        |
+| `prettier.config.js`                       | Task 1     | Format rules                                      |
+| `VERSION.md`                               | Task 1     | Current semver (starts at `0.0.0`)                |
+| `CHANGELOG.md`                             | Task 1     | Release history (starts empty)                    |
+| `LICENSE`                                  | Task 1     | MIT license text                                  |
+| `SECURITY.md`                              | Task 1     | Vulnerability reporting policy                    |
+| `CONTRIBUTING.md`                          | Task 1     | How to contribute                                 |
+| `CODE_OF_CONDUCT.md`                       | Task 1     | Contributor Covenant                              |
+| `stu/user-stories.md`                      | Task 1     | Active story queue with AC + SC                   |
+| `stu/completed-user-stories.md`            | Task 1     | Archive of finished stories                       |
+| `stu/memory.md`                            | Task 1     | ADR log                                           |
+| `stu/backlog.md`                           | Task 1     | Tech debt log                                     |
+| `stu/backend-feature-requests.md`          | Task 1     | BFR log (N/A for MVP)                             |
+| `action.yml`                               | Task 2     | Action metadata, inputs, outputs, branding        |
+| `src/labels.ts`                            | Task 3     | Detect bump type from PR label strings            |
+| `tests/labels.test.ts`                     | Task 3     | Unit tests for labels                             |
+| `src/version.ts`                           | Task 4     | Read/write VERSION file, apply semver bump        |
+| `tests/version.test.ts`                    | Task 4     | Unit tests for version                            |
+| `src/changelog.ts`                         | Task 5     | Prepend entry to CHANGELOG.md                     |
+| `tests/changelog.test.ts`                  | Task 5     | Unit tests for changelog                          |
+| `src/git.ts`                               | Task 6     | Git operations: configure, commit, tag, push      |
+| `tests/git.test.ts`                        | Task 6     | Unit tests for git (mocked exec)                  |
+| `src/github-release.ts`                    | Task 7     | Create GitHub Release via Octokit                 |
+| `tests/github-release.test.ts`             | Task 7     | Unit tests (mocked octokit)                       |
+| `src/index.ts`                             | Task 8     | Entry point — wires all modules, dry-run, outputs |
+| `tests/index.test.ts`                      | Task 8     | Integration-style unit tests (all deps mocked)    |
+| `.github/workflows/ci.yml`                 | Task 9     | CI: lint, typecheck, test, build, dist check      |
+| `.github/workflows/codeql.yml`             | Task 10    | CodeQL security scan                              |
+| `.github/dependabot.yml`                   | Task 10    | Weekly npm updates                                |
+| `.github/workflows/release.yml`            | Task 11    | Release: action uses itself                       |
+| `.github/ISSUE_TEMPLATE/bug.yml`           | Task 12    | Bug report template                               |
+| `.github/ISSUE_TEMPLATE/feature.yml`       | Task 12    | Feature request template                          |
+| `.github/ISSUE_TEMPLATE/question.yml`      | Task 12    | Question template                                 |
+| `.github/pull_request_template.md`         | Task 12    | PR template                                       |
+| `README.md`                                | Task 13    | Main documentation                                |
+| `docs/quick-start.md`                      | Task 13    | 5-minute setup guide                              |
+| `docs/configuration.md`                    | Task 13    | All inputs/outputs documented                     |
+| `docs/labels.md`                           | Task 13    | Label reference                                   |
+| `docs/architecture.md`                     | Task 13    | Mermaid data-flow diagram                         |
+| `docs/roadmap.md`                          | Task 13    | MVP → v2.x roadmap                                |
+| `docs/versioning-policy.md`                | Task 13    | major/minor/patch definitions                     |
+| `docs/troubleshooting.md`                  | Task 13    | Common errors and fixes                           |
+| `docs/adrs/ADR-001-use-semver.md`          | Task 13    | ADR: semver choice                                |
+| `docs/adrs/ADR-002-use-pr-labels.md`       | Task 13    | ADR: label-driven bumps                           |
+| `docs/adrs/ADR-003-use-github-releases.md` | Task 13    | ADR: GitHub Releases                              |
+| `examples/basic.yml`                       | Task 13    | Basic workflow example                            |
+| `examples/strict-labels.yml`               | Task 13    | Strict labels example                             |
+| `examples/dry-run.yml`                     | Task 13    | Dry-run example                                   |
 
 ---
 
@@ -161,13 +161,9 @@ export default defineConfig({
 const js = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 
-module.exports = tseslint.config(
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
-  {
-    ignores: ['dist/', 'node_modules/'],
-  }
-);
+module.exports = tseslint.config(js.configs.recommended, ...tseslint.configs.recommended, {
+  ignores: ['dist/', 'node_modules/'],
+});
 ```
 
 - [ ] **Step 1.5 — Create `prettier.config.js`**
@@ -233,7 +229,7 @@ SOFTWARE.
 ## Supported Versions
 
 | Version | Supported |
-|---------|-----------|
+| ------- | --------- |
 | 1.x     | ✅        |
 | 0.x     | ❌        |
 
@@ -248,7 +244,7 @@ You can expect a response within 48 hours and a patch within 7 days for confirme
 
 - [ ] **Step 1.10 — Create `CONTRIBUTING.md`**
 
-```markdown
+````markdown
 # Contributing
 
 ## Prerequisites
@@ -261,6 +257,7 @@ You can expect a response within 48 hours and a patch within 7 days for confirme
 ```bash
 npm ci
 ```
+````
 
 ## Running tests
 
@@ -286,6 +283,7 @@ npm run format
 ## Commit standards
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` new feature
 - `fix:` bug fix
 - `chore:` maintenance
@@ -301,7 +299,8 @@ Releases are automated. Add a `release:major`, `release:minor`, or `release:patc
 AI tools may be used for ideation, refactoring, test generation, and documentation support.
 All contributors are responsible for reviewing, testing, and understanding any AI-assisted changes before opening a pull request.
 Do not submit code that you cannot explain, maintain, or verify.
-```
+
+````
 
 - [ ] **Step 1.11 — Create `CODE_OF_CONDUCT.md`**
 
@@ -550,7 +549,7 @@ Use the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version
 
 ## Epic 8 — GitHub Marketplace Release
 > Stories TBD after MVP ships.
-```
+````
 
 - [ ] **Step 1.13 — Create `stu/completed-user-stories.md`**
 
@@ -569,11 +568,11 @@ Newest story at top. All AC items ticked. Append-only.
 
 ## ADR Index
 
-| ID | Title | Status | Date |
-|---|---|---|---|
-| ADR-001 | Runtime: TypeScript compiled to dist/index.js via ncc | Accepted | 2026-06-04 |
-| ADR-002 | Version trigger: PR labels over conventional commits | Accepted | 2026-06-04 |
-| ADR-003 | Releases: GitHub Releases API via octokit | Accepted | 2026-06-04 |
+| ID      | Title                                                       | Status   | Date       |
+| ------- | ----------------------------------------------------------- | -------- | ---------- |
+| ADR-001 | Runtime: TypeScript compiled to dist/index.js via ncc       | Accepted | 2026-06-04 |
+| ADR-002 | Version trigger: PR labels over conventional commits        | Accepted | 2026-06-04 |
+| ADR-003 | Releases: GitHub Releases API via octokit                   | Accepted | 2026-06-04 |
 | ADR-004 | Module: CommonJS (not ESM) for GitHub Actions compatibility | Accepted | 2026-06-04 |
 
 ---
@@ -811,9 +810,9 @@ describe('detectBump', () => {
   });
 
   it('throws when multiple release labels found and failOnMultiple is true', () => {
-    expect(() =>
-      detectBump(['release:major', 'release:minor'], 'patch', true)
-    ).toThrow('Multiple release labels found: release:major, release:minor');
+    expect(() => detectBump(['release:major', 'release:minor'], 'patch', true)).toThrow(
+      'Multiple release labels found: release:major, release:minor'
+    );
   });
 
   it('returns first match when multiple release labels and failOnMultiple is false', () => {
@@ -1026,9 +1025,7 @@ const sampleEntry: ChangelogEntry = {
 describe('buildEntry', () => {
   it('formats entry correctly', () => {
     const result = buildEntry(sampleEntry);
-    expect(result).toBe(
-      '## [1.2.3] - 2026-06-04\n\n- minor: Add new feature (#42)\n'
-    );
+    expect(result).toBe('## [1.2.3] - 2026-06-04\n\n- minor: Add new feature (#42)\n');
   });
 });
 
@@ -1085,9 +1082,7 @@ export function buildEntry(entry: ChangelogEntry): string {
 
 export function prependEntry(filePath: string, entry: ChangelogEntry): void {
   const newEntry = buildEntry(entry);
-  const existing = fs.existsSync(filePath)
-    ? (fs.readFileSync(filePath, 'utf8') as string)
-    : '';
+  const existing = fs.existsSync(filePath) ? (fs.readFileSync(filePath, 'utf8') as string) : '';
   fs.writeFileSync(filePath, newEntry + '\n' + existing, 'utf8');
 }
 ```
@@ -1126,16 +1121,16 @@ describe('configureGit', () => {
   it('sets git user name', async () => {
     vi.mocked(exec.exec).mockResolvedValue(0);
     await configureGit();
-    expect(exec.exec).toHaveBeenCalledWith('git', [
-      'config', 'user.name', 'github-actions[bot]',
-    ]);
+    expect(exec.exec).toHaveBeenCalledWith('git', ['config', 'user.name', 'github-actions[bot]']);
   });
 
   it('sets git user email', async () => {
     vi.mocked(exec.exec).mockResolvedValue(0);
     await configureGit();
     expect(exec.exec).toHaveBeenCalledWith('git', [
-      'config', 'user.email', 'github-actions[bot]@users.noreply.github.com',
+      'config',
+      'user.email',
+      'github-actions[bot]@users.noreply.github.com',
     ]);
   });
 });
@@ -1148,9 +1143,7 @@ describe('commitRelease', () => {
     await commitRelease(['VERSION.md', 'CHANGELOG.md'], 'chore(release): v1.2.3');
     expect(exec.exec).toHaveBeenCalledWith('git', ['add', 'VERSION.md']);
     expect(exec.exec).toHaveBeenCalledWith('git', ['add', 'CHANGELOG.md']);
-    expect(exec.exec).toHaveBeenCalledWith('git', [
-      'commit', '-m', 'chore(release): v1.2.3',
-    ]);
+    expect(exec.exec).toHaveBeenCalledWith('git', ['commit', '-m', 'chore(release): v1.2.3']);
   });
 });
 
@@ -1179,11 +1172,7 @@ import * as exec from '@actions/exec';
 
 export async function configureGit(): Promise<void> {
   await exec.exec('git', ['config', 'user.name', 'github-actions[bot]']);
-  await exec.exec('git', [
-    'config',
-    'user.email',
-    'github-actions[bot]@users.noreply.github.com',
-  ]);
+  await exec.exec('git', ['config', 'user.email', 'github-actions[bot]@users.noreply.github.com']);
 }
 
 export async function commitRelease(files: string[], message: string): Promise<void> {
@@ -1491,8 +1480,7 @@ export async function run(): Promise<void> {
     const createGhRelease = core.getInput('create-github-release') !== 'false';
     const failOnMultiple = core.getInput('fail-on-multiple-labels') !== 'false';
     const dryRun = core.getInput('dry-run') === 'true';
-    const commitTemplate =
-      core.getInput('commit-message-template') || 'chore(release): {tag}';
+    const commitTemplate = core.getInput('commit-message-template') || 'chore(release): {tag}';
 
     const labels: string[] = (pr.labels as Array<{ name: string }>).map((l) => l.name);
     const bump = detectBump(labels, defaultBump, failOnMultiple);
@@ -1949,12 +1937,12 @@ See [docs/quick-start.md](docs/quick-start.md).
 
 Create these labels in your repository:
 
-| Label | Effect |
-|---|---|
+| Label           | Effect                  |
+| --------------- | ----------------------- |
 | `release:major` | Bumps `1.0.0` → `2.0.0` |
 | `release:minor` | Bumps `1.0.0` → `1.1.0` |
 | `release:patch` | Bumps `1.0.0` → `1.0.1` |
-| `release:none` | Skips release entirely |
+| `release:none`  | Skips release entirely  |
 
 ## Example workflow
 
@@ -1990,12 +1978,12 @@ See [docs/configuration.md](docs/configuration.md) for full reference.
 
 ## Outputs
 
-| Output | Description |
-|---|---|
-| `version` | New version e.g. `1.2.3` |
-| `tag` | Created tag e.g. `v1.2.3` |
-| `bump` | `major`, `minor`, `patch`, or `none` |
-| `skipped` | `true` if release was skipped |
+| Output    | Description                          |
+| --------- | ------------------------------------ |
+| `version` | New version e.g. `1.2.3`             |
+| `tag`     | Created tag e.g. `v1.2.3`            |
+| `bump`    | `major`, `minor`, `patch`, or `none` |
+| `skipped` | `true` if release was skipped        |
 
 ## Roadmap
 
@@ -2022,10 +2010,11 @@ Get up and running in under 5 minutes.
 ## 1. Add a VERSION file
 
 Create `VERSION.md` in the root of your repo:
+```
 
-```
 1.0.0
-```
+
+````
 
 ## 2. Add a CHANGELOG file
 
@@ -2033,7 +2022,7 @@ Create `CHANGELOG.md`:
 
 ```markdown
 # Changelog
-```
+````
 
 ## 3. Create release labels
 
@@ -2084,7 +2073,8 @@ Apply a `release:patch` label to your next PR and merge it. The action will:
 4. Commit both files
 5. Create tag `v1.0.1`
 6. Publish a GitHub Release
-```
+
+`````
 
 - [ ] **Step 13.3 — Create `docs/configuration.md`**
 
@@ -2120,18 +2110,19 @@ flowchart TD
 
     RELEASE
     --> OUTPUTS[Action outputs\nversion, tag, bump, skipped]
-```
+`````
 
 ## Module Responsibilities
 
-| Module | Responsibility |
-|---|---|
-| `labels.ts` | Pure function. Maps label strings to bump type. No I/O. |
-| `version.ts` | Reads/writes `VERSION` file. Uses `semver` package. |
-| `changelog.ts` | Reads/writes `CHANGELOG.md`. Prepends formatted entry. |
-| `git.ts` | Runs git commands via `@actions/exec`. No shell strings. |
-| `github-release.ts` | Calls GitHub REST API via `@actions/github` octokit. |
-| `index.ts` | Wires all modules. Handles all `@actions/core` I/O. |
+| Module              | Responsibility                                           |
+| ------------------- | -------------------------------------------------------- |
+| `labels.ts`         | Pure function. Maps label strings to bump type. No I/O.  |
+| `version.ts`        | Reads/writes `VERSION` file. Uses `semver` package.      |
+| `changelog.ts`      | Reads/writes `CHANGELOG.md`. Prepends formatted entry.   |
+| `git.ts`            | Runs git commands via `@actions/exec`. No shell strings. |
+| `github-release.ts` | Calls GitHub REST API via `@actions/github` octokit.     |
+| `index.ts`          | Wires all modules. Handles all `@actions/core` I/O.      |
+
 ````
 
 - [ ] **Step 13.6 — Create `docs/roadmap.md`**
@@ -2365,3 +2356,4 @@ Present all documentation files. This completes the MVP. Wait for user to commit
 - [x] **Spec coverage:** All 13 stories covered across Tasks 1–13. All inputs, outputs, labels, modules, workflows, and working files accounted for.
 - [x] **Placeholder scan:** No TBD/TODO in implementation tasks. Steps 13.3 and 13.4 describe content precisely enough to write without ambiguity.
 - [x] **Type consistency:** `BumpType` defined in `labels.ts` and imported by `version.ts` and `index.ts`. `ChangelogEntry` defined in `changelog.ts` and used in `index.ts`. `detectBump`, `readVersion`, `bumpVersion`, `writeVersion`, `prependEntry`, `configureGit`, `commitRelease`, `createTag`, `createRelease` — all names consistent across definition and usage tasks.
+````

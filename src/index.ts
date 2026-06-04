@@ -22,8 +22,7 @@ export async function run(): Promise<void> {
     const createGhRelease = core.getInput('create-github-release') !== 'false';
     const failOnMultiple = core.getInput('fail-on-multiple-labels') !== 'false';
     const dryRun = core.getInput('dry-run') === 'true';
-    const commitTemplate =
-      core.getInput('commit-message-template') || 'chore(release): {tag}';
+    const commitTemplate = core.getInput('commit-message-template') || 'chore(release): {tag}';
 
     const labels = (pr.labels as Array<{ name: string }>).map((l) => l.name);
     const bump = detectBump(labels, defaultBump, failOnMultiple);

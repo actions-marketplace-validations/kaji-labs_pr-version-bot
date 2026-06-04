@@ -25,14 +25,14 @@ flowchart TD
 
 ## Module Responsibilities
 
-| Module | Responsibility |
-|---|---|
-| `src/labels.ts` | Pure function. Maps PR label strings to bump type. No I/O. |
-| `src/version.ts` | Reads and writes `VERSION.md`. Uses the `semver` npm package. |
-| `src/changelog.ts` | Reads and writes `CHANGELOG.md`. Prepends a formatted entry. |
-| `src/git.ts` | Runs git commands via `@actions/exec`. All calls use array-form args. |
-| `src/github-release.ts` | Calls GitHub REST API via `@actions/github` Octokit. |
-| `src/index.ts` | Entry point. Reads all `@actions/core` inputs. Wires all modules. Handles dry-run and error flow. |
+| Module                  | Responsibility                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| `src/labels.ts`         | Pure function. Maps PR label strings to bump type. No I/O.                                        |
+| `src/version.ts`        | Reads and writes `VERSION.md`. Uses the `semver` npm package.                                     |
+| `src/changelog.ts`      | Reads and writes `CHANGELOG.md`. Prepends a formatted entry.                                      |
+| `src/git.ts`            | Runs git commands via `@actions/exec`. All calls use array-form args.                             |
+| `src/github-release.ts` | Calls GitHub REST API via `@actions/github` Octokit.                                              |
+| `src/index.ts`          | Entry point. Reads all `@actions/core` inputs. Wires all modules. Handles dry-run and error flow. |
 
 ## Runtime
 

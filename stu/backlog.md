@@ -3,6 +3,7 @@
 ## Open Items
 
 ### B-001 — Dependencies: undici vulnerability in @actions/github
+
 - **Logged:** 2026-06-04 by scaffold agent
 - **Triggered by:** Story 1.1
 - **Priority:** Medium
@@ -11,7 +12,18 @@
 
 ---
 
+### B-005 — Dependencies: @actions/core v3 incompatible with @vercel/ncc
+
+- **Logged:** 2026-06-04 by dependency upgrade
+- **Triggered by:** Dependabot PR #7
+- **Priority:** Low
+- **Description:** `@actions/core` v3.x uses ESM exports which `@vercel/ncc` (0.38.x) cannot bundle — fails with "Package path . is not exported". Pinned at `^1.11.1`. Revisit when `@vercel/ncc` adds full ESM package support, or when we migrate the build to a bundler that handles ESM (e.g. esbuild directly). No security vulnerability in v1.x — this is purely a version upgrade.
+- **Status:** Open
+
+---
+
 ### B-004 — Security: Pin GitHub Actions to exact SHAs in workflows
+
 - **Logged:** 2026-06-04 by review agent
 - **Triggered by:** Story 1.10
 - **Priority:** Low
@@ -21,6 +33,7 @@
 ---
 
 ### B-003 — git.ts: commitRelease called with empty files array
+
 - **Logged:** 2026-06-04 by review agent
 - **Triggered by:** Story 1.6
 - **Priority:** Low
@@ -30,6 +43,7 @@
 ---
 
 ### B-002 — Dependencies: esbuild moderate vulnerability in vitest/vite
+
 - **Logged:** 2026-06-04 by scaffold agent
 - **Triggered by:** Story 1.1
 - **Priority:** Low

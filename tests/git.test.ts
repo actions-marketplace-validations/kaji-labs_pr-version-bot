@@ -11,16 +11,16 @@ describe('configureGit', () => {
   it('sets git user name', async () => {
     vi.mocked(exec.exec).mockResolvedValue(0);
     await configureGit();
-    expect(exec.exec).toHaveBeenCalledWith('git', [
-      'config', 'user.name', 'github-actions[bot]',
-    ]);
+    expect(exec.exec).toHaveBeenCalledWith('git', ['config', 'user.name', 'github-actions[bot]']);
   });
 
   it('sets git user email', async () => {
     vi.mocked(exec.exec).mockResolvedValue(0);
     await configureGit();
     expect(exec.exec).toHaveBeenCalledWith('git', [
-      'config', 'user.email', 'github-actions[bot]@users.noreply.github.com',
+      'config',
+      'user.email',
+      'github-actions[bot]@users.noreply.github.com',
     ]);
   });
 });
@@ -38,9 +38,7 @@ describe('commitRelease', () => {
   it('commits with the provided message', async () => {
     vi.mocked(exec.exec).mockResolvedValue(0);
     await commitRelease(['VERSION.md', 'CHANGELOG.md'], 'chore(release): v1.2.3');
-    expect(exec.exec).toHaveBeenCalledWith('git', [
-      'commit', '-m', 'chore(release): v1.2.3',
-    ]);
+    expect(exec.exec).toHaveBeenCalledWith('git', ['commit', '-m', 'chore(release): v1.2.3']);
   });
 
   it('stages files before committing', async () => {

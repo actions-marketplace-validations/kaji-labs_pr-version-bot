@@ -1,6 +1,4 @@
+dist/
 node_modules/
-out/
 coverage/
-*.js.map
 licenses.txt
-.env

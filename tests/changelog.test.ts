@@ -17,16 +17,12 @@ const sampleEntry: ChangelogEntry = {
 describe('buildEntry', () => {
   it('formats entry correctly', () => {
     const result = buildEntry(sampleEntry);
-    expect(result).toBe(
-      '## [1.2.3] - 2026-06-04\n\n- minor: Add new feature (#42)\n'
-    );
+    expect(result).toBe('## [1.2.3] - 2026-06-04\n\n- minor: Add new feature (#42)\n');
   });
 
   it('handles patch bump type', () => {
     const result = buildEntry({ ...sampleEntry, bump: 'patch', version: '1.2.4' });
-    expect(result).toBe(
-      '## [1.2.4] - 2026-06-04\n\n- patch: Add new feature (#42)\n'
-    );
+    expect(result).toBe('## [1.2.4] - 2026-06-04\n\n- patch: Add new feature (#42)\n');
   });
 
   it('includes PR number in parentheses', () => {
@@ -80,10 +76,6 @@ describe('prependEntry', () => {
 
     prependEntry('CHANGELOG.md', sampleEntry);
 
-    expect(fs.writeFileSync).toHaveBeenCalledWith(
-      'CHANGELOG.md',
-      expect.any(String),
-      'utf8'
-    );
+    expect(fs.writeFileSync).toHaveBeenCalledWith('CHANGELOG.md', expect.any(String), 'utf8');
   });
 });

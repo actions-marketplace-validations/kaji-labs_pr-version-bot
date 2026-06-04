@@ -27,9 +27,9 @@ describe('detectBump', () => {
   });
 
   it('throws when multiple release labels found and failOnMultiple is true', () => {
-    expect(() =>
-      detectBump(['release:major', 'release:minor'], 'patch', true)
-    ).toThrow('Multiple release labels found: release:major, release:minor');
+    expect(() => detectBump(['release:major', 'release:minor'], 'patch', true)).toThrow(
+      'Multiple release labels found: release:major, release:minor'
+    );
   });
 
   it('returns first match when multiple release labels and failOnMultiple is false', () => {

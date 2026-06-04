@@ -5,6 +5,7 @@ All inputs and outputs for PR Version Bot.
 ## Inputs
 
 ### `github-token`
+
 - **Type:** string
 - **Required:** yes
 - **Default:** `${{ github.token }}`
@@ -14,6 +15,7 @@ GitHub token used for API access (creating releases) and git push. The built-in 
 ---
 
 ### `version-file`
+
 - **Type:** string
 - **Required:** no
 - **Default:** `VERSION.md`
@@ -23,6 +25,7 @@ Path to the file containing the current semver string. Must contain a bare semve
 ---
 
 ### `changelog-file`
+
 - **Type:** string
 - **Required:** no
 - **Default:** `CHANGELOG.md`
@@ -32,6 +35,7 @@ Path to the changelog file. New entries are prepended above existing content.
 ---
 
 ### `default-bump`
+
 - **Type:** `major` | `minor` | `patch` | `none`
 - **Required:** no
 - **Default:** `patch`
@@ -41,6 +45,7 @@ Bump type applied when the PR has no release label. Set to `none` to skip releas
 ---
 
 ### `tag-prefix`
+
 - **Type:** string
 - **Required:** no
 - **Default:** `v`
@@ -50,6 +55,7 @@ Prefix prepended to the version number when creating git tags and releases. With
 ---
 
 ### `create-github-release`
+
 - **Type:** `'true'` | `'false'`
 - **Required:** no
 - **Default:** `'true'`
@@ -59,6 +65,7 @@ Whether to create a GitHub Release after tagging. Set to `'false'` to create onl
 ---
 
 ### `fail-on-multiple-labels`
+
 - **Type:** `'true'` | `'false'`
 - **Required:** no
 - **Default:** `'true'`
@@ -68,6 +75,7 @@ Whether to fail the action when a PR has more than one `release:*` label. When `
 ---
 
 ### `dry-run`
+
 - **Type:** `'true'` | `'false'`
 - **Required:** no
 - **Default:** `'false'`
@@ -77,6 +85,7 @@ When `'true'`, the action logs what it would do but writes nothing — no file c
 ---
 
 ### `target-branch`
+
 - **Type:** string
 - **Required:** no
 - **Default:** `main`
@@ -86,6 +95,7 @@ Branch the release commit is pushed to.
 ---
 
 ### `commit-message-template`
+
 - **Type:** string
 - **Required:** no
 - **Default:** `chore(release): {tag}`
@@ -97,15 +107,19 @@ Template for the release commit message. Use `{tag}` as a placeholder for the ta
 ## Outputs
 
 ### `version`
+
 New semantic version string, e.g. `1.2.3`.
 
 ### `tag`
+
 Created git tag, e.g. `v1.2.3`.
 
 ### `bump`
+
 Bump type applied: `major`, `minor`, `patch`, or `none`.
 
 ### `skipped`
+
 `'true'` if the release was skipped (`release:none` label or `default-bump: none`). `'false'` otherwise.
 
 ## Using outputs in downstream steps

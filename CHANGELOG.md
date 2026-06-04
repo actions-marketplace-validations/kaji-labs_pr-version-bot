@@ -1,3 +1,7 @@
+## [0.0.2] - 2026-06-04
+
+- patch: chore(deps): Bump @actions/core from 1.11.1 to 3.0.1 (#7)
+
 ## [0.0.1] - 2026-06-04
 
 - patch: Chore/dependency upgrades (#10)

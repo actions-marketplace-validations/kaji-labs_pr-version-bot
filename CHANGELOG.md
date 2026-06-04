@@ -1,3 +1,7 @@
+## [0.6.0] - 2026-06-04
+
+- minor: feat(epic-7): pre-release versioning (alpha/beta/rc labels) (#21)
+
 ## [0.5.0] - 2026-06-04
 
 - minor: feat(epic-6): monorepo multi-package version bumping (#18)

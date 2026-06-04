@@ -2,6 +2,15 @@
 
 ## Open Items
 
+### B-007 — conventional.ts: conventional scan can silently downgrade defaultBump
+- **Logged:** 2026-06-04 by review agent
+- **Triggered by:** Story 4.1
+- **Priority:** Low
+- **Description:** When `useConventionalCommits` is true and no release label exists, `detectBump` already returns `defaultBump` (e.g. `minor`). If the conventional scan then detects only `fix:` commits, `bump` is overwritten to `patch`, silently downgrading below the configured default. Current semantics: conventional commits always override `defaultBump`. Consider whether conventional result should be floored at `defaultBump` using `higher(conventionalBump, defaultBump)`. Deferred — current behaviour is consistent and documented.
+- **Status:** Open
+
+---
+
 ### B-001 — Dependencies: undici vulnerability in @actions/github
 
 - **Logged:** 2026-06-04 by scaffold agent

@@ -20,6 +20,7 @@ export interface BotConfig {
   targetBranch?: string;
   commitMessageTemplate?: string;
   syncPackageJson?: boolean;
+  useConventionalCommits?: boolean;
   labels?: Partial<LabelConfig>;
 }
 
@@ -34,6 +35,7 @@ export interface ResolvedConfig {
   targetBranch: string;
   commitMessageTemplate: string;
   syncPackageJson: boolean;
+  useConventionalCommits: boolean;
   labels: LabelConfig;
 }
 
@@ -80,6 +82,9 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
     syncPackageJson: inp('sync-package-json')
       ? inp('sync-package-json') === 'true'
       : (fileConfig.syncPackageJson ?? false),
+    useConventionalCommits: inp('use-conventional-commits')
+      ? inp('use-conventional-commits') === 'true'
+      : (fileConfig.useConventionalCommits ?? false),
     labels: {
       ...DEFAULT_LABELS,
       ...fileConfig.labels,

@@ -1,3 +1,7 @@
+## [0.9.1] - 2026-06-05
+
+- patch: fix(backlog): B-003 empty files guard, B-016 richer releases, B-017 CHANGELOG URLs, B-014 CODEOWNERS ([#27](https://github.com/kaji-labs/pr-version-bot/pull/27))
+
 ## [0.9.0] - 2026-06-05
 
 - minor: feat(epic-11): branch protection compatibility - push error detection + release PR mode (#26)

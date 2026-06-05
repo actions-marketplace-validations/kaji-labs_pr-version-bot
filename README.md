@@ -34,14 +34,14 @@ Create these labels in your repository:
 
 <!-- VERSIONBOT:START -->
 
-[![Version](https://img.shields.io/badge/version-v0.9.0-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
+[![Version](https://img.shields.io/badge/version-v0.9.1-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
 
-> Current stable release: **v0.9.0**
+> Current stable release: **v0.9.1**
 
 **Pinned version (recommended):**
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v0.9.0
+- uses: kaji-labs/pr-version-bot@v0.9.1
 ```
 
 **Major version alias:**

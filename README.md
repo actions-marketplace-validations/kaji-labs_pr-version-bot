@@ -2,12 +2,20 @@
 
 [![CI](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml)
-[![Version](https://img.shields.io/badge/version-v0.10.0-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
+[![Version](https://img.shields.io/github/v/release/kaji-labs/pr-version-bot?label=version&color=orange)](https://github.com/kaji-labs/pr-version-bot/releases)
 [![License: Source-Available](https://img.shields.io/badge/License-Source--Available-blue.svg)](LICENSE)
 
 > Reusable GitHub Action for automatic semantic versioning from merged pull requests.
 
 Automatically bumps your semver, updates `CHANGELOG.md`, creates a git tag, and publishes a GitHub Release — triggered by a label on your PR.
+
+## Why PR Version Bot?
+
+- **Label-driven, not commit-message-driven** — no commit message conventions to enforce; just label the PR before merging
+- **Zero-config defaults** — works out of the box with a single input (`github-token`); every other option has a sensible default
+- **Full pre-release lifecycle** — alpha → beta → rc → stable with optional enforced channel ordering
+- **Self-updating README and badges** — auto-syncs your install snippet and generates a live Shields.io badge after each release
+- **Monorepo-aware** — bump multiple packages in a single atomic release commit
 
 ## How it works
 
@@ -85,7 +93,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v0.10.3
+      - uses: kaji-labs/pr-version-bot@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

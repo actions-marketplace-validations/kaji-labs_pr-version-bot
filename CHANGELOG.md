@@ -1,3 +1,7 @@
+## [0.10.0] - 2026-06-05
+
+- minor: feat: implement all 25 suggestions - security hardening, new features, +58 tests ([#29](https://github.com/kaji-labs/pr-version-bot/pull/29))
+
 ## [0.9.2] - 2026-06-05
 
 - patch: fix(security): SSRF in notify.ts, input validation, undici CVE upgrade, full docs update ([#28](https://github.com/kaji-labs/pr-version-bot/pull/28))

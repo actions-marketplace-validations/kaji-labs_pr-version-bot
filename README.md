@@ -62,7 +62,7 @@ See [docs/labels.md](docs/labels.md) for full pre-release lifecycle rules.
 
 <!-- VERSIONBOT:END -->
 
-## Example workflow
+## Usage
 
 ```yaml
 name: Release
@@ -85,7 +85,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v0.10.0
+      - uses: kaji-labs/pr-version-bot@v0.10.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

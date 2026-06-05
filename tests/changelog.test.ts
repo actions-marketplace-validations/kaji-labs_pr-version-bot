@@ -28,6 +28,31 @@ describe('buildEntry', () => {
   it('includes PR number in parentheses', () => {
     expect(buildEntry(sampleEntry)).toContain('(#42)');
   });
+
+  it('includes full PR URL as Markdown link when prUrl is provided', () => {
+    const entry = buildEntry({
+      version: '1.2.3',
+      date: '2026-06-05',
+      prTitle: 'Add feature',
+      prNumber: 42,
+      bump: 'minor',
+      prUrl: 'https://github.com/kaji-labs/pr-version-bot/pull/42',
+    });
+    expect(entry).toContain('[#42](https://github.com/kaji-labs/pr-version-bot/pull/42)');
+    expect(entry).not.toContain('(#42)');
+  });
+
+  it('falls back to bare #N when prUrl is absent', () => {
+    const entry = buildEntry({
+      version: '1.2.3',
+      date: '2026-06-05',
+      prTitle: 'Add feature',
+      prNumber: 42,
+      bump: 'minor',
+    });
+    expect(entry).toContain('(#42)');
+    expect(entry).not.toContain('](');
+  });
 });
 
 describe('prependEntry', () => {

@@ -6,10 +6,12 @@ export interface ChangelogEntry {
   prTitle: string;
   prNumber: number;
   bump: string;
+  prUrl?: string;
 }
 
 export function buildEntry(entry: ChangelogEntry): string {
-  return `## [${entry.version}] - ${entry.date}\n\n- ${entry.bump}: ${entry.prTitle} (#${entry.prNumber})\n`;
+  const prRef = entry.prUrl ? `([#${entry.prNumber}](${entry.prUrl}))` : `(#${entry.prNumber})`;
+  return `## [${entry.version}] - ${entry.date}\n\n- ${entry.bump}: ${entry.prTitle} ${prRef}\n`;
 }
 
 export function prependEntry(filePath: string, entry: ChangelogEntry): void {

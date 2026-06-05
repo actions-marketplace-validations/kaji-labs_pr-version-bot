@@ -43783,9 +43783,10 @@ function writeVersion(filePath, version) {
 // src/changelog.ts
 var fs4 = __toESM(require("fs"));
 function buildEntry(entry) {
+  const prRef = entry.prUrl ? `([#${entry.prNumber}](${entry.prUrl}))` : `(#${entry.prNumber})`;
   return `## [${entry.version}] - ${entry.date}
 
-- ${entry.bump}: ${entry.prTitle} (#${entry.prNumber})
+- ${entry.bump}: ${entry.prTitle} ${prRef}
 `;
 }
 function prependEntry(filePath, entry) {
@@ -43801,6 +43802,8 @@ async function configureGit() {
   await exec.exec("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"]);
 }
 async function commitRelease(files, message) {
+  if (files.length === 0)
+    throw new Error("commitRelease called with an empty files array \u2014 nothing to commit");
   for (const file of files) {
     await exec.exec("git", ["add", file]);
   }
@@ -43856,9 +43859,17 @@ async function openReleasePr(token, branchName, targetBranch, title, body) {
 
 // src/github-release.ts
 var github2 = __toESM(require_github());
-async function createRelease(token, tag, version, body) {
+async function createRelease(token, tag, version, context4) {
   const octokit = github2.getOctokit(token);
   const { owner, repo } = github2.context.repo;
+  const compareUrl = `https://github.com/${owner}/${repo}/compare/${context4.previousTag}...${tag}`;
+  const body = [
+    `## What changed`,
+    ``,
+    `- **${context4.bump}**: ${context4.prTitle} ([#${context4.prNumber}](${context4.prUrl})) by @${context4.authorLogin}`,
+    ``,
+    `**Full diff:** ${compareUrl}`
+  ].join("\n");
   await octokit.rest.repos.createRelease({
     owner,
     repo,
@@ -46623,7 +46634,8 @@ async function run() {
           date,
           prTitle: pr.title,
           prNumber: pr.number,
-          bump
+          bump,
+          prUrl: pr.html_url
         });
         filesToCommit.push(pkgChangelogFile);
       }
@@ -46640,7 +46652,8 @@ async function run() {
         date,
         prTitle: pr.title,
         prNumber: pr.number,
-        bump
+        bump,
+        prUrl: pr.html_url
       });
       filesToCommit.push(config.changelogFile);
       if (config.syncPackageJson) {
@@ -46680,12 +46693,14 @@ async function run() {
       if (config.tagOnReleasePr) {
         await createTag(tag);
         if (config.createGithubRelease) {
-          await createRelease(
-            token,
-            tag,
-            next,
-            `${bump}: ${pr.title} (#${pr.number})`
-          );
+          await createRelease(token, tag, next, {
+            bump,
+            prTitle: pr.title,
+            prNumber: pr.number,
+            prUrl: pr.html_url,
+            authorLogin: pr.user.login,
+            previousTag: `${config.tagPrefix}${current}`
+          });
         }
       }
       const prTitle = message;
@@ -46704,12 +46719,14 @@ async function run() {
       await createTag(tag);
       await pushWithProtectionCheck(config.targetBranch);
       if (config.createGithubRelease) {
-        await createRelease(
-          token,
-          tag,
-          next,
-          `${bump}: ${pr.title} (#${pr.number})`
-        );
+        await createRelease(token, tag, next, {
+          bump,
+          prTitle: pr.title,
+          prNumber: pr.number,
+          prUrl: pr.html_url,
+          authorLogin: pr.user.login,
+          previousTag: `${config.tagPrefix}${current}`
+        });
       }
     }
     const notifMessage = config.notificationTemplate.replace("{tag}", tag).replace("{bump}", bump).replace("{prTitle}", pr.title).replace("{prNumber}", String(pr.number));

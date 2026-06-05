@@ -51,6 +51,8 @@ function mockMergedPR(labels: string[] = ['release:minor']): void {
           merged: true,
           number: 42,
           title: 'Add new feature',
+          html_url: 'https://github.com/test-owner/test-repo/pull/42',
+          user: { login: 'testuser' },
           labels: labels.map((name) => ({ name })),
         },
       },

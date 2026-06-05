@@ -2,5 +2,10 @@
 # Defines required reviewers for specific files.
 # See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
+# Core action files — require review from the maintainer
+/action.yml @Rashay01
+/src/ @Rashay01
+/.github/workflows/ @Rashay01
+
 # Only the copyright holder may approve changes to the license
 /LICENSE @Rashay01

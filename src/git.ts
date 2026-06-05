@@ -6,6 +6,8 @@ export async function configureGit(): Promise<void> {
 }
 
 export async function commitRelease(files: string[], message: string): Promise<void> {
+  if (files.length === 0)
+    throw new Error('commitRelease called with an empty files array — nothing to commit');
   for (const file of files) {
     await exec.exec('git', ['add', file]);
   }

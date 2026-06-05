@@ -139,65 +139,7 @@ Publish PR Version Bot to the GitHub Marketplace so teams can discover and insta
 
 ## Epic 10 — PR Template Checkbox Label Detection
 
-Optionally detect the release bump type from checked checkboxes in the PR body, so teams can drive versioning from their existing PR template without applying separate labels. Falls back gracefully to all existing logic if the feature is disabled or no matching checkboxes are found.
-
-### Story 10.1 — Detect bump type from PR body checkboxes
-
-> As a team using a PR template, I want checked checkboxes in the PR body to automatically determine the version bump, so that I don't need to apply a separate label.
-
-**AC:**
-
-- [ ] New input `use-pr-template-labels` (default: `'false'`)
-- [ ] When `'true'`, action reads `pr.body` and scans for checked Markdown checkboxes (`- [x]` or `* [x]`, case-insensitive)
-- [ ] Matches checkbox text against the configured label names (from `config.labels`: `major`, `minor`, `patch`, `none`)
-- [ ] Matching is substring — e.g. a checkbox containing `release:minor` matches the `minor` label
-- [ ] **Precedence:** actual PR label > PR body checkbox > conventional commits > `default-bump`
-- [ ] If multiple matching checkboxes found and `fail-on-multiple-labels: 'true'` → fails with error
-- [ ] If no matching checkbox found → falls through to next precedence level
-- [ ] New `src/pr-template.ts` exports `detectBumpFromPrBody(body: string, labelConfig: LabelConfig): BumpType | null`
-- [ ] Unit tests: single match, no match (null), multiple matches + failOnMultiple, case-insensitive, unchecked boxes ignored
-
-**SC:**
-
-- [ ] PR body content never logged in full — only the matched label name is logged
-- [ ] Feature is strictly opt-in — no behaviour change for existing users when disabled
-
----
-
-### Story 10.2 — Config file support
-
-> As a user, I want to enable PR template label detection in `.versionbot.yml`, so that I don't have to edit my workflow.
-
-**AC:**
-
-- [ ] `.versionbot.yml` supports `usePrTemplateLabels: true/false`
-- [ ] Workflow input `use-pr-template-labels` overrides config file value
-- [ ] `src/config.ts` updated: `BotConfig` and `ResolvedConfig` include `usePrTemplateLabels: boolean`
-- [ ] `mergeConfig` handles new field (default: `false`)
-- [ ] Unit tests: config file path, input override, default false
-
-**SC:**
-
-- [ ] Default is `false` — no behaviour change for existing users
-
----
-
-### Story 10.3 — Docs and PR template example
-
-> As a user, I want documentation and a PR template example so I can set up checkbox-driven releases in minutes.
-
-**AC:**
-
-- [ ] `docs/configuration.md` updated with `use-pr-template-labels` input
-- [ ] `docs/labels.md` updated with PR template checkbox section explaining how checkboxes map to bump types
-- [ ] `.github/pull_request_template.md` updated to include a release type section with the four release checkboxes
-- [ ] `docs/troubleshooting.md` updated with checkbox not detected section (3 common causes)
-- [ ] `.versionbot.yml.example` updated with `usePrTemplateLabels: false`
-
-**SC:**
-
-- [ ] No real tokens in examples
-- [ ] PR template example shows all 4 release options including `release:none`
+> All 3 stories delivered. Moved to completed-user-stories.md.
 
 ---
 

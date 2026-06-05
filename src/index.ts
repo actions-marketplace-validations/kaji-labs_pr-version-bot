@@ -9,6 +9,7 @@ import { createRelease } from './github-release';
 import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
 import { detectBumpFromCommits } from './conventional';
+import { detectBumpFromPrBody } from './pr-template';
 import { sendSlackNotification, sendDiscordNotification } from './notify';
 import { resolvePackagePaths } from './monorepo';
 import { generateBadgeJson, writeBadgeFile } from './badge';
@@ -36,6 +37,7 @@ export async function run(): Promise<void> {
       'commit-message-template': core.getInput('commit-message-template'),
       'sync-package-json': core.getInput('sync-package-json'),
       'use-conventional-commits': core.getInput('use-conventional-commits'),
+      'use-pr-template-labels': core.getInput('use-pr-template-labels'),
       'generate-badge': core.getInput('generate-badge'),
       'badge-color': core.getInput('badge-color'),
       'badge-file': core.getInput('badge-file'),
@@ -52,7 +54,24 @@ export async function run(): Promise<void> {
     const releaseLabels = labels.filter((l) => Object.values(config.labels).includes(l));
     let bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
 
-    if (releaseLabels.length === 0 && config.useConventionalCommits) {
+    // PR body checkbox detection (lower priority than actual PR labels)
+    if (releaseLabels.length === 0 && config.usePrTemplateLabels) {
+      const prBodyBump = detectBumpFromPrBody(
+        pr.body as string | null,
+        config.labels,
+        config.failOnMultipleLabels
+      );
+      if (prBodyBump !== null) {
+        bump = prBodyBump;
+        core.info(`PR body checkbox detected bump: ${bump}`);
+      }
+    }
+
+    if (
+      releaseLabels.length === 0 &&
+      bump === config.defaultBump &&
+      config.useConventionalCommits
+    ) {
       const octokit = github.getOctokit(token);
       const { owner, repo } = github.context.repo;
       const commits = await octokit.rest.pulls.listCommits({

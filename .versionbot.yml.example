@@ -18,6 +18,7 @@ targetBranch: main
 commitMessageTemplate: 'chore(release): {tag}'
 syncPackageJson: false
 useConventionalCommits: false
+# usePrTemplateLabels: false
 
 # Notifications (optional — store URLs in GitHub secrets, not here)
 # slackWebhookUrl: ''

@@ -29,6 +29,7 @@ export interface BotConfig {
   notificationTemplate?: string;
   labels?: Partial<LabelConfig>;
   packages?: string[];
+  usePrTemplateLabels?: boolean;
   generateBadge?: boolean;
   badgeColor?: string;
   badgeFile?: string;
@@ -55,6 +56,7 @@ export interface ResolvedConfig {
   notificationTemplate: string;
   labels: LabelConfig;
   packages: string[];
+  usePrTemplateLabels: boolean;
   generateBadge: boolean;
   badgeColor: string;
   badgeFile: string;
@@ -129,6 +131,9 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
           .map((p) => p.trim())
           .filter(Boolean)
       : (fileConfig.packages ?? []),
+    usePrTemplateLabels: inp('use-pr-template-labels')
+      ? inp('use-pr-template-labels') === 'true'
+      : (fileConfig.usePrTemplateLabels ?? false),
     generateBadge: inp('generate-badge')
       ? inp('generate-badge') === 'true'
       : (fileConfig.generateBadge ?? false),

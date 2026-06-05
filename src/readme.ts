@@ -3,7 +3,7 @@ import * as fs from 'fs';
 export function updateVersionRefs(content: string, previousTag: string, newTag: string): string {
   if (!previousTag) return content;
   const escaped = previousTag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return content.replace(new RegExp(escaped, 'g'), newTag);
+  return content.replace(new RegExp('\\b' + escaped + '\\b', 'g'), newTag);
 }
 
 export function updateReadmeBlock(

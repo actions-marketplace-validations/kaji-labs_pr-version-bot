@@ -1,9 +1,16 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import * as semver from 'semver';
 import { detectBump } from './labels';
-import { bumpPrerelease, readVersion, bumpVersion, writeVersion } from './version';
+import {
+  bumpPrerelease,
+  readVersion,
+  bumpVersion,
+  writeVersion,
+  assertChannelOrder,
+} from './version';
 import type { PrereleaseChannel } from './version';
-import { prependEntry } from './changelog';
+import { prependEntry, buildEntry } from './changelog';
 import { configureGit, commitRelease, createTag, pushWithProtectionCheck } from './git';
 import {
   sanitiseReleaseBranch,
@@ -16,7 +23,7 @@ import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
 import { detectBumpFromCommits } from './conventional';
 import { detectBumpFromPrBody } from './pr-template';
-import { sendSlackNotification, sendDiscordNotification } from './notify';
+import { sendSlackNotifications, sendDiscordNotifications } from './notify';
 import { resolvePackagePaths } from './monorepo';
 import { generateBadgeJson, writeBadgeFile } from './badge';
 import { applyReadmeUpdate, extractMajorAlias } from './readme';
@@ -26,10 +33,12 @@ export async function run(): Promise<void> {
     const pr = github.context.payload.pull_request;
     if (!pr?.merged) {
       core.info('PR not merged — skipping');
+      core.setOutput('skipped', 'true');
       return;
     }
 
     const token = core.getInput('github-token', { required: true });
+    const octokit = github.getOctokit(token);
 
     const inputs: Record<string, string> = {
       'version-file': core.getInput('version-file'),
@@ -53,6 +62,8 @@ export async function run(): Promise<void> {
       'readme-end-marker': core.getInput('readme-end-marker'),
       'use-release-pr': core.getInput('use-release-pr'),
       'tag-on-release-pr': core.getInput('tag-on-release-pr'),
+      'release-pr-base': core.getInput('release-pr-base'),
+      'enforce-channel-order': core.getInput('enforce-channel-order'),
     };
 
     const fileConfig = loadConfig();
@@ -80,7 +91,6 @@ export async function run(): Promise<void> {
       bump === config.defaultBump &&
       config.useConventionalCommits
     ) {
-      const octokit = github.getOctokit(token);
       const { owner, repo } = github.context.repo;
       const commits = await octokit.rest.pulls.listCommits({
         owner,
@@ -114,6 +124,24 @@ export async function run(): Promise<void> {
 
     // Use first package (or root) to determine the "canonical" next version for the tag
     const current = readVersion(packageVersionFiles[0]);
+
+    if (config.enforceChannelOrder && isPrereleaseChannel(bump)) {
+      assertChannelOrder(current, bump);
+    }
+
+    if (isPrereleaseChannel(bump)) {
+      const sv = semver.parse(current);
+      if (sv && sv.prerelease.length >= 2) {
+        const currentChan = String(sv.prerelease[0]);
+        if (currentChan !== bump) {
+          core.warning(
+            `Pre-release channel changed from "${currentChan}" to "${bump}". ` +
+              `The patch number has been reset to reflect the new channel.`
+          );
+        }
+      }
+    }
+
     const next = isPrereleaseChannel(bump)
       ? bumpPrerelease(current, bump)
       : bumpVersion(current, bump as Exclude<typeof bump, PrereleaseChannel | 'none'>);
@@ -126,7 +154,15 @@ export async function run(): Promise<void> {
     core.info(`Creating tag: ${tag}`);
 
     if (config.dryRun) {
-      core.info('Dry run — no changes written');
+      const dryRunEntry = buildEntry({
+        version: next,
+        date: new Date().toISOString().split('T')[0],
+        prTitle: pr.title as string,
+        prNumber: pr.number as number,
+        bump,
+      });
+      core.info(`Dry run — no changes written`);
+      core.info(`Changelog entry that would be written:\n${dryRunEntry}`);
       core.setOutput('version', next);
       core.setOutput('tag', tag);
       core.setOutput('bump', bump);
@@ -203,7 +239,8 @@ export async function run(): Promise<void> {
         config.readmeEndMarker,
         repoFullName,
         tag,
-        majorAlias
+        majorAlias,
+        `${config.tagPrefix}${current}`
       );
       if (updated) {
         filesToCommit.push(config.readmeFile);
@@ -212,6 +249,7 @@ export async function run(): Promise<void> {
       }
     }
 
+    core.info(`Files to commit: ${filesToCommit.join(', ')}`);
     await configureGit();
 
     if (config.useReleasePr) {
@@ -223,7 +261,7 @@ export async function run(): Promise<void> {
       if (config.tagOnReleasePr) {
         await createTag(tag);
         if (config.createGithubRelease) {
-          await createRelease(token, tag, next, {
+          const releaseUrl = await createRelease(token, tag, next, {
             bump,
             prTitle: pr.title as string,
             prNumber: pr.number as number,
@@ -231,12 +269,14 @@ export async function run(): Promise<void> {
             authorLogin: (pr.user as { login: string }).login,
             previousTag: `${config.tagPrefix}${current}`,
           });
+          core.setOutput('release-url', releaseUrl);
         }
       }
 
       const prTitle = message;
       const prBody = `This PR was automatically created by PR Version Bot.\n\n## Changes\n\n- Version bumped to \`${next}\`\n- \`${config.versionFile}\` updated\n- \`${config.changelogFile}\` updated`;
-      const prUrl = await openReleasePr(token, releaseBranch, config.targetBranch, prTitle, prBody);
+      const prBase = config.releasePrBase || config.targetBranch;
+      const prUrl = await openReleasePr(token, releaseBranch, prBase, prTitle, prBody);
 
       core.info(`Release PR created: ${prUrl}`);
       core.setOutput('release-pr-url', prUrl);
@@ -246,7 +286,7 @@ export async function run(): Promise<void> {
       await pushWithProtectionCheck(config.targetBranch);
 
       if (config.createGithubRelease) {
-        await createRelease(token, tag, next, {
+        const releaseUrl = await createRelease(token, tag, next, {
           bump,
           prTitle: pr.title as string,
           prNumber: pr.number as number,
@@ -254,6 +294,7 @@ export async function run(): Promise<void> {
           authorLogin: (pr.user as { login: string }).login,
           previousTag: `${config.tagPrefix}${current}`,
         });
+        core.setOutput('release-url', releaseUrl);
       }
     }
 
@@ -264,11 +305,26 @@ export async function run(): Promise<void> {
       .replace('{prNumber}', String(pr.number));
 
     if (config.slackWebhookUrl) {
-      await sendSlackNotification(config.slackWebhookUrl, notifMessage);
+      await sendSlackNotifications(config.slackWebhookUrl, notifMessage);
     }
     if (config.discordWebhookUrl) {
-      await sendDiscordNotification(config.discordWebhookUrl, notifMessage, tag);
+      await sendDiscordNotifications(config.discordWebhookUrl, notifMessage, tag);
     }
+
+    await core.summary
+      .addHeading(`Released ${tag}`, 2)
+      .addTable([
+        [
+          { data: 'Field', header: true },
+          { data: 'Value', header: true },
+        ],
+        ['Previous version', current],
+        ['New version', next],
+        ['Bump type', bump],
+        ['Tag', tag],
+        ['PR', `#${pr.number as number} — ${pr.title as string}`],
+      ])
+      .write();
 
     core.setOutput('version', next);
     core.setOutput('tag', tag);

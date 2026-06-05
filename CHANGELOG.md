@@ -1,3 +1,7 @@
+## [0.8.1] - 2026-06-05
+
+- patch: fix: static badge URL - endpoint badge broken on private repos (#25)
+
 ## [0.8.0] - 2026-06-05
 
 - minor: feat(epic-10): PR template checkbox label detection (#23)

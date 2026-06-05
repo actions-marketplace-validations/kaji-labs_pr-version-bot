@@ -17,6 +17,13 @@ describe('updateReadmeBlock', () => {
     expect(result).toContain('More text');
   });
 
+  it('includes static version badge in generated block', () => {
+    const input = `${START}\nold\n${END}`;
+    const result = updateReadmeBlock(input, START, END, 'owner/repo', 'v1.2.3', 'v1');
+    expect(result).toContain('img.shields.io/badge/version-v1.2.3-orange');
+    expect(result).toContain('github.com/owner/repo/releases');
+  });
+
   it('returns null when start marker not found', () => {
     const input = `# My Repo\n\n${END}\n\nMore text`;
     expect(updateReadmeBlock(input, START, END, 'owner/repo', 'v1.2.3', 'v1')).toBeNull();

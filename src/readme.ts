@@ -19,6 +19,8 @@ export function updateReadmeBlock(
   const block = [
     startMarker,
     '',
+    `[![Version](https://img.shields.io/badge/version-${tag}-orange)](https://github.com/${repoFullName}/releases)`,
+    '',
     `> Current stable release: **${tag}**`,
     '',
     '**Pinned version (recommended):**',

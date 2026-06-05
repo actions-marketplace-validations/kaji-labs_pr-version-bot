@@ -29726,7 +29726,7 @@ function generateBadgeJson(tag, color) {
 function writeBadgeFile(filePath, badge) {
   const dir = path2.dirname(filePath);
   fs8.mkdirSync(dir, { recursive: true });
-  fs8.writeFileSync(filePath, JSON.stringify(badge, null, 2), "utf8");
+  fs8.writeFileSync(filePath, JSON.stringify(badge, null, 2) + "\n", "utf8");
 }
 
 // src/readme.ts

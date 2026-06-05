@@ -47,7 +47,7 @@ describe('writeBadgeFile', () => {
     writeBadgeFile('.badges/version.json', badge);
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       '.badges/version.json',
-      JSON.stringify(badge, null, 2),
+      JSON.stringify(badge, null, 2) + '\n',
       'utf8'
     );
   });

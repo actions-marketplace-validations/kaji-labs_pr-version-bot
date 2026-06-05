@@ -4,29 +4,15 @@
 
 ### B-016 — Enrich release notes with PR link, author, and label used
 
-- **Logged:** 2026-06-04
-- **Priority:** Medium
-- **Description:** The GitHub Release body currently contains only a single line: `{bump}: {prTitle} (#{prNumber})`. This is functional but minimal. Richer release notes should include: the full PR link (not just the number), the PR author's GitHub handle, the bump type label that triggered the release (or the conventional commit if that path was used), and a direct link to the diff/compare. Example:
-
-  ```
-  ## What changed
-  - minor: Add .versionbot.yml config file support (#11) by @Rashay01
-    https://github.com/kaji-labs/pr-version-bot/pull/11
-
-  **Full diff:** https://github.com/kaji-labs/pr-version-bot/compare/v0.0.1...v0.1.0
-  ```
-
-- **Implementation:** `src/github-release.ts` — update `createRelease` to accept additional context (author login, PR URL, compare URL). `src/index.ts` — pass `pr.user.login`, `pr.html_url`, and build compare URL from previous tag. See Epic 9 / Story 8.2 for related README sync work.
-- **Status:** Open
+- **Logged:** 2026-06-04 | **Closed:** 2026-06-05
+- **Resolution:** `src/github-release.ts` updated — `createRelease` now accepts a `ReleaseContext` object and generates a structured body with PR link, author handle, and compare URL. Both call sites in `src/index.ts` updated.
 
 ---
 
 ### B-017 — Include PR link in CHANGELOG.md entries
 
-- **Logged:** 2026-06-04
-- **Priority:** Medium
-- **Description:** `CHANGELOG.md` entries currently use `(#42)` which GitHub auto-links to the PR. But users reading the raw file (or in IDEs) don't see the full URL. Update `buildEntry` in `src/changelog.ts` to include the full PR URL as a Markdown link instead of just the number: `([#42](https://github.com/kaji-labs/pr-version-bot/pull/42))`. The repo URL needs to be available — read from `github.context.payload.repository.html_url` or `github.context.repo` at runtime. This should be opt-in or always-on — always-on is simpler since it's universally better. Unit tests: verify the URL is included in the formatted entry.
-- **Status:** Open
+- **Logged:** 2026-06-04 | **Closed:** 2026-06-05
+- **Resolution:** `src/changelog.ts` — `ChangelogEntry` gained optional `prUrl?: string`; `buildEntry` renders `([#42](url))` when present, falls back to `(#42)`. Both `prependEntry` call sites in `src/index.ts` pass `pr.html_url`.
 
 ---
 
@@ -52,11 +38,8 @@
 
 ### B-010 — [GO PUBLIC] Ensure SECURITY.md advisory URL is correct
 
-- **Logged:** 2026-06-04
-- **Priority:** High — do before making repo public
-- **Description:** `SECURITY.md` links to `https://github.com/YOUR_ORG/pr-version-bot/security/advisories/new`. This was updated to `kaji-labs` but verify the private security advisory feature is enabled on the repo. On public repos, GitHub enables this automatically.
-- **File:** `SECURITY.md`
-- **Status:** Open
+- **Logged:** 2026-06-04 | **Closed:** 2026-06-05
+- **Resolution:** Verified — `SECURITY.md` correctly links to `https://github.com/kaji-labs/pr-version-bot/security/advisories/new`. No `YOUR_ORG` placeholder remains. Feature becomes active automatically when repo goes public.
 
 ---
 
@@ -89,10 +72,8 @@
 
 ### B-014 — [GO PUBLIC] Review and tighten CODEOWNERS
 
-- **Logged:** 2026-06-04
-- **Priority:** Medium
-- **Description:** `.github/CODEOWNERS` currently only protects `LICENSE`. Consider adding coverage for: `action.yml`, `src/`, `.github/workflows/` — requiring review from `@Rashay01` for any changes to the core action files and CI workflows.
-- **Status:** Open
+- **Logged:** 2026-06-04 | **Closed:** 2026-06-05
+- **Resolution:** `.github/CODEOWNERS` expanded to require `@Rashay01` review on `/action.yml`, `/src/`, `/.github/workflows/`, and `/LICENSE`.
 
 ---
 
@@ -127,11 +108,8 @@
 
 ### B-003 — git.ts: commitRelease called with empty files array
 
-- **Logged:** 2026-06-04 by review agent
-- **Triggered by:** Story 1.6
-- **Priority:** Low
-- **Description:** `commitRelease([])` would run `git commit -m ...` with nothing staged. Git would error with "nothing to commit". Internal function — callers are responsible for passing non-empty file lists. Consider adding a guard: `if (files.length === 0) return;` or throw explicitly. Not a risk in current usage since index.ts always passes `[versionFile, changelogFile]`.
-- **Status:** Open
+- **Logged:** 2026-06-04 | **Closed:** 2026-06-05
+- **Resolution:** `src/git.ts` — `commitRelease` now throws `'commitRelease called with an empty files array'` immediately when `files.length === 0`. 1 new unit test.
 
 ---
 

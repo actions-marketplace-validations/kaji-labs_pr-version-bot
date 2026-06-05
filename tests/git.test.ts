@@ -52,6 +52,10 @@ describe('commitRelease', () => {
     const commitIdx = calls.findIndex((a) => a[0] === 'commit');
     expect(addIdx).toBeLessThan(commitIdx);
   });
+
+  it('throws when files array is empty', async () => {
+    await expect(commitRelease([], 'chore(release): v1.0.0')).rejects.toThrow('empty files array');
+  });
 });
 
 describe('createTag', () => {

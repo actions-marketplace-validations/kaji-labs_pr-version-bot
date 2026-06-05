@@ -156,6 +156,7 @@ export async function run(): Promise<void> {
           prTitle: pr.title as string,
           prNumber: pr.number as number,
           bump,
+          prUrl: pr.html_url as string,
         });
         filesToCommit.push(pkgChangelogFile);
       }
@@ -176,6 +177,7 @@ export async function run(): Promise<void> {
         prTitle: pr.title as string,
         prNumber: pr.number as number,
         bump,
+        prUrl: pr.html_url as string,
       });
       filesToCommit.push(config.changelogFile);
 
@@ -221,12 +223,14 @@ export async function run(): Promise<void> {
       if (config.tagOnReleasePr) {
         await createTag(tag);
         if (config.createGithubRelease) {
-          await createRelease(
-            token,
-            tag,
-            next,
-            `${bump}: ${pr.title as string} (#${pr.number as number})`
-          );
+          await createRelease(token, tag, next, {
+            bump,
+            prTitle: pr.title as string,
+            prNumber: pr.number as number,
+            prUrl: pr.html_url as string,
+            authorLogin: (pr.user as { login: string }).login,
+            previousTag: `${config.tagPrefix}${current}`,
+          });
         }
       }
 
@@ -242,12 +246,14 @@ export async function run(): Promise<void> {
       await pushWithProtectionCheck(config.targetBranch);
 
       if (config.createGithubRelease) {
-        await createRelease(
-          token,
-          tag,
-          next,
-          `${bump}: ${pr.title as string} (#${pr.number as number})`
-        );
+        await createRelease(token, tag, next, {
+          bump,
+          prTitle: pr.title as string,
+          prNumber: pr.number as number,
+          prUrl: pr.html_url as string,
+          authorLogin: (pr.user as { login: string }).login,
+          previousTag: `${config.tagPrefix}${current}`,
+        });
       }
     }
 

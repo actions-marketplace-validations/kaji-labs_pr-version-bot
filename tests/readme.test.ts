@@ -107,7 +107,15 @@ describe('applyReadmeUpdate with previousTag', () => {
     vi.mocked(fs.readFileSync).mockReturnValue(readmeContent);
     vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
 
-    const result = applyReadmeUpdate('README.md', START, END, 'owner/repo', 'v1.1.0', 'v1', 'v1.0.0');
+    const result = applyReadmeUpdate(
+      'README.md',
+      START,
+      END,
+      'owner/repo',
+      'v1.1.0',
+      'v1',
+      'v1.0.0'
+    );
     expect(result).toBe(true);
     const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
     expect(written).toContain('version-v1.1.0-orange');

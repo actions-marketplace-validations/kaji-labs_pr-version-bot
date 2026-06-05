@@ -29734,7 +29734,7 @@ var fs9 = __toESM(require("fs"));
 function updateVersionRefs(content, previousTag, newTag) {
   if (!previousTag) return content;
   const escaped = previousTag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return content.replace(new RegExp(escaped, "g"), newTag);
+  return content.replace(new RegExp("\\b" + escaped + "\\b", "g"), newTag);
 }
 function updateReadmeBlock(content, startMarker, endMarker, repoFullName, tag, majorAlias) {
   const startIdx = content.indexOf(startMarker);

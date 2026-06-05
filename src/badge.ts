@@ -20,5 +20,5 @@ export function generateBadgeJson(tag: string, color: string): BadgeJson {
 export function writeBadgeFile(filePath: string, badge: BadgeJson): void {
   const dir = path.dirname(filePath);
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(badge, null, 2), 'utf8');
+  fs.writeFileSync(filePath, JSON.stringify(badge, null, 2) + '\n', 'utf8');
 }

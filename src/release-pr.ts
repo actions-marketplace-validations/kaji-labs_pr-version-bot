@@ -2,8 +2,8 @@ import * as exec from '@actions/exec';
 import * as github from '@actions/github';
 
 export function sanitiseReleaseBranch(tag: string): string {
-  // Only keep alphanumeric, /, ., - characters
-  return `release/${tag.replace(/[^a-zA-Z0-9/.-]/g, '-')}`;
+  // Only keep alphanumeric, ., - characters (no slashes — those would create sub-paths)
+  return `release/${tag.replace(/[^a-zA-Z0-9.-]/g, '-')}`;
 }
 
 export async function createReleaseBranch(branchName: string): Promise<void> {

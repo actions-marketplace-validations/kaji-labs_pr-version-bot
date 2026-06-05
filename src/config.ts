@@ -39,6 +39,8 @@ export interface BotConfig {
   readmeEndMarker?: string;
   useReleasePr?: boolean;
   tagOnReleasePr?: boolean;
+  releasePrBase?: string;
+  enforceChannelOrder?: boolean;
 }
 
 export interface ResolvedConfig {
@@ -68,6 +70,8 @@ export interface ResolvedConfig {
   readmeEndMarker: string;
   useReleasePr: boolean;
   tagOnReleasePr: boolean;
+  releasePrBase: string;
+  enforceChannelOrder: boolean;
 }
 
 const DEFAULT_LABELS: LabelConfig = {
@@ -114,6 +118,15 @@ function validateBumpType(value: string, source: string): BumpType {
   );
 }
 
+function validateTagPrefix(value: string): string {
+  if (!/^[a-zA-Z0-9._-]*$/.test(value)) {
+    throw new Error(
+      `Invalid tag-prefix "${value}". Only alphanumeric characters, dots, underscores, and hyphens are allowed.`
+    );
+  }
+  return value;
+}
+
 export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string>): ResolvedConfig {
   const inp = (key: string) => inputs[key] || '';
 
@@ -123,7 +136,7 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
     versionFile: inp('version-file') || fileConfig.versionFile || 'VERSION.md',
     changelogFile: inp('changelog-file') || fileConfig.changelogFile || 'CHANGELOG.md',
     defaultBump: validateBumpType(String(rawDefaultBump), 'default-bump'),
-    tagPrefix: inp('tag-prefix') || fileConfig.tagPrefix || 'v',
+    tagPrefix: validateTagPrefix(inp('tag-prefix') || fileConfig.tagPrefix || 'v'),
     createGithubRelease: inp('create-github-release')
       ? inp('create-github-release') !== 'false'
       : (fileConfig.createGithubRelease ?? true),
@@ -132,8 +145,18 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
       : (fileConfig.failOnMultipleLabels ?? true),
     dryRun: inp('dry-run') ? inp('dry-run') === 'true' : (fileConfig.dryRun ?? false),
     targetBranch: inp('target-branch') || fileConfig.targetBranch || 'main',
-    commitMessageTemplate:
-      inp('commit-message-template') || fileConfig.commitMessageTemplate || 'chore(release): {tag}',
+    commitMessageTemplate: (() => {
+      const commitMessageTemplate =
+        inp('commit-message-template') ||
+        fileConfig.commitMessageTemplate ||
+        'chore(release): {tag}';
+      if (commitMessageTemplate.length > 500) {
+        throw new Error(
+          `commit-message-template must be 500 characters or fewer (got ${commitMessageTemplate.length})`
+        );
+      }
+      return commitMessageTemplate;
+    })(),
     syncPackageJson: inp('sync-package-json')
       ? inp('sync-package-json') === 'true'
       : (fileConfig.syncPackageJson ?? false),
@@ -178,5 +201,9 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
     tagOnReleasePr: inp('tag-on-release-pr')
       ? inp('tag-on-release-pr') !== 'false'
       : (fileConfig.tagOnReleasePr ?? true),
+    releasePrBase: inp('release-pr-base') || fileConfig.releasePrBase || '',
+    enforceChannelOrder: inp('enforce-channel-order')
+      ? inp('enforce-channel-order') === 'true'
+      : (fileConfig.enforceChannelOrder ?? false),
   };
 }

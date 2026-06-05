@@ -14,6 +14,11 @@ export function validateNoPaths(packages: string[]): void {
 export function resolvePackagePaths(packages: string[], versionFile: string): string[] {
   if (packages.length === 0) return [];
   validateNoPaths(packages);
+  // Guard the versionFile filename itself
+  const normVF = path.normalize(versionFile);
+  if (normVF.startsWith('..') || path.isAbsolute(normVF)) {
+    throw new Error(`versionFile contains path traversal: "${versionFile}"`);
+  }
   return packages.map((pkg) => {
     const versionPath = path.join(pkg, versionFile).replace(/\\/g, '/');
     if (fs.existsSync(versionPath) === false) {

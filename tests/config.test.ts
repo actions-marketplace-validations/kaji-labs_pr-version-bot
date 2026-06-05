@@ -30,6 +30,8 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'readme-file': '',
   'readme-start-marker': '',
   'readme-end-marker': '',
+  'use-release-pr': '',
+  'tag-on-release-pr': '',
 };
 
 describe('loadConfig', () => {
@@ -268,5 +270,13 @@ describe('mergeConfig', () => {
       { ...DEFAULT_INPUTS, 'readme-file': 'OTHER.md' }
     );
     expect(result.readmeFile).toBe('OTHER.md');
+  });
+
+  it('resolves useReleasePr default to false', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).useReleasePr).toBe(false);
+  });
+
+  it('resolves tagOnReleasePr default to true', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).tagOnReleasePr).toBe(true);
   });
 });

@@ -15,5 +15,20 @@ export async function commitRelease(files: string[], message: string): Promise<v
 export async function createTag(tag: string): Promise<void> {
   await exec.exec('git', ['tag', tag]);
   await exec.exec('git', ['push', 'origin', tag]);
-  await exec.exec('git', ['push']);
+}
+
+export async function pushWithProtectionCheck(targetBranch: string): Promise<void> {
+  try {
+    await exec.exec('git', ['push']);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Push to "${targetBranch}" was rejected. ` +
+        `If branch protection is enabled, direct pushes may be blocked. ` +
+        `Enable \`use-release-pr: true\` to open a release PR instead. ` +
+        `See https://github.com/kaji-labs/pr-version-bot/blob/main/docs/troubleshooting.md ` +
+        `(original error: ${msg})`,
+      { cause: error }
+    );
+  }
 }

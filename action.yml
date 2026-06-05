@@ -92,6 +92,23 @@ inputs:
     required: false
     default: '🚀 Released {tag}: {prTitle} (#{prNumber})'
 
+  use-release-pr:
+    description: >
+      When 'true', commits release files to a release/{tag} branch and opens a
+      PR instead of pushing directly to the target branch. Requires
+      pull-requests: write permission. Useful when branch protection blocks
+      direct pushes.
+    required: false
+    default: 'false'
+
+  tag-on-release-pr:
+    description: >
+      When 'true' (default) and use-release-pr is enabled, creates the git tag
+      and GitHub Release immediately on the release branch rather than waiting
+      for the PR to merge.
+    required: false
+    default: 'true'
+
   packages:
     description: >
       Comma-separated list of package paths for monorepo support
@@ -161,6 +178,9 @@ outputs:
 
   skipped:
     description: true if the release was skipped (release:none label)
+
+  release-pr-url:
+    description: URL of the release PR (only set when use-release-pr is true)
 
 runs:
   using: node20

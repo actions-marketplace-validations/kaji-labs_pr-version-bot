@@ -4,3 +4,5 @@ coverage/
 *.js.map
 licenses.txt
 .env
+stu/
+docs/superpowers/

@@ -1,3 +1,11 @@
+## [1.0.2] - 2026-06-05
+
+- patch: fix: use GitHub App token so release PRs trigger CI ([#46](https://github.com/kaji-labs/pr-version-bot/pull/46))
+
+## [1.0.1] - 2026-06-05
+
+- patch: test: verify end-to-end release flow ([#43](https://github.com/kaji-labs/pr-version-bot/pull/43))
+
 ## [1.0.0] - 2026-06-05
 
 - major: chore: cut v1.0.0 — first stable Marketplace release ([#40](https://github.com/kaji-labs/pr-version-bot/pull/40))

@@ -170,15 +170,17 @@ Push to "main" was rejected. If branch protection is enabled, direct pushes may 
 Enable `use-release-pr: true` to open a release PR instead.
 ```
 
-**Cause:** Your repository has branch protection rules that block direct pushes to the target branch, including pushes from `github-actions[bot]`.
+**Cause:** Your repository has branch protection rules (rulesets) that block direct pushes to the target branch, including pushes from `github-actions[bot]`.
 
-**Option A — Exempt `github-actions[bot]` from push restrictions**
+**Option A — GitHub App with bypass actor (recommended)**
 
-In your repository, go to **Settings → Branches → Branch protection rules** and edit the rule for your target branch. Under "Restrict who can push to matching branches", add `github-actions[bot]` to the allow list. This lets the action push directly without changing your protection rules for humans.
+Create a GitHub App, add it as a bypass actor on your ruleset, and pass its token to the action. The app can push directly to the protected branch without a separate release PR.
+
+See [GitHub App Setup](github-app-setup.md) for step-by-step instructions and [`examples/with-branch-protection.yml`](../examples/with-branch-protection.yml) for a complete workflow example.
 
 **Option B — Enable release PR mode**
 
-Add `use-release-pr: 'true'` to your workflow and grant `pull-requests: write` permission:
+Add `use-release-pr: 'true'` to your workflow. The action commits the release files to a `release/{tag}` branch and opens a PR instead of pushing directly. Use a GitHub App token so the release PR triggers CI checks normally.
 
 ```yaml
 permissions:
@@ -186,17 +188,20 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: kaji-labs/pr-version-bot@v0.9.1
+  - name: Generate app token
+    id: app-token
+    uses: actions/create-github-app-token@v3
     with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      app-id: ${{ secrets.APP_ID }}
+      private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+  - uses: kaji-labs/pr-version-bot@v1
+    with:
+      github-token: ${{ steps.app-token.outputs.token }}
       use-release-pr: 'true'
 ```
 
-In this mode, the action commits the release files to a `release/{tag}` branch and opens a PR against your target branch. The `release:none` label is automatically applied to the release PR to prevent recursive release triggering.
-
-**Also required:** GitHub must allow Actions to open PRs. Go to **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests** and enable the checkbox. Without this the action will emit a warning and exit cleanly — the tag and GitHub Release are still created, but you will need to open the release PR manually.
-
-See [`examples/with-branch-protection.yml`](../examples/with-branch-protection.yml) for a complete workflow example.
+The `release:none` label is automatically applied to the release PR to prevent recursive release triggering.
 
 ---
 

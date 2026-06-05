@@ -52,14 +52,14 @@ See [docs/labels.md](docs/labels.md) for full pre-release lifecycle rules.
 
 <!-- VERSIONBOT:START -->
 
-[![Version](https://img.shields.io/badge/version-v0.10.3-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
+[![Version](https://img.shields.io/badge/version-v0.10.4-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
 
-> Current stable release: **v0.10.3**
+> Current stable release: **v0.10.4**
 
 **Pinned version (recommended):**
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v0.10.3
+- uses: kaji-labs/pr-version-bot@v0.10.4
 ```
 
 **Major version alias:**
@@ -70,7 +70,7 @@ See [docs/labels.md](docs/labels.md) for full pre-release lifecycle rules.
 
 <!-- VERSIONBOT:END -->
 
-## Example workflow
+## Usage
 
 ```yaml
 name: Release

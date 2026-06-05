@@ -1,3 +1,7 @@
+## [1.0.0] - 2026-06-05
+
+- major: chore: cut v1.0.0 — first stable Marketplace release ([#40](https://github.com/kaji-labs/pr-version-bot/pull/40))
+
 ## [0.10.4] - 2026-06-05
 
 - patch: chore(B-009): pin all GitHub Actions to exact commit SHAs ([#34](https://github.com/kaji-labs/pr-version-bot/pull/34))

@@ -161,6 +161,43 @@
 
 ---
 
+## Branch protection blocks push
+
+**Symptom:** Action fails with a message like:
+
+```
+Push to "main" was rejected. If branch protection is enabled, direct pushes may be blocked.
+Enable `use-release-pr: true` to open a release PR instead.
+```
+
+**Cause:** Your repository has branch protection rules that block direct pushes to the target branch, including pushes from `github-actions[bot]`.
+
+**Option A — Exempt `github-actions[bot]` from push restrictions**
+
+In your repository, go to **Settings → Branches → Branch protection rules** and edit the rule for your target branch. Under "Restrict who can push to matching branches", add `github-actions[bot]` to the allow list. This lets the action push directly without changing your protection rules for humans.
+
+**Option B — Enable release PR mode**
+
+Add `use-release-pr: 'true'` to your workflow and grant `pull-requests: write` permission:
+
+```yaml
+permissions:
+  contents: write
+  pull-requests: write
+
+steps:
+  - uses: kaji-labs/pr-version-bot@v1
+    with:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      use-release-pr: 'true'
+```
+
+In this mode, the action commits the release files to a `release/{tag}` branch and opens a PR against your target branch. The `release:none` label is automatically applied to the release PR to prevent recursive release triggering.
+
+See [`examples/with-branch-protection.yml`](../examples/with-branch-protection.yml) for a complete workflow example.
+
+---
+
 ## Checkbox not detected
 
 If `use-pr-template-labels` is enabled but the action falls through to `default-bump` instead of using your checkbox, check these common causes:

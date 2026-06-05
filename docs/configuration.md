@@ -62,6 +62,8 @@ The config file is optional. The action works identically without it.
 | `readmeFile`             | string                            | `README.md`                                    | Path to README file to update                                       |
 | `readmeStartMarker`      | string                            | `<!-- VERSIONBOT:START -->`                    | Start marker for README block                                       |
 | `readmeEndMarker`        | string                            | `<!-- VERSIONBOT:END -->`                      | End marker for README block                                         |
+| `useReleasePr`           | boolean                           | `false`                                        | Open a release PR instead of pushing directly to target branch      |
+| `tagOnReleasePr`         | boolean                           | `true`                                         | Create git tag and GitHub Release immediately on the release branch |
 
 ---
 
@@ -361,6 +363,32 @@ Start marker for the README block. Only used when `update-readme` is `'true'`. T
 - **Default:** `<!-- VERSIONBOT:END -->`
 
 End marker for the README block. Only used when `update-readme` is `'true'`. The marker text must match exactly in your README file.
+
+---
+
+### `use-release-pr`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'false'`
+
+When `'true'`, commits release files to a `release/{tag}` branch and opens a PR against the target branch instead of pushing directly. Useful when branch protection rules block direct pushes by the `github-actions[bot]` user.
+
+Requires `pull-requests: write` permission on the workflow token.
+
+See [docs/troubleshooting.md](troubleshooting.md#branch-protection-blocks-push) for setup instructions.
+
+---
+
+### `tag-on-release-pr`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'true'`
+
+When `'true'` (default) and `use-release-pr` is enabled, creates the git tag and GitHub Release immediately on the release branch rather than waiting for the PR to merge.
+
+Set to `'false'` to defer tagging until the release PR is merged.
 
 ---
 

@@ -120,6 +120,8 @@ describe('applyReadmeUpdate with previousTag', () => {
     const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
     expect(written).toContain('version-v1.1.0-orange');
     expect(written).not.toContain('version-v1.0.0-orange');
+    expect(written).toContain('owner/repo@v1.1.0');
+    expect(written).not.toContain('owner/repo@v1.0.0');
   });
 });
 

@@ -86,7 +86,7 @@
 
 **Cause 2:** `package.json` is not in the repo root.
 
-**Fix:** The action looks for `package.json` in the repository root only. If your `package.json` is in a subdirectory, this feature is not supported in this version — see the roadmap for monorepo support (Epic 6).
+**Fix:** The action looks for `package.json` in the repository root only. If your `package.json` is in a subdirectory, use the `packages` input for monorepo support — see [configuration.md](configuration.md#packages) for details.
 
 ---
 
@@ -121,7 +121,7 @@
 **Fix:** Add the URL as a GitHub secret and pass it to the action:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1
+- uses: kaji-labs/pr-version-bot@v0.9.1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -186,7 +186,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: kaji-labs/pr-version-bot@v1
+  - uses: kaji-labs/pr-version-bot@v0.9.1
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       use-release-pr: 'true'

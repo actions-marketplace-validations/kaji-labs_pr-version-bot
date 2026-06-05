@@ -95,13 +95,34 @@ export function loadConfig(configPath = '.versionbot.yml'): BotConfig {
   return parsed as BotConfig;
 }
 
+const VALID_BUMP_TYPES: readonly BumpType[] = [
+  'major',
+  'minor',
+  'patch',
+  'none',
+  'alpha',
+  'beta',
+  'rc',
+];
+
+function validateBumpType(value: string, source: string): BumpType {
+  if ((VALID_BUMP_TYPES as readonly string[]).includes(value)) {
+    return value as BumpType;
+  }
+  throw new Error(
+    `Invalid ${source} value "${value}". Must be one of: ${VALID_BUMP_TYPES.join(', ')}`
+  );
+}
+
 export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string>): ResolvedConfig {
   const inp = (key: string) => inputs[key] || '';
+
+  const rawDefaultBump = inp('default-bump') || fileConfig.defaultBump || 'patch';
 
   return {
     versionFile: inp('version-file') || fileConfig.versionFile || 'VERSION.md',
     changelogFile: inp('changelog-file') || fileConfig.changelogFile || 'CHANGELOG.md',
-    defaultBump: (inp('default-bump') || fileConfig.defaultBump || 'patch') as BumpType,
+    defaultBump: validateBumpType(String(rawDefaultBump), 'default-bump'),
     tagPrefix: inp('tag-prefix') || fileConfig.tagPrefix || 'v',
     createGithubRelease: inp('create-github-release')
       ? inp('create-github-release') !== 'false'

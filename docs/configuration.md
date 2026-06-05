@@ -280,7 +280,7 @@ Comma-separated list of package paths for monorepo support. When set, the action
 Each path must contain its own `VERSION.md`. The changelog is updated at `{package}/CHANGELOG.md`.
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1
+- uses: kaji-labs/pr-version-bot@v0.9.1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     packages: 'packages/api,packages/web,packages/sdk'
@@ -423,11 +423,15 @@ Bump type applied: `major`, `minor`, `patch`, or `none`.
 
 `'true'` if the release was skipped (`release:none` label or `default-bump: none`). `'false'` otherwise.
 
+### `release-pr-url`
+
+URL of the pull request opened by the action when `use-release-pr` is `'true'`. Empty string when release PR mode is disabled.
+
 ## Using outputs in downstream steps
 
 ```yaml
 - id: version
-  uses: kaji-labs/pr-version-bot@v1
+  uses: kaji-labs/pr-version-bot@v0.9.1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
 

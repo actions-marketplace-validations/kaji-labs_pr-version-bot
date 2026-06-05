@@ -8,6 +8,9 @@ flowchart TD
     --> LABELS[labels.ts\nDetect bump type from PR labels]
 
     LABELS
+    --> PRTEMPLATE[pr-template.ts\nCheckbox detection fallback]
+
+    PRTEMPLATE
     --> VERSION[version.ts\nRead VERSION.md, compute next semver]
 
     VERSION
@@ -20,7 +23,16 @@ flowchart TD
     --> RELEASE[github-release.ts\nCreate GitHub Release via API]
 
     RELEASE
-    --> OUTPUTS[Action outputs\nversion, tag, bump, skipped]
+    --> RELEASEPR[release-pr.ts\nOpen release PR if branch protection active]
+
+    RELEASE
+    --> BADGE[badge.ts\nWrite Shields.io badge JSON]
+
+    RELEASE
+    --> README[readme.ts\nUpdate VERSIONBOT block in README]
+
+    RELEASE
+    --> OUTPUTS[Action outputs\nversion, tag, bump, skipped, release-pr-url]
 ```
 
 ## Module Responsibilities
@@ -28,10 +40,14 @@ flowchart TD
 | Module                  | Responsibility                                                                                    |
 | ----------------------- | ------------------------------------------------------------------------------------------------- |
 | `src/labels.ts`         | Pure function. Maps PR label strings to bump type. No I/O.                                        |
+| `src/pr-template.ts`    | Scans the merged PR body for checked Markdown checkboxes matching configured label names.         |
 | `src/version.ts`        | Reads and writes `VERSION.md`. Uses the `semver` npm package.                                     |
 | `src/changelog.ts`      | Reads and writes `CHANGELOG.md`. Prepends a formatted entry.                                      |
 | `src/git.ts`            | Runs git commands via `@actions/exec`. All calls use array-form args.                             |
 | `src/github-release.ts` | Calls GitHub REST API via `@actions/github` Octokit.                                              |
+| `src/release-pr.ts`     | Commits release files to a `release/{tag}` branch and opens a PR when `use-release-pr` is set.    |
+| `src/badge.ts`          | Writes a Shields.io-compatible badge JSON file when `generate-badge` is enabled.                  |
+| `src/readme.ts`         | Updates the VERSIONBOT block in the target README file when `update-readme` is enabled.           |
 | `src/index.ts`          | Entry point. Reads all `@actions/core` inputs. Wires all modules. Handles dry-run and error flow. |
 
 ## Runtime

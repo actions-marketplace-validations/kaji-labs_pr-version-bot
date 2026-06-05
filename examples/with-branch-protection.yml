@@ -1,10 +1,13 @@
-# Uses release PR mode for repos where branch protection blocks direct pushes.
+# Uses a GitHub App token so the action can push directly to a branch-protected
+# main branch without needing a separate release PR.
 #
-# A GitHub App token is used so that the release PR triggers CI checks.
-# PRs opened with GITHUB_TOKEN are intentionally ignored by GitHub Actions
-# to prevent infinite loops — using an App token bypasses this restriction.
+# Prerequisites:
+#   1. Create a GitHub App with Contents: write permission
+#   2. Add the app as a bypass actor on your branch protection ruleset
+#      (Settings → Rules → Rulesets → Bypass list → Add bypass → App)
+#   3. Store APP_ID and APP_PRIVATE_KEY as repository secrets
 #
-# Setup: see docs/github-app-setup.md
+# See docs/github-app-setup.md for step-by-step instructions.
 name: Release
 
 on:
@@ -14,7 +17,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   release:
@@ -23,7 +25,7 @@ jobs:
     steps:
       - name: Generate app token
         id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -36,4 +38,3 @@ jobs:
       - uses: kaji-labs/pr-version-bot@v1
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          use-release-pr: 'true'

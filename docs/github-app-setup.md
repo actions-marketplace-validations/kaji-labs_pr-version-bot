@@ -1,12 +1,12 @@
 # GitHub App Setup
 
-When `use-release-pr: 'true'` is enabled, the action creates a release PR on your behalf. GitHub intentionally does not trigger CI workflow runs on PRs opened with `GITHUB_TOKEN` (to prevent infinite loops). If your branch protection requires CI checks to pass before merging, you need to use a GitHub App token instead.
+If your repository has branch protection rules, direct pushes from `GITHUB_TOKEN` are blocked — including pushes from GitHub Actions. A GitHub App token bypasses this when the app is added to the ruleset bypass list, letting the action commit the release files directly to your main branch without a separate release PR.
 
 ## Why a GitHub App?
 
-- PRs opened via a GitHub App token trigger CI normally
+- Bypass actors in GitHub rulesets are App-based — `GITHUB_TOKEN` cannot be added directly at the repository level
 - The private key does not expire — no rotation burden
-- Permissions are scoped to exactly what the action needs
+- Permissions are scoped to exactly what the action needs (`contents: write`)
 
 ## Setup
 
@@ -30,7 +30,6 @@ Under **Repository permissions**:
 | Permission      | Access         |
 | --------------- | -------------- |
 | Contents        | Read and write |
-| Pull requests   | Read and write |
 | Everything else | No access      |
 
 Under **Where can this GitHub App be installed**, select **"Any account"** if you want to reuse the app across multiple repos or orgs.
@@ -49,7 +48,13 @@ Scroll to the bottom of the app settings page and click **"Generate a private ke
 
 In the app settings sidebar, click **"Install App"** → **"Install"** next to your account or org → select the repositories you want → click **"Install"**.
 
-### 5. Add secrets to your repository
+### 5. Add the app as a bypass actor
+
+Go to your repo → **Settings → Rules → Rulesets** → edit your ruleset → **Bypass list** → **Add bypass** → switch type to **App** → search for your app name → select it → save.
+
+This allows the app to push directly to protected branches.
+
+### 6. Add secrets to your repository
 
 Go to your repo → **Settings → Secrets and variables → Actions**.
 
@@ -60,14 +65,13 @@ Add:
 | Secret | `APP_ID`          | The App ID number from step 2                |
 | Secret | `APP_PRIVATE_KEY` | Full contents of the `.pem` file from step 3 |
 
-### 6. Update your workflow
+### 7. Update your workflow
 
 Add a token generation step before checkout and pass the token to the action:
 
 ```yaml
 permissions:
   contents: write
-  pull-requests: write
 
 steps:
   - name: Generate app token
@@ -85,17 +89,12 @@ steps:
   - uses: kaji-labs/pr-version-bot@v1
     with:
       github-token: ${{ steps.app-token.outputs.token }}
-      use-release-pr: 'true'
 ```
 
 See [`examples/with-branch-protection.yml`](../examples/with-branch-protection.yml) for a complete workflow.
 
-## Alternative: bypass actor
+## Using release PR mode instead
 
-If you do not need CI to run on release PRs (the release PR only bumps version metadata — `VERSION.md`, `CHANGELOG.md`, README, badge), you can instead add `github-actions[bot]` as a bypass actor on your branch protection ruleset:
+If you prefer the action to open a pull request for each release (so you can review before merging to main), add `use-release-pr: 'true'` and grant `pull-requests: write` to the app. PRs opened with an App token trigger CI normally, so branch protection checks will pass.
 
-1. Go to **Settings → Rules → Rulesets** → edit your ruleset
-2. Under **Bypass list** → **Add bypass** → switch type to **App** → search for **GitHub Actions**
-3. Save
-
-This lets the bot-created PR merge without CI passing. Real code PRs from humans are unaffected.
+See [troubleshooting — CI not running on release PR](troubleshooting.md#ci-not-running-on-release-pr) for more detail.

@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   release:
@@ -38,7 +37,6 @@ jobs:
           default-bump: patch
           generate-badge: 'true'
           update-readme: 'true'
-          use-release-pr: 'true'
 
       - name: Push major version tag
         if: steps.versionbot.outputs.skipped != 'true'

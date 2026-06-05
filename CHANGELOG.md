@@ -1,3 +1,7 @@
+## [1.1.0] - 2026-06-05
+
+- minor: chore: upgrade to Node.js 24 — action runtime and all workflow actions ([#45](https://github.com/kaji-labs/pr-version-bot/pull/45))
+
 ## [1.0.2] - 2026-06-05
 
 - patch: fix: use GitHub App token so release PRs trigger CI ([#46](https://github.com/kaji-labs/pr-version-bot/pull/46))

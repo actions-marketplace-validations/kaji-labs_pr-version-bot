@@ -1,3 +1,7 @@
+## [0.9.0] - 2026-06-05
+
+- minor: feat(epic-11): branch protection compatibility - push error detection + release PR mode (#26)
+
 ## [0.8.1] - 2026-06-05
 
 - patch: fix: static badge URL - endpoint badge broken on private repos (#25)

@@ -46236,6 +46236,7 @@ function mergeConfig(fileConfig, inputs) {
       ...fileConfig.labels
     },
     packages: inp("packages") ? inp("packages").split(",").map((p) => p.trim()).filter(Boolean) : fileConfig.packages ?? [],
+    usePrTemplateLabels: inp("use-pr-template-labels") ? inp("use-pr-template-labels") === "true" : fileConfig.usePrTemplateLabels ?? false,
     generateBadge: inp("generate-badge") ? inp("generate-badge") === "true" : fileConfig.generateBadge ?? false,
     badgeColor: inp("badge-color") || fileConfig.badgeColor || "orange",
     badgeFile: inp("badge-file") || fileConfig.badgeFile || ".badges/version.json",
@@ -46298,6 +46299,42 @@ function detectBumpFromCommits(commitMessages) {
     }
   }
   return result;
+}
+
+// src/pr-template.ts
+function detectBumpFromPrBody(body, labelConfig, failOnMultiple) {
+  if (!body) return null;
+  const lines = body.split("\n");
+  const checkedTexts = [];
+  for (const line of lines) {
+    const match = line.match(/^[*-]\s+\[x\]\s+(.+)$/i);
+    if (match) checkedTexts.push(match[1].trim());
+  }
+  if (checkedTexts.length === 0) return null;
+  const labelToType = {
+    [labelConfig.major]: "major",
+    [labelConfig.minor]: "minor",
+    [labelConfig.patch]: "patch",
+    [labelConfig.none]: "none"
+  };
+  if (labelConfig.alpha) labelToType[labelConfig.alpha] = "alpha";
+  if (labelConfig.beta) labelToType[labelConfig.beta] = "beta";
+  if (labelConfig.rc) labelToType[labelConfig.rc] = "rc";
+  const matched = [];
+  for (const text of checkedTexts) {
+    for (const [labelValue, bumpType] of Object.entries(labelToType)) {
+      if (text.includes(labelValue)) {
+        matched.push(bumpType);
+        break;
+      }
+    }
+  }
+  if (matched.length === 0) return null;
+  if (matched.includes("none")) return "none";
+  if (matched.length > 1 && failOnMultiple) {
+    throw new Error(`Multiple release checkboxes found: ${matched.join(", ")}`);
+  }
+  return matched[0];
 }
 
 // src/notify.ts
@@ -46460,6 +46497,7 @@ async function run() {
       "commit-message-template": getInput("commit-message-template"),
       "sync-package-json": getInput("sync-package-json"),
       "use-conventional-commits": getInput("use-conventional-commits"),
+      "use-pr-template-labels": getInput("use-pr-template-labels"),
       "generate-badge": getInput("generate-badge"),
       "badge-color": getInput("badge-color"),
       "badge-file": getInput("badge-file"),
@@ -46473,7 +46511,18 @@ async function run() {
     const labels = pr.labels.map((l) => l.name);
     const releaseLabels = labels.filter((l) => Object.values(config.labels).includes(l));
     let bump = detectBump(labels, config.defaultBump, config.failOnMultipleLabels, config.labels);
-    if (releaseLabels.length === 0 && config.useConventionalCommits) {
+    if (releaseLabels.length === 0 && config.usePrTemplateLabels) {
+      const prBodyBump = detectBumpFromPrBody(
+        pr.body,
+        config.labels,
+        config.failOnMultipleLabels
+      );
+      if (prBodyBump !== null) {
+        bump = prBodyBump;
+        info(`PR body checkbox detected bump: ${bump}`);
+      }
+    }
+    if (releaseLabels.length === 0 && bump === config.defaultBump && config.useConventionalCommits) {
       const octokit = github2.getOctokit(token);
       const { owner, repo } = github2.context.repo;
       const commits = await octokit.rest.pulls.listCommits({

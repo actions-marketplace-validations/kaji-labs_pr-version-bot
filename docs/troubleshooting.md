@@ -158,3 +158,13 @@
 **Cause:** One of the configured package paths contains `..` or starts with `/`.
 
 **Fix:** Use only relative paths from the repo root, e.g. `packages/api` not `../api` or `/workspace/api`.
+
+---
+
+## Checkbox not detected
+
+If `use-pr-template-labels` is enabled but the action falls through to `default-bump` instead of using your checkbox, check these common causes:
+
+1. **Checkbox not checked** — the box must be `- [x]` (with a lowercase or uppercase X). An unchecked `- [ ]` is ignored.
+2. **Label text not found** — the checkbox text must contain the configured label value (e.g. `release:minor`) as a substring. Verify the label name matches what is configured in `config.labels` or the default `release:*` names.
+3. **PR body is empty** — some Git clients submit PRs without a body. Ensure the PR description includes the checkbox section before merging.

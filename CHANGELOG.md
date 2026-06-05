@@ -1,3 +1,7 @@
+## [0.10.3] - 2026-06-05
+
+- patch: fix: README version sync - word-boundary regex and bootstrap patch ([#32](https://github.com/kaji-labs/pr-version-bot/pull/32))
+
 ## [0.10.2] - 2026-06-05
 
 - patch: fix: replace build-dist auto-commit with dist integrity check - eliminates release race ([#30](https://github.com/kaji-labs/pr-version-bot/pull/30))

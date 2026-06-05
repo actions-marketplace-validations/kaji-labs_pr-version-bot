@@ -34,12 +34,12 @@ Create these labels in your repository:
 
 <!-- VERSIONBOT:START -->
 
-> Current stable release: **v0.7.1**
+> Current stable release: **v0.8.0**
 
 **Pinned version (recommended):**
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v0.7.1
+- uses: kaji-labs/pr-version-bot@v0.8.0
 ```
 
 **Major version alias:**

@@ -43,8 +43,8 @@ Pre-release versions follow the format `MAJOR.MINOR.PATCH-CHANNEL.N` where `CHAN
 After each stable release the action automatically force-pushes a floating major version tag (e.g. `v1`) so callers can pin to a major version without needing to update their workflows on every release:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1   # always the latest v1.x.x
-- uses: kaji-labs/pr-version-bot@v1.2.3  # pinned to a specific patch
+- uses: kaji-labs/pr-version-bot@v1 # always the latest v1.x.x
+- uses: kaji-labs/pr-version-bot@v1.2.3 # pinned to a specific patch
 ```
 
 Pre-release tags (`v1.2.3-rc.1`) do **not** move the floating tag — `v1` always points to the latest stable release in that major line.

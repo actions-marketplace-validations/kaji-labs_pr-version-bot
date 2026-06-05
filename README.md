@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml/badge.svg)](https://github.com/kaji-labs/pr-version-bot/actions/workflows/codeql.yml)
-[![Version](https://img.shields.io/badge/version-v0.9.1-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
+[![Version](https://img.shields.io/badge/version-v0.10.0-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
 [![License: Source-Available](https://img.shields.io/badge/License-Source--Available-blue.svg)](LICENSE)
 
 > Reusable GitHub Action for automatic semantic versioning from merged pull requests.
@@ -81,11 +81,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v0.9.1
+      - uses: kaji-labs/pr-version-bot@v0.10.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

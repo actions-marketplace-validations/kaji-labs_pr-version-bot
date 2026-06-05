@@ -26,9 +26,9 @@ describe('updateVersionRefs', () => {
     expect(updateVersionRefs(content, 'v1.2.3', 'v1.3.0')).toBe('Use v1.3.0 in your workflow');
   });
 
-  it('does not partially match similar tags', () => {
+  it('does not partially match a longer tag that starts with the same prefix', () => {
     const content = 'Use v1.2.3 but not v1.2.30';
-    expect(updateVersionRefs(content, 'v1.2.3', 'v2.0.0')).toBe('Use v2.0.0 but not v2.0.00');
+    expect(updateVersionRefs(content, 'v1.2.3', 'v2.0.0')).toBe('Use v2.0.0 but not v1.2.30');
   });
 });
 
@@ -89,6 +89,39 @@ describe('applyReadmeUpdate with previousTag', () => {
     const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
     expect(written).toContain('v1.1.0');
     expect(written).not.toContain('v1.0.0');
+  });
+
+  it('updates version ref appearing before the start marker (header badge scenario)', () => {
+    const readmeContent = [
+      '[![Version](https://img.shields.io/badge/version-v1.0.0-orange)](https://github.com/owner/repo/releases)',
+      '',
+      START,
+      'old block content',
+      END,
+      '',
+      '## Example',
+      '- uses: owner/repo@v1.0.0',
+    ].join('\n');
+
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readFileSync).mockReturnValue(readmeContent);
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+
+    const result = applyReadmeUpdate(
+      'README.md',
+      START,
+      END,
+      'owner/repo',
+      'v1.1.0',
+      'v1',
+      'v1.0.0'
+    );
+    expect(result).toBe(true);
+    const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
+    expect(written).toContain('version-v1.1.0-orange');
+    expect(written).not.toContain('version-v1.0.0-orange');
+    expect(written).toContain('owner/repo@v1.1.0');
+    expect(written).not.toContain('owner/repo@v1.0.0');
   });
 });
 

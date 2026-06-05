@@ -1,3 +1,7 @@
+## [0.10.4] - 2026-06-05
+
+- patch: chore(B-009): pin all GitHub Actions to exact commit SHAs ([#34](https://github.com/kaji-labs/pr-version-bot/pull/34))
+
 ## [0.10.3] - 2026-06-05
 
 - patch: fix: README version sync - word-boundary regex and bootstrap patch ([#32](https://github.com/kaji-labs/pr-version-bot/pull/32))

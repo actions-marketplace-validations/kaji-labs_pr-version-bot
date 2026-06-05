@@ -65,3 +65,19 @@ export function bumpPrerelease(current: string, channel: PrereleaseChannel): str
 export function writeVersion(filePath: string, version: string): void {
   fs.writeFileSync(filePath, version + '\n', 'utf8');
 }
+
+export const CHANNEL_ORDER: Readonly<Record<string, number>> = { alpha: 0, beta: 1, rc: 2 };
+
+export function assertChannelOrder(current: string, requestedChannel: PrereleaseChannel): void {
+  const sv = semver.parse(current);
+  if (!sv || sv.prerelease.length < 2) return; // stable, nothing to check
+  const currentChannel = String(sv.prerelease[0]);
+  if (
+    currentChannel in CHANNEL_ORDER &&
+    CHANNEL_ORDER[requestedChannel] < CHANNEL_ORDER[currentChannel]
+  ) {
+    throw new Error(
+      `enforce-channel-order: cannot bump to "${requestedChannel}" from "${currentChannel}" — channel order is alpha < beta < rc`
+    );
+  }
+}

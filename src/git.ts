@@ -11,6 +11,14 @@ export async function commitRelease(files: string[], message: string): Promise<v
   for (const file of files) {
     await exec.exec('git', ['add', file]);
   }
+  // Check if there are staged changes before committing
+  const hasStagedChanges = await exec.exec('git', ['diff', '--staged', '--quiet'], {
+    ignoreReturnCode: true,
+  });
+  if (hasStagedChanges === 0) {
+    // exit code 0 means no diff = nothing staged
+    throw new Error('commitRelease: no staged changes found — files may already be committed');
+  }
   await exec.exec('git', ['commit', '-m', message]);
 }
 

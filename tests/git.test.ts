@@ -29,14 +29,21 @@ describe('commitRelease', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('stages each file individually', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    vi.mocked(exec.exec).mockImplementation((_cmd, args) => {
+      // Return 1 for diff --staged --quiet (exit code 1 = has staged changes)
+      if (Array.isArray(args) && args.includes('--staged')) return Promise.resolve(1);
+      return Promise.resolve(0);
+    });
     await commitRelease(['VERSION.md', 'CHANGELOG.md'], 'chore(release): v1.2.3');
     expect(exec.exec).toHaveBeenCalledWith('git', ['add', 'VERSION.md']);
     expect(exec.exec).toHaveBeenCalledWith('git', ['add', 'CHANGELOG.md']);
   });
 
   it('commits with the provided message', async () => {
-    vi.mocked(exec.exec).mockResolvedValue(0);
+    vi.mocked(exec.exec).mockImplementation((_cmd, args) => {
+      if (Array.isArray(args) && args.includes('--staged')) return Promise.resolve(1);
+      return Promise.resolve(0);
+    });
     await commitRelease(['VERSION.md', 'CHANGELOG.md'], 'chore(release): v1.2.3');
     expect(exec.exec).toHaveBeenCalledWith('git', ['commit', '-m', 'chore(release): v1.2.3']);
   });
@@ -45,6 +52,8 @@ describe('commitRelease', () => {
     const calls: string[][] = [];
     vi.mocked(exec.exec).mockImplementation((_cmd, args) => {
       calls.push(args as string[]);
+      // Return 1 for diff --staged --quiet (exit code 1 = has staged changes)
+      if (Array.isArray(args) && args.includes('--staged')) return Promise.resolve(1);
       return Promise.resolve(0);
     });
     await commitRelease(['VERSION.md'], 'chore(release): v1.0.1');
@@ -55,6 +64,31 @@ describe('commitRelease', () => {
 
   it('throws when files array is empty', async () => {
     await expect(commitRelease([], 'chore(release): v1.0.0')).rejects.toThrow('empty files array');
+  });
+
+  // S-007: staged changes guard
+  it('throws when git diff --staged --quiet returns 0 (nothing staged)', async () => {
+    vi.mocked(exec.exec).mockImplementation((_cmd, args) => {
+      if (Array.isArray(args) && args.includes('--staged')) {
+        // exit code 0 = no diff = nothing staged
+        return Promise.resolve(0);
+      }
+      return Promise.resolve(0);
+    });
+    await expect(commitRelease(['VERSION.md'], 'chore(release): v1.0.0')).rejects.toThrow(
+      'no staged changes found'
+    );
+  });
+
+  it('proceeds to commit when staged changes exist (exit code 1)', async () => {
+    vi.mocked(exec.exec).mockImplementation((_cmd, args) => {
+      if (Array.isArray(args) && args.includes('--staged')) {
+        // exit code 1 = diff exists = has staged changes
+        return Promise.resolve(1);
+      }
+      return Promise.resolve(0);
+    });
+    await expect(commitRelease(['VERSION.md'], 'chore(release): v1.0.0')).resolves.not.toThrow();
   });
 });
 

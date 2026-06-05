@@ -14,7 +14,7 @@ export async function createRelease(
   tag: string,
   version: string,
   context: ReleaseContext
-): Promise<void> {
+): Promise<string> {
   const octokit = github.getOctokit(token);
   const { owner, repo } = github.context.repo;
 
@@ -27,13 +27,18 @@ export async function createRelease(
     `**Full diff:** ${compareUrl}`,
   ].join('\n');
 
-  await octokit.rest.repos.createRelease({
+  const isPreReleaseVersion =
+    context.bump === 'alpha' || context.bump === 'beta' || context.bump === 'rc';
+
+  const response = await octokit.rest.repos.createRelease({
     owner,
     repo,
     tag_name: tag,
     name: `Release ${tag}`,
     body,
     draft: false,
-    prerelease: false,
+    prerelease: isPreReleaseVersion,
+    make_latest: isPreReleaseVersion ? 'false' : 'true',
   });
+  return response.data.html_url;
 }

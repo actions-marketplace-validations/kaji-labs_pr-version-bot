@@ -1,5 +1,11 @@
 import * as fs from 'fs';
 
+export function updateVersionRefs(content: string, previousTag: string, newTag: string): string {
+  if (!previousTag) return content;
+  const escaped = previousTag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return content.replace(new RegExp(escaped, 'g'), newTag);
+}
+
 export function updateReadmeBlock(
   content: string,
   startMarker: string,
@@ -54,14 +60,26 @@ export function applyReadmeUpdate(
   endMarker: string,
   repoFullName: string,
   tag: string,
-  majorAlias: string
+  majorAlias: string,
+  previousTag: string
 ): boolean {
   if (!fs.existsSync(readmeFile)) {
     return false;
   }
   const content = fs.readFileSync(readmeFile, 'utf8') as string;
-  const updated = updateReadmeBlock(content, startMarker, endMarker, repoFullName, tag, majorAlias);
-  if (updated === null) return false;
+  const afterBlock = updateReadmeBlock(
+    content,
+    startMarker,
+    endMarker,
+    repoFullName,
+    tag,
+    majorAlias
+  );
+  const updated =
+    afterBlock !== null
+      ? updateVersionRefs(afterBlock, previousTag, tag)
+      : updateVersionRefs(content, previousTag, tag);
+  if (updated === content) return false;
   fs.writeFileSync(readmeFile, updated, 'utf8');
   return true;
 }

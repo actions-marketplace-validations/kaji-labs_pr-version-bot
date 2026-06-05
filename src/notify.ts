@@ -7,12 +7,14 @@ import * as core from '@actions/core';
 const SSRF_BLOCKED_PATTERNS = [
   /^localhost(:\d+)?$/i,
   /^127\.\d+\.\d+\.\d+(:\d+)?$/, // IPv4 loopback
-  /^::1(:\d+)?$/, // IPv6 loopback
+  /^\[?::1\]?(:\d+)?$/, // IPv6 loopback
   /^169\.254\.\d+\.\d+(:\d+)?$/, // link-local / AWS metadata
   /^10\.\d+\.\d+\.\d+(:\d+)?$/, // RFC-1918 10/8
   /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$/, // RFC-1918 172.16/12
   /^192\.168\.\d+\.\d+(:\d+)?$/, // RFC-1918 192.168/16
   /^0\.0\.0\.0(:\d+)?$/, // unspecified
+  /^\[?fc[0-9a-f]{2}:[0-9a-f:]+\]?$/i, // IPv6 ULA fc00::/7
+  /^\[?fe[89ab][0-9a-f]:[0-9a-f:]+\]?$/i, // IPv6 link-local fe80::/10
 ];
 
 function requireHttps(url: string, label: string): void {
@@ -60,7 +62,15 @@ function post(url: string, body: string): Promise<number> {
 export async function sendSlackNotification(webhookUrl: string, message: string): Promise<void> {
   requireHttps(webhookUrl, 'Slack');
   const body = JSON.stringify({ text: message });
-  const status = await post(webhookUrl, body);
+  let status: number;
+  try {
+    status = await post(webhookUrl, body);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Slack notification request failed: ${msg.replace(webhookUrl, '[redacted]')}`, {
+      cause: err,
+    });
+  }
   if (status < 200 || status >= 300) {
     core.warning(`Slack notification failed with status ${status} — release continues`);
   }
@@ -81,8 +91,41 @@ export async function sendDiscordNotification(
       },
     ],
   });
-  const status = await post(webhookUrl, body);
+  let status: number;
+  try {
+    status = await post(webhookUrl, body);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `Discord notification request failed: ${msg.replace(webhookUrl, '[redacted]')}`,
+      { cause: err }
+    );
+  }
   if (status < 200 || status >= 300) {
     core.warning(`Discord notification failed with status ${status} — release continues`);
+  }
+}
+
+export async function sendSlackNotifications(webhookUrls: string, message: string): Promise<void> {
+  const urls = webhookUrls
+    .split(',')
+    .map((u) => u.trim())
+    .filter(Boolean);
+  for (const url of urls) {
+    await sendSlackNotification(url, message);
+  }
+}
+
+export async function sendDiscordNotifications(
+  webhookUrls: string,
+  message: string,
+  tag: string
+): Promise<void> {
+  const urls = webhookUrls
+    .split(',')
+    .map((u) => u.trim())
+    .filter(Boolean);
+  for (const url of urls) {
+    await sendDiscordNotification(url, message, tag);
   }
 }

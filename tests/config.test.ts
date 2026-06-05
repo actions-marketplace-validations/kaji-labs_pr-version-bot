@@ -32,6 +32,8 @@ const DEFAULT_INPUTS: Record<string, string> = {
   'readme-end-marker': '',
   'use-release-pr': '',
   'tag-on-release-pr': '',
+  'release-pr-base': '',
+  'enforce-channel-order': '',
 };
 
 describe('loadConfig', () => {
@@ -278,5 +280,70 @@ describe('mergeConfig', () => {
 
   it('resolves tagOnReleasePr default to true', () => {
     expect(mergeConfig({}, DEFAULT_INPUTS).tagOnReleasePr).toBe(true);
+  });
+
+  it('resolves releasePrBase default to empty string', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).releasePrBase).toBe('');
+  });
+
+  it('resolves enforceChannelOrder default to false', () => {
+    expect(mergeConfig({}, DEFAULT_INPUTS).enforceChannelOrder).toBe(false);
+  });
+
+  // S-003: tagPrefix validation
+  it('accepts valid tagPrefix with alphanumeric, dots, underscores, hyphens', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'tag-prefix': 'v1_beta-' });
+    expect(r.tagPrefix).toBe('v1_beta-');
+  });
+
+  it('throws on tagPrefix containing invalid characters', () => {
+    expect(() => mergeConfig({}, { ...DEFAULT_INPUTS, 'tag-prefix': 'v@bad!' })).toThrow(
+      'Invalid tag-prefix'
+    );
+  });
+
+  it('throws on tagPrefix containing slash', () => {
+    expect(() => mergeConfig({}, { ...DEFAULT_INPUTS, 'tag-prefix': 'release/' })).toThrow(
+      'Invalid tag-prefix'
+    );
+  });
+
+  it('accepts empty tagPrefix (defaults to v)', () => {
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'tag-prefix': '' });
+    expect(r.tagPrefix).toBe('v');
+  });
+
+  // S-004: commitMessageTemplate length validation (cap: 500 chars)
+  it('accepts commitMessageTemplate of exactly 500 characters', () => {
+    const template = 'a'.repeat(500);
+    const r = mergeConfig({}, { ...DEFAULT_INPUTS, 'commit-message-template': template });
+    expect(r.commitMessageTemplate).toBe(template);
+  });
+
+  it('throws when commitMessageTemplate exceeds 500 characters', () => {
+    const template = 'a'.repeat(501);
+    expect(() =>
+      mergeConfig({}, { ...DEFAULT_INPUTS, 'commit-message-template': template })
+    ).toThrow('commit-message-template must be 500 characters or fewer');
+  });
+
+  it('includes actual length in commitMessageTemplate error', () => {
+    const template = 'a'.repeat(600);
+    expect(() =>
+      mergeConfig({}, { ...DEFAULT_INPUTS, 'commit-message-template': template })
+    ).toThrow('600');
+  });
+
+  // S-022: validateBumpType error path
+  it('throws a clear error when default-bump is an invalid value', () => {
+    expect(() => mergeConfig({}, { ...DEFAULT_INPUTS, 'default-bump': 'hotfix' })).toThrow(
+      'Invalid default-bump value "hotfix"'
+    );
+  });
+
+  it('throws listing all valid bump types when default-bump is invalid', () => {
+    expect(() => mergeConfig({}, { ...DEFAULT_INPUTS, 'default-bump': 'PATCH' })).toThrow(
+      'major, minor, patch'
+    );
   });
 });

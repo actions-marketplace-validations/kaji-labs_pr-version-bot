@@ -19449,7 +19449,7 @@ var require_dist = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.format = format;
-    exports2.parse = parse4;
+    exports2.parse = parse5;
     var TEXT_REGEXP = /^[\u0009\u0020-\u007e\u0080-\u00ff]*$/;
     var TOKEN_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
     var QUOTE_REGEXP = /[\\"]/g;
@@ -19476,7 +19476,7 @@ var require_dist = __commonJS({
       }
       return result;
     }
-    function parse4(header, options) {
+    function parse5(header, options) {
       const len = header.length;
       let index = skipOWS(header, 0, len);
       const valueStart = index;
@@ -20045,7 +20045,7 @@ var require_parse2 = __commonJS({
   "node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse4 = (version, options, throwErrors = false) => {
+    var parse5 = (version, options, throwErrors = false) => {
       if (version instanceof SemVer) {
         return version;
       }
@@ -20058,7 +20058,7 @@ var require_parse2 = __commonJS({
         throw er;
       }
     };
-    module2.exports = parse4;
+    module2.exports = parse5;
   }
 });
 
@@ -20066,9 +20066,9 @@ var require_parse2 = __commonJS({
 var require_valid = __commonJS({
   "node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var valid2 = (version, options) => {
-      const v = parse4(version, options);
+      const v = parse5(version, options);
       return v ? v.version : null;
     };
     module2.exports = valid2;
@@ -20079,9 +20079,9 @@ var require_valid = __commonJS({
 var require_clean = __commonJS({
   "node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var clean = (version, options) => {
-      const s = parse4(version.trim().replace(/^[=v]+/, ""), options);
+      const s = parse5(version.trim().replace(/^[=v]+/, ""), options);
       return s ? s.version : null;
     };
     module2.exports = clean;
@@ -20116,10 +20116,10 @@ var require_inc = __commonJS({
 var require_diff = __commonJS({
   "node_modules/semver/functions/diff.js"(exports2, module2) {
     "use strict";
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var diff = (version1, version2) => {
-      const v1 = parse4(version1, null, true);
-      const v2 = parse4(version2, null, true);
+      const v1 = parse5(version1, null, true);
+      const v2 = parse5(version2, null, true);
       const comparison = v1.compare(v2);
       if (comparison === 0) {
         return null;
@@ -20190,9 +20190,9 @@ var require_patch = __commonJS({
 var require_prerelease = __commonJS({
   "node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var prerelease = (version, options) => {
-      const parsed = parse4(version, options);
+      const parsed = parse5(version, options);
       return parsed && parsed.prerelease.length ? parsed.prerelease : null;
     };
     module2.exports = prerelease;
@@ -20378,7 +20378,7 @@ var require_coerce = __commonJS({
   "node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
     var SemVer = require_semver();
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var { safeRe: re, t } = require_re();
     var coerce = (version, options) => {
       if (version instanceof SemVer) {
@@ -20413,7 +20413,7 @@ var require_coerce = __commonJS({
       const patch = match[4] || "0";
       const prerelease = options.includePrerelease && match[5] ? `-${match[5]}` : "";
       const build = options.includePrerelease && match[6] ? `+${match[6]}` : "";
-      return parse4(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse5(`${major}.${minor}.${patch}${prerelease}${build}`, options);
     };
     module2.exports = coerce;
   }
@@ -20423,7 +20423,7 @@ var require_coerce = __commonJS({
 var require_truncate = __commonJS({
   "node_modules/semver/functions/truncate.js"(exports2, module2) {
     "use strict";
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var constants3 = require_constants6();
     var SemVer = require_semver();
     var truncate = (version, truncation, options) => {
@@ -20435,7 +20435,7 @@ var require_truncate = __commonJS({
     };
     var cloneInputVersion = (version, options) => {
       const versionStringToParse = version instanceof SemVer ? version.version : version;
-      return parse4(versionStringToParse, options);
+      return parse5(versionStringToParse, options);
     };
     var doTruncation = (version, truncation) => {
       if (isPrerelease(truncation)) {
@@ -21474,7 +21474,7 @@ var require_semver2 = __commonJS({
     var constants3 = require_constants6();
     var SemVer = require_semver();
     var identifiers = require_identifiers();
-    var parse4 = require_parse2();
+    var parse5 = require_parse2();
     var valid2 = require_valid();
     var clean = require_clean();
     var inc2 = require_inc();
@@ -21513,7 +21513,7 @@ var require_semver2 = __commonJS({
     var simplifyRange = require_simplify();
     var subset = require_subset();
     module2.exports = {
-      parse: parse4,
+      parse: parse5,
       valid: valid2,
       clean,
       inc: inc2,
@@ -23022,6 +23022,7 @@ var Summary = class {
   }
 };
 var _summary = new Summary();
+var summary = _summary;
 
 // node_modules/@actions/core/lib/platform.js
 var import_os2 = __toESM(require("os"), 1);
@@ -26822,6 +26823,9 @@ function getOctokit(token, options, ...additionalPlugins) {
   return new GitHubWithPlugins(getOctokitOptions(token, options));
 }
 
+// src/index.ts
+var semver2 = __toESM(require_semver2());
+
 // src/labels.ts
 var DEFAULT_LABEL_MAP = {
   major: "release:major",
@@ -26897,6 +26901,17 @@ function bumpPrerelease(current, channel) {
 function writeVersion(filePath, version) {
   fs3.writeFileSync(filePath, version + "\n", "utf8");
 }
+var CHANNEL_ORDER = { alpha: 0, beta: 1, rc: 2 };
+function assertChannelOrder(current, requestedChannel) {
+  const sv = semver.parse(current);
+  if (!sv || sv.prerelease.length < 2) return;
+  const currentChannel = String(sv.prerelease[0]);
+  if (currentChannel in CHANNEL_ORDER && CHANNEL_ORDER[requestedChannel] < CHANNEL_ORDER[currentChannel]) {
+    throw new Error(
+      `enforce-channel-order: cannot bump to "${requestedChannel}" from "${currentChannel}" \u2014 channel order is alpha < beta < rc`
+    );
+  }
+}
 
 // src/changelog.ts
 var fs4 = __toESM(require("fs"));
@@ -26925,6 +26940,12 @@ async function commitRelease(files, message) {
   for (const file of files) {
     await exec.exec("git", ["add", file]);
   }
+  const hasStagedChanges = await exec.exec("git", ["diff", "--staged", "--quiet"], {
+    ignoreReturnCode: true
+  });
+  if (hasStagedChanges === 0) {
+    throw new Error("commitRelease: no staged changes found \u2014 files may already be committed");
+  }
   await exec.exec("git", ["commit", "-m", message]);
 }
 async function createTag(tag) {
@@ -26946,7 +26967,7 @@ async function pushWithProtectionCheck(targetBranch) {
 // src/release-pr.ts
 var exec3 = __toESM(require_exec());
 function sanitiseReleaseBranch(tag) {
-  return `release/${tag.replace(/[^a-zA-Z0-9/.-]/g, "-")}`;
+  return `release/${tag.replace(/[^a-zA-Z0-9.-]/g, "-")}`;
 }
 async function createReleaseBranch(branchName) {
   await exec3.exec("git", ["checkout", "-b", branchName]);
@@ -26986,15 +27007,18 @@ async function createRelease(token, tag, version, context3) {
     ``,
     `**Full diff:** ${compareUrl}`
   ].join("\n");
-  await octokit.rest.repos.createRelease({
+  const isPreReleaseVersion = context3.bump === "alpha" || context3.bump === "beta" || context3.bump === "rc";
+  const response = await octokit.rest.repos.createRelease({
     owner,
     repo,
     tag_name: tag,
     name: `Release ${tag}`,
     body,
     draft: false,
-    prerelease: false
+    prerelease: isPreReleaseVersion,
+    make_latest: isPreReleaseVersion ? "false" : "true"
   });
+  return response.data.html_url;
 }
 
 // src/config.ts
@@ -29400,6 +29424,14 @@ function validateBumpType(value, source) {
     `Invalid ${source} value "${value}". Must be one of: ${VALID_BUMP_TYPES.join(", ")}`
   );
 }
+function validateTagPrefix(value) {
+  if (!/^[a-zA-Z0-9._-]*$/.test(value)) {
+    throw new Error(
+      `Invalid tag-prefix "${value}". Only alphanumeric characters, dots, underscores, and hyphens are allowed.`
+    );
+  }
+  return value;
+}
 function mergeConfig(fileConfig, inputs) {
   const inp = (key) => inputs[key] || "";
   const rawDefaultBump = inp("default-bump") || fileConfig.defaultBump || "patch";
@@ -29407,12 +29439,20 @@ function mergeConfig(fileConfig, inputs) {
     versionFile: inp("version-file") || fileConfig.versionFile || "VERSION.md",
     changelogFile: inp("changelog-file") || fileConfig.changelogFile || "CHANGELOG.md",
     defaultBump: validateBumpType(String(rawDefaultBump), "default-bump"),
-    tagPrefix: inp("tag-prefix") || fileConfig.tagPrefix || "v",
+    tagPrefix: validateTagPrefix(inp("tag-prefix") || fileConfig.tagPrefix || "v"),
     createGithubRelease: inp("create-github-release") ? inp("create-github-release") !== "false" : fileConfig.createGithubRelease ?? true,
     failOnMultipleLabels: inp("fail-on-multiple-labels") ? inp("fail-on-multiple-labels") !== "false" : fileConfig.failOnMultipleLabels ?? true,
     dryRun: inp("dry-run") ? inp("dry-run") === "true" : fileConfig.dryRun ?? false,
     targetBranch: inp("target-branch") || fileConfig.targetBranch || "main",
-    commitMessageTemplate: inp("commit-message-template") || fileConfig.commitMessageTemplate || "chore(release): {tag}",
+    commitMessageTemplate: (() => {
+      const commitMessageTemplate = inp("commit-message-template") || fileConfig.commitMessageTemplate || "chore(release): {tag}";
+      if (commitMessageTemplate.length > 500) {
+        throw new Error(
+          `commit-message-template must be 500 characters or fewer (got ${commitMessageTemplate.length})`
+        );
+      }
+      return commitMessageTemplate;
+    })(),
     syncPackageJson: inp("sync-package-json") ? inp("sync-package-json") === "true" : fileConfig.syncPackageJson ?? false,
     useConventionalCommits: inp("use-conventional-commits") ? inp("use-conventional-commits") === "true" : fileConfig.useConventionalCommits ?? false,
     slackWebhookUrl: inp("slack-webhook-url") || fileConfig.slackWebhookUrl || "",
@@ -29432,7 +29472,9 @@ function mergeConfig(fileConfig, inputs) {
     readmeStartMarker: inp("readme-start-marker") || fileConfig.readmeStartMarker || "<!-- VERSIONBOT:START -->",
     readmeEndMarker: inp("readme-end-marker") || fileConfig.readmeEndMarker || "<!-- VERSIONBOT:END -->",
     useReleasePr: inp("use-release-pr") ? inp("use-release-pr") === "true" : fileConfig.useReleasePr ?? false,
-    tagOnReleasePr: inp("tag-on-release-pr") ? inp("tag-on-release-pr") !== "false" : fileConfig.tagOnReleasePr ?? true
+    tagOnReleasePr: inp("tag-on-release-pr") ? inp("tag-on-release-pr") !== "false" : fileConfig.tagOnReleasePr ?? true,
+    releasePrBase: inp("release-pr-base") || fileConfig.releasePrBase || "",
+    enforceChannelOrder: inp("enforce-channel-order") ? inp("enforce-channel-order") === "true" : fileConfig.enforceChannelOrder ?? false
   };
 }
 
@@ -29512,7 +29554,7 @@ function detectBumpFromPrBody(body, labelConfig, failOnMultiple) {
   const matched = [];
   for (const text of checkedTexts) {
     for (const [labelValue, bumpType] of Object.entries(labelToType)) {
-      if (text.includes(labelValue)) {
+      if (text.toLowerCase() === labelValue.toLowerCase()) {
         matched.push(bumpType);
         break;
       }
@@ -29532,7 +29574,7 @@ var SSRF_BLOCKED_PATTERNS = [
   /^localhost(:\d+)?$/i,
   /^127\.\d+\.\d+\.\d+(:\d+)?$/,
   // IPv4 loopback
-  /^::1(:\d+)?$/,
+  /^\[?::1\]?(:\d+)?$/,
   // IPv6 loopback
   /^169\.254\.\d+\.\d+(:\d+)?$/,
   // link-local / AWS metadata
@@ -29542,8 +29584,12 @@ var SSRF_BLOCKED_PATTERNS = [
   // RFC-1918 172.16/12
   /^192\.168\.\d+\.\d+(:\d+)?$/,
   // RFC-1918 192.168/16
-  /^0\.0\.0\.0(:\d+)?$/
+  /^0\.0\.0\.0(:\d+)?$/,
   // unspecified
+  /^\[?fc[0-9a-f]{2}:[0-9a-f:]+\]?$/i,
+  // IPv6 ULA fc00::/7
+  /^\[?fe[89ab][0-9a-f]:[0-9a-f:]+\]?$/i
+  // IPv6 link-local fe80::/10
 ];
 function requireHttps(url, label) {
   if (!url.startsWith("https://")) {
@@ -29587,7 +29633,15 @@ function post(url, body) {
 async function sendSlackNotification(webhookUrl, message) {
   requireHttps(webhookUrl, "Slack");
   const body = JSON.stringify({ text: message });
-  const status = await post(webhookUrl, body);
+  let status;
+  try {
+    status = await post(webhookUrl, body);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Slack notification request failed: ${msg.replace(webhookUrl, "[redacted]")}`, {
+      cause: err
+    });
+  }
   if (status < 200 || status >= 300) {
     warning(`Slack notification failed with status ${status} \u2014 release continues`);
   }
@@ -29603,9 +29657,30 @@ async function sendDiscordNotification(webhookUrl, message, tag) {
       }
     ]
   });
-  const status = await post(webhookUrl, body);
+  let status;
+  try {
+    status = await post(webhookUrl, body);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `Discord notification request failed: ${msg.replace(webhookUrl, "[redacted]")}`,
+      { cause: err }
+    );
+  }
   if (status < 200 || status >= 300) {
     warning(`Discord notification failed with status ${status} \u2014 release continues`);
+  }
+}
+async function sendSlackNotifications(webhookUrls, message) {
+  const urls = webhookUrls.split(",").map((u) => u.trim()).filter(Boolean);
+  for (const url of urls) {
+    await sendSlackNotification(url, message);
+  }
+}
+async function sendDiscordNotifications(webhookUrls, message, tag) {
+  const urls = webhookUrls.split(",").map((u) => u.trim()).filter(Boolean);
+  for (const url of urls) {
+    await sendDiscordNotification(url, message, tag);
   }
 }
 
@@ -29624,6 +29699,10 @@ function validateNoPaths(packages) {
 function resolvePackagePaths(packages, versionFile) {
   if (packages.length === 0) return [];
   validateNoPaths(packages);
+  const normVF = path.normalize(versionFile);
+  if (normVF.startsWith("..") || path.isAbsolute(normVF)) {
+    throw new Error(`versionFile contains path traversal: "${versionFile}"`);
+  }
   return packages.map((pkg) => {
     const versionPath = path.join(pkg, versionFile).replace(/\\/g, "/");
     if (fs7.existsSync(versionPath) === false) {
@@ -29652,6 +29731,11 @@ function writeBadgeFile(filePath, badge) {
 
 // src/readme.ts
 var fs9 = __toESM(require("fs"));
+function updateVersionRefs(content, previousTag, newTag) {
+  if (!previousTag) return content;
+  const escaped = previousTag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return content.replace(new RegExp(escaped, "g"), newTag);
+}
 function updateReadmeBlock(content, startMarker, endMarker, repoFullName, tag, majorAlias) {
   const startIdx = content.indexOf(startMarker);
   const endIdx = content.indexOf(endMarker);
@@ -29686,13 +29770,21 @@ function extractMajorAlias(tag, tagPrefix) {
   const major = version.split(".")[0];
   return `${tagPrefix}${major}`;
 }
-function applyReadmeUpdate(readmeFile, startMarker, endMarker, repoFullName, tag, majorAlias) {
+function applyReadmeUpdate(readmeFile, startMarker, endMarker, repoFullName, tag, majorAlias, previousTag) {
   if (!fs9.existsSync(readmeFile)) {
     return false;
   }
   const content = fs9.readFileSync(readmeFile, "utf8");
-  const updated = updateReadmeBlock(content, startMarker, endMarker, repoFullName, tag, majorAlias);
-  if (updated === null) return false;
+  const afterBlock = updateReadmeBlock(
+    content,
+    startMarker,
+    endMarker,
+    repoFullName,
+    tag,
+    majorAlias
+  );
+  const updated = afterBlock !== null ? updateVersionRefs(afterBlock, previousTag, tag) : updateVersionRefs(content, previousTag, tag);
+  if (updated === content) return false;
   fs9.writeFileSync(readmeFile, updated, "utf8");
   return true;
 }
@@ -29703,9 +29795,11 @@ async function run() {
     const pr = context2.payload.pull_request;
     if (!pr?.merged) {
       info("PR not merged \u2014 skipping");
+      setOutput("skipped", "true");
       return;
     }
     const token = getInput("github-token", { required: true });
+    const octokit = getOctokit(token);
     const inputs = {
       "version-file": getInput("version-file"),
       "changelog-file": getInput("changelog-file"),
@@ -29727,7 +29821,9 @@ async function run() {
       "readme-start-marker": getInput("readme-start-marker"),
       "readme-end-marker": getInput("readme-end-marker"),
       "use-release-pr": getInput("use-release-pr"),
-      "tag-on-release-pr": getInput("tag-on-release-pr")
+      "tag-on-release-pr": getInput("tag-on-release-pr"),
+      "release-pr-base": getInput("release-pr-base"),
+      "enforce-channel-order": getInput("enforce-channel-order")
     };
     const fileConfig = loadConfig();
     const config = mergeConfig(fileConfig, inputs);
@@ -29746,7 +29842,6 @@ async function run() {
       }
     }
     if (releaseLabels.length === 0 && bump === config.defaultBump && config.useConventionalCommits) {
-      const octokit = getOctokit(token);
       const { owner, repo } = context2.repo;
       const commits = await octokit.rest.pulls.listCommits({
         owner,
@@ -29770,6 +29865,20 @@ async function run() {
     const packageVersionFiles = config.packages.length > 0 ? resolvePackagePaths(config.packages, config.versionFile) : [config.versionFile];
     const isPrereleaseChannel = (b) => b === "alpha" || b === "beta" || b === "rc";
     const current = readVersion(packageVersionFiles[0]);
+    if (config.enforceChannelOrder && isPrereleaseChannel(bump)) {
+      assertChannelOrder(current, bump);
+    }
+    if (isPrereleaseChannel(bump)) {
+      const sv = semver2.parse(current);
+      if (sv && sv.prerelease.length >= 2) {
+        const currentChan = String(sv.prerelease[0]);
+        if (currentChan !== bump) {
+          warning(
+            `Pre-release channel changed from "${currentChan}" to "${bump}". The patch number has been reset to reflect the new channel.`
+          );
+        }
+      }
+    }
     const next = isPrereleaseChannel(bump) ? bumpPrerelease(current, bump) : bumpVersion(current, bump);
     const tag = `${config.tagPrefix}${next}`;
     const message = config.commitMessageTemplate.replace("{tag}", tag);
@@ -29778,7 +29887,16 @@ async function run() {
     info(`Next version: ${next}`);
     info(`Creating tag: ${tag}`);
     if (config.dryRun) {
-      info("Dry run \u2014 no changes written");
+      const dryRunEntry = buildEntry({
+        version: next,
+        date: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+        prTitle: pr.title,
+        prNumber: pr.number,
+        bump
+      });
+      info(`Dry run \u2014 no changes written`);
+      info(`Changelog entry that would be written:
+${dryRunEntry}`);
       setOutput("version", next);
       setOutput("tag", tag);
       setOutput("bump", bump);
@@ -29842,7 +29960,8 @@ async function run() {
         config.readmeEndMarker,
         repoFullName,
         tag,
-        majorAlias
+        majorAlias,
+        `${config.tagPrefix}${current}`
       );
       if (updated) {
         filesToCommit.push(config.readmeFile);
@@ -29850,6 +29969,7 @@ async function run() {
         info("VERSIONBOT markers not found in README \u2014 skipping");
       }
     }
+    info(`Files to commit: ${filesToCommit.join(", ")}`);
     await configureGit();
     if (config.useReleasePr) {
       const releaseBranch = sanitiseReleaseBranch(tag);
@@ -29859,7 +29979,7 @@ async function run() {
       if (config.tagOnReleasePr) {
         await createTag(tag);
         if (config.createGithubRelease) {
-          await createRelease(token, tag, next, {
+          const releaseUrl = await createRelease(token, tag, next, {
             bump,
             prTitle: pr.title,
             prNumber: pr.number,
@@ -29867,6 +29987,7 @@ async function run() {
             authorLogin: pr.user.login,
             previousTag: `${config.tagPrefix}${current}`
           });
+          setOutput("release-url", releaseUrl);
         }
       }
       const prTitle = message;
@@ -29877,7 +29998,8 @@ async function run() {
 - Version bumped to \`${next}\`
 - \`${config.versionFile}\` updated
 - \`${config.changelogFile}\` updated`;
-      const prUrl = await openReleasePr(token, releaseBranch, config.targetBranch, prTitle, prBody);
+      const prBase = config.releasePrBase || config.targetBranch;
+      const prUrl = await openReleasePr(token, releaseBranch, prBase, prTitle, prBody);
       info(`Release PR created: ${prUrl}`);
       setOutput("release-pr-url", prUrl);
     } else {
@@ -29885,7 +30007,7 @@ async function run() {
       await createTag(tag);
       await pushWithProtectionCheck(config.targetBranch);
       if (config.createGithubRelease) {
-        await createRelease(token, tag, next, {
+        const releaseUrl = await createRelease(token, tag, next, {
           bump,
           prTitle: pr.title,
           prNumber: pr.number,
@@ -29893,15 +30015,27 @@ async function run() {
           authorLogin: pr.user.login,
           previousTag: `${config.tagPrefix}${current}`
         });
+        setOutput("release-url", releaseUrl);
       }
     }
     const notifMessage = config.notificationTemplate.replace("{tag}", tag).replace("{bump}", bump).replace("{prTitle}", pr.title).replace("{prNumber}", String(pr.number));
     if (config.slackWebhookUrl) {
-      await sendSlackNotification(config.slackWebhookUrl, notifMessage);
+      await sendSlackNotifications(config.slackWebhookUrl, notifMessage);
     }
     if (config.discordWebhookUrl) {
-      await sendDiscordNotification(config.discordWebhookUrl, notifMessage, tag);
+      await sendDiscordNotifications(config.discordWebhookUrl, notifMessage, tag);
     }
+    await summary.addHeading(`Released ${tag}`, 2).addTable([
+      [
+        { data: "Field", header: true },
+        { data: "Value", header: true }
+      ],
+      ["Previous version", current],
+      ["New version", next],
+      ["Bump type", bump],
+      ["Tag", tag],
+      ["PR", `#${pr.number} \u2014 ${pr.title}`]
+    ]).write();
     setOutput("version", next);
     setOutput("tag", tag);
     setOutput("bump", bump);

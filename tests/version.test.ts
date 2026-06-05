@@ -3,7 +3,13 @@ import * as fs from 'fs';
 
 vi.mock('fs');
 
-import { readVersion, bumpVersion, writeVersion, bumpPrerelease } from '../src/version';
+import {
+  readVersion,
+  bumpVersion,
+  writeVersion,
+  bumpPrerelease,
+  assertChannelOrder,
+} from '../src/version';
 
 describe('readVersion', () => {
   beforeEach(() => {
@@ -115,5 +121,27 @@ describe('bumpPrerelease', () => {
 
   it('throws on invalid semver', () => {
     expect(() => bumpPrerelease('not-semver', 'alpha')).toThrow('Invalid semver');
+  });
+});
+
+describe('assertChannelOrder', () => {
+  it('does nothing for stable current version', () => {
+    expect(() => assertChannelOrder('1.0.0', 'alpha')).not.toThrow();
+  });
+
+  it('allows same channel', () => {
+    expect(() => assertChannelOrder('1.0.0-alpha.1', 'alpha')).not.toThrow();
+  });
+
+  it('allows higher channel (alpha → beta)', () => {
+    expect(() => assertChannelOrder('1.0.0-alpha.1', 'beta')).not.toThrow();
+  });
+
+  it('throws when bumping to lower channel (beta → alpha)', () => {
+    expect(() => assertChannelOrder('1.0.0-beta.1', 'alpha')).toThrow('enforce-channel-order');
+  });
+
+  it('throws when bumping to lower channel (rc → beta)', () => {
+    expect(() => assertChannelOrder('1.0.0-rc.1', 'beta')).toThrow('enforce-channel-order');
   });
 });

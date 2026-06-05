@@ -11,7 +11,9 @@ import * as github from '@actions/github';
 import { createRelease, ReleaseContext } from '../src/github-release';
 
 describe('createRelease', () => {
-  const mockCreateRelease = vi.fn().mockResolvedValue({ data: { id: 1 } });
+  const mockCreateRelease = vi.fn().mockResolvedValue({
+    data: { id: 1, html_url: 'https://github.com/owner/repo/releases/tag/v1.2.3' },
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,7 +35,7 @@ describe('createRelease', () => {
     previousTag: 'v1.0.0',
   };
 
-  it('creates a non-draft, non-prerelease release', async () => {
+  it('creates a non-draft, non-prerelease release for stable bumps', async () => {
     await createRelease('fake-token', 'v1.2.3', '1.2.3', ctx);
 
     expect(mockCreateRelease).toHaveBeenCalledWith(
@@ -44,9 +46,37 @@ describe('createRelease', () => {
         name: 'Release v1.2.3',
         draft: false,
         prerelease: false,
+        make_latest: 'true',
       })
     );
   });
+
+  // S-020 + S-026: prerelease flag for alpha/beta/rc bumps
+  it.each(['alpha', 'beta', 'rc'])(
+    'sets prerelease:true and make_latest:false for bump=%s',
+    async (bump) => {
+      await createRelease('fake-token', `v1.0.0-${bump}.1`, `1.0.0-${bump}.1`, { ...ctx, bump });
+      expect(mockCreateRelease).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prerelease: true,
+          make_latest: 'false',
+        })
+      );
+    }
+  );
+
+  it.each(['major', 'minor', 'patch'])(
+    'sets prerelease:false and make_latest:true for stable bump=%s',
+    async (bump) => {
+      await createRelease('fake-token', 'v1.2.3', '1.2.3', { ...ctx, bump });
+      expect(mockCreateRelease).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prerelease: false,
+          make_latest: 'true',
+        })
+      );
+    }
+  );
 
   it('uses the provided token to construct octokit', async () => {
     await createRelease('my-token', 'v1.0.0', '1.0.0', {
@@ -100,5 +130,13 @@ describe('createRelease', () => {
 
     const call = mockCreateRelease.mock.calls[0][0];
     expect(call.body).toContain('[#42](https://github.com/owner/repo/pull/42)');
+  });
+
+  it('returns the html_url from the created release', async () => {
+    mockCreateRelease.mockResolvedValueOnce({
+      data: { id: 1, html_url: 'https://github.com/owner/repo/releases/tag/v1.2.3' },
+    });
+    const url = await createRelease('fake-token', 'v1.2.3', '1.2.3', ctx);
+    expect(url).toBe('https://github.com/owner/repo/releases/tag/v1.2.3');
   });
 });

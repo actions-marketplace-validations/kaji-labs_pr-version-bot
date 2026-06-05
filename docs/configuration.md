@@ -64,6 +64,8 @@ The config file is optional. The action works identically without it.
 | `readmeEndMarker`        | string                            | `<!-- VERSIONBOT:END -->`                      | End marker for README block                                         |
 | `useReleasePr`           | boolean                           | `false`                                        | Open a release PR instead of pushing directly to target branch      |
 | `tagOnReleasePr`         | boolean                           | `true`                                         | Create git tag and GitHub Release immediately on the release branch |
+| `releasePrBase`          | string                            | `''` (uses `targetBranch`)                     | Base branch for the release PR when different from `targetBranch`   |
+| `enforceChannelOrder`    | boolean                           | `false`                                        | Throw if a pre-release bump moves to a lower-precedence channel     |
 
 ---
 
@@ -236,6 +238,8 @@ See [docs/labels.md](labels.md) for checkbox examples.
 
 Slack incoming webhook URL. When provided, a message is posted to Slack after a successful release. Must use HTTPS. If the webhook request fails, a warning is logged and the release continues.
 
+Accepts a **comma-separated list** of URLs to notify multiple Slack channels at once (e.g. `https://hooks.slack.com/a,https://hooks.slack.com/b`). Failures for individual URLs are logged as warnings without halting the release.
+
 Store the URL in a GitHub secret and pass it via `${{ secrets.SLACK_WEBHOOK_URL }}`.
 
 ---
@@ -247,6 +251,8 @@ Store the URL in a GitHub secret and pass it via `${{ secrets.SLACK_WEBHOOK_URL 
 - **Default:** `''` (disabled)
 
 Discord webhook URL. When provided, a release embed is posted to Discord after a successful release. Must use HTTPS. Failure is non-fatal.
+
+Accepts a **comma-separated list** of URLs to notify multiple Discord channels at once. Failures for individual URLs are logged as warnings without halting the release.
 
 Store the URL in a GitHub secret: `${{ secrets.DISCORD_WEBHOOK_URL }}`.
 
@@ -287,6 +293,26 @@ Each path must contain its own `VERSION.md`. The changelog is updated at `{packa
 ```
 
 **Restrictions:** Paths must be relative to the repo root. Path traversal (`..`) is not allowed.
+
+---
+
+## Monorepo mode
+
+When `packages` is set, the action operates in monorepo mode and bumps all listed packages together in a single release commit.
+
+### Per-package changelog files
+
+Each package gets its own changelog file at `{packageDir}/CHANGELOG.md`. The changelog filename is derived from the root `changelog-file` setting — only the filename portion is used, not the directory.
+
+**Example:** if `changelog-file` is set to `docs/HISTORY.md`, each package's changelog will be written to `{packageDir}/HISTORY.md` (not `{packageDir}/docs/HISTORY.md`).
+
+| `changelog-file` value   | Per-package changelog path  |
+| ------------------------ | --------------------------- |
+| `CHANGELOG.md` (default) | `packages/api/CHANGELOG.md` |
+| `docs/HISTORY.md`        | `packages/api/HISTORY.md`   |
+| `CHANGES.md`             | `packages/api/CHANGES.md`   |
+
+This means all packages share the same changelog filename, controlled by the root `changelog-file` setting.
 
 ---
 
@@ -392,6 +418,28 @@ Set to `'false'` to defer tagging until the release PR is merged.
 
 ---
 
+### `release-pr-base`
+
+- **Type:** string
+- **Required:** no
+- **Default:** `''` (uses `target-branch`)
+
+Base branch for the release PR when `use-release-pr` is `'true'`. Defaults to `target-branch` when not set. Use this if you want the release PR to target a different branch than the one commits are normally pushed to (e.g. `develop` vs `main`).
+
+---
+
+### `enforce-channel-order`
+
+- **Type:** `'true'` | `'false'`
+- **Required:** no
+- **Default:** `'false'`
+
+When `'true'`, throws an error if a pre-release bump attempts to move to a lower-precedence channel than the current one. Channel precedence order is: `alpha` < `beta` < `rc` < stable.
+
+For example, if the current version is `1.0.0-beta.2`, attempting a bump labelled `alpha` will fail with an error. This prevents accidental channel regressions during a release train.
+
+---
+
 ## Setting up README auto-sync
 
 Add the following markers to your README where you want the version block to appear:
@@ -426,6 +474,10 @@ Bump type applied: `major`, `minor`, `patch`, or `none`.
 ### `release-pr-url`
 
 URL of the pull request opened by the action when `use-release-pr` is `'true'`. Empty string when release PR mode is disabled.
+
+### `release-url`
+
+URL of the GitHub Release page (e.g. `https://github.com/owner/repo/releases/tag/v1.2.3`). Only set when `create-github-release` is `'true'`. Empty string otherwise.
 
 ## Using outputs in downstream steps
 

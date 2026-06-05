@@ -29,11 +29,11 @@ export function detectBumpFromPrBody(
   if (labelConfig.beta) labelToType[labelConfig.beta] = 'beta';
   if (labelConfig.rc) labelToType[labelConfig.rc] = 'rc';
 
-  // Substring match: does any checked text contain a configured label value?
+  // Exact match (case-insensitive): checked text must equal a configured label value
   const matched: BumpType[] = [];
   for (const text of checkedTexts) {
     for (const [labelValue, bumpType] of Object.entries(labelToType)) {
-      if (text.includes(labelValue)) {
+      if (text.toLowerCase() === labelValue.toLowerCase()) {
         matched.push(bumpType);
         break; // one label per checkbox
       }

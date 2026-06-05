@@ -73,15 +73,15 @@ inputs:
 
   slack-webhook-url:
     description: >
-      Slack incoming webhook URL. When provided, a notification is posted
-      to Slack after a successful release. Must use HTTPS.
+      Slack Incoming Webhook URL. Accepts a comma-separated list to notify
+      multiple channels.
     required: false
     default: ''
 
   discord-webhook-url:
     description: >
-      Discord webhook URL. When provided, a release embed is posted to
-      Discord after a successful release. Must use HTTPS.
+      Discord webhook URL. Accepts a comma-separated list to notify multiple
+      channels.
     required: false
     default: ''
 
@@ -108,6 +108,20 @@ inputs:
       for the PR to merge.
     required: false
     default: 'true'
+
+  release-pr-base:
+    description: >
+      Base branch for the release PR when use-release-pr is true. Defaults to
+      target-branch when not set.
+    required: false
+    default: ''
+
+  enforce-channel-order:
+    description: >
+      When 'true', throws if a pre-release bump moves to a lower-precedence
+      channel (e.g. beta → alpha). Channel order: alpha < beta < rc < stable.
+    required: false
+    default: 'false'
 
   packages:
     description: >
@@ -181,6 +195,9 @@ outputs:
 
   release-pr-url:
     description: URL of the release PR (only set when use-release-pr is true)
+
+  release-url:
+    description: URL of the GitHub Release page (only set when create-github-release is true)
 
 runs:
   using: node20

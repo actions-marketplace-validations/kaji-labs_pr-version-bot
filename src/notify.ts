@@ -1,9 +1,37 @@
 import * as https from 'https';
 import * as core from '@actions/core';
 
+// Private / link-local / loopback ranges that must never be contacted (SSRF prevention).
+// These patterns cover IPv4 loopback, link-local (169.254/16), RFC-1918 private ranges,
+// and the unspecified address.
+const SSRF_BLOCKED_PATTERNS = [
+  /^localhost(:\d+)?$/i,
+  /^127\.\d+\.\d+\.\d+(:\d+)?$/, // IPv4 loopback
+  /^::1(:\d+)?$/, // IPv6 loopback
+  /^169\.254\.\d+\.\d+(:\d+)?$/, // link-local / AWS metadata
+  /^10\.\d+\.\d+\.\d+(:\d+)?$/, // RFC-1918 10/8
+  /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$/, // RFC-1918 172.16/12
+  /^192\.168\.\d+\.\d+(:\d+)?$/, // RFC-1918 192.168/16
+  /^0\.0\.0\.0(:\d+)?$/, // unspecified
+];
+
 function requireHttps(url: string, label: string): void {
   if (!url.startsWith('https://')) {
     throw new Error(`${label} webhook URL must use HTTPS`);
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`${label} webhook URL is not a valid URL: "${url}"`);
+  }
+
+  const host = parsed.host; // includes port if present
+  if (SSRF_BLOCKED_PATTERNS.some((re) => re.test(host))) {
+    throw new Error(
+      `${label} webhook URL targets a private/internal address and is not allowed: "${url}"`
+    );
   }
 }
 

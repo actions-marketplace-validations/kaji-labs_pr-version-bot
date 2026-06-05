@@ -27,6 +27,14 @@ In your GitHub repo, go to **Issues → Labels** and create:
 - `release:patch`
 - `release:none`
 
+Optionally also create pre-release labels:
+
+- `release:alpha`
+- `release:beta`
+- `release:rc`
+
+See [labels.md](labels.md) for the full labels reference, including pre-release lifecycle rules.
+
 ## 4. Add the workflow
 
 Create `.github/workflows/release.yml`:
@@ -52,7 +60,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v1
+      - uses: kaji-labs/pr-version-bot@v0.9.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -73,7 +81,7 @@ Apply a `release:patch` label to your next PR and merge it. The action will:
 Add a Shields.io-powered version badge to your README by enabling `generate-badge`:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1
+- uses: kaji-labs/pr-version-bot@v0.9.1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     generate-badge: 'true'
@@ -101,7 +109,7 @@ Enable auto-update of your README on each release by adding markers and enabling
 2. Enable the feature in your workflow:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1
+- uses: kaji-labs/pr-version-bot@v0.9.1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     update-readme: 'true'
@@ -114,3 +122,11 @@ The action will replace the content between the markers with an auto-generated b
 If your repository has branch protection rules that block direct pushes, the action will fail with a clear error message. You can either exempt `github-actions[bot]` from push restrictions, or enable release PR mode by adding `use-release-pr: 'true'` to your workflow.
 
 See [docs/troubleshooting.md](troubleshooting.md#branch-protection-blocks-push) for full instructions.
+
+## Next steps
+
+- [Configuration reference](configuration.md) — every input, output, and `.versionbot.yml` field
+- [Labels reference](labels.md) — pre-release labels, PR template checkboxes, conventional commits
+- [Versioning policy](versioning-policy.md) — stable and pre-release lifecycle
+- [Troubleshooting](troubleshooting.md) — common error messages and fixes
+- [Architecture](architecture.md) — module overview and design decisions

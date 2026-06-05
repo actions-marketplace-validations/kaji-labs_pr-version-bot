@@ -56,6 +56,9 @@ export function applyReadmeUpdate(
   tag: string,
   majorAlias: string
 ): boolean {
+  if (!fs.existsSync(readmeFile)) {
+    return false;
+  }
   const content = fs.readFileSync(readmeFile, 'utf8') as string;
   const updated = updateReadmeBlock(content, startMarker, endMarker, repoFullName, tag, majorAlias);
   if (updated === null) return false;

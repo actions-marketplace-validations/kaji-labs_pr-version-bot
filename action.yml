@@ -201,5 +201,5 @@ outputs:
     description: URL of the GitHub Release page (only set when create-github-release is true)
 
 runs:
-  using: node20
+  using: node24
   main: dist/index.js

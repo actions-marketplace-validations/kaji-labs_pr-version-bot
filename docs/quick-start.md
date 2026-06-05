@@ -2,6 +2,8 @@
 
 Get up and running in under 5 minutes.
 
+> **GitHub Marketplace:** Search for **PR Version Bot** on the [GitHub Marketplace](https://github.com/marketplace) to add it to your repository in one click.
+
 ## 1. Add a VERSION.md file
 
 Create `VERSION.md` in the root of your repo:
@@ -60,7 +62,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v0.9.1
+      - uses: kaji-labs/pr-version-bot@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -81,7 +83,7 @@ Apply a `release:patch` label to your next PR and merge it. The action will:
 Add a Shields.io-powered version badge to your README by enabling `generate-badge`:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v0.9.1
+- uses: kaji-labs/pr-version-bot@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     generate-badge: 'true'
@@ -109,7 +111,7 @@ Enable auto-update of your README on each release by adding markers and enabling
 2. Enable the feature in your workflow:
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v0.9.1
+- uses: kaji-labs/pr-version-bot@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     update-readme: 'true'

@@ -22,6 +22,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run PR Version Bot
+        id: versionbot
         uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,3 +31,14 @@ jobs:
           default-bump: patch
           generate-badge: 'true'
           update-readme: 'true'
+
+      - name: Push major version tag
+        if: steps.versionbot.outputs.skipped != 'true'
+        env:
+          TAG: ${{ steps.versionbot.outputs.tag }}
+        run: |
+          if [[ "$TAG" =~ ^v([0-9]+)\.[0-9]+\.[0-9]+$ ]]; then
+            MAJOR="v${BASH_REMATCH[1]}"
+            git tag -f "$MAJOR"
+            git push origin "$MAJOR" --force
+          fi

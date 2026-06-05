@@ -1,3 +1,7 @@
+## [0.10.2] - 2026-06-05
+
+- patch: fix: replace build-dist auto-commit with dist integrity check - eliminates release race ([#30](https://github.com/kaji-labs/pr-version-bot/pull/30))
+
 ## [0.10.1] - 2026-06-05
 
 - patch: fix: trailing newline in writeBadgeFile - permanent fix for recurring format:check failure ([#31](https://github.com/kaji-labs/pr-version-bot/pull/31))

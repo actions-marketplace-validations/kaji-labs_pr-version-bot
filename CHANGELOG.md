@@ -1,3 +1,7 @@
+## [0.10.1] - 2026-06-05
+
+- patch: fix: trailing newline in writeBadgeFile - permanent fix for recurring format:check failure ([#31](https://github.com/kaji-labs/pr-version-bot/pull/31))
+
 ## [0.10.0] - 2026-06-05
 
 - minor: feat: implement all 25 suggestions - security hardening, new features, +58 tests ([#29](https://github.com/kaji-labs/pr-version-bot/pull/29))

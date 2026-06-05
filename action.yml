@@ -1,5 +1,6 @@
 name: PR Version Bot
 description: Automatic semantic versioning from merged pull request labels
+author: Rashay Daya
 
 branding:
   icon: tag

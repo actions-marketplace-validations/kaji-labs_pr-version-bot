@@ -1,3 +1,7 @@
+## [0.9.2] - 2026-06-05
+
+- patch: fix(security): SSRF in notify.ts, input validation, undici CVE upgrade, full docs update ([#28](https://github.com/kaji-labs/pr-version-bot/pull/28))
+
 ## [0.9.1] - 2026-06-05
 
 - patch: fix(backlog): B-003 empty files guard, B-016 richer releases, B-017 CHANGELOG URLs, B-014 CODEOWNERS ([#27](https://github.com/kaji-labs/pr-version-bot/pull/27))

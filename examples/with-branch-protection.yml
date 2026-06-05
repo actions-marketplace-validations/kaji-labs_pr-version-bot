@@ -1,5 +1,10 @@
 # Uses release PR mode for repos where branch protection blocks direct pushes.
-# Requires pull-requests: write permission.
+#
+# A GitHub App token is used so that the release PR triggers CI checks.
+# PRs opened with GITHUB_TOKEN are intentionally ignored by GitHub Actions
+# to prevent infinite loops — using an App token bypasses this restriction.
+#
+# Setup: see docs/github-app-setup.md
 name: Release
 
 on:
@@ -16,11 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v6
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
-      - uses: kaji-labs/pr-version-bot@v0.8.1
+      - uses: kaji-labs/pr-version-bot@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
           use-release-pr: 'true'

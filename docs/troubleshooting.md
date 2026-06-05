@@ -161,6 +161,30 @@
 
 ---
 
+## CI not running on release PR
+
+**Symptom:** The release PR is created but CI checks never run. The PR shows "Expected — Waiting for status to be reported" and branch protection blocks merging.
+
+**Cause:** GitHub intentionally does not trigger workflow runs on pull requests opened by `GITHUB_TOKEN`. This prevents infinite loop scenarios where a workflow-created PR would re-trigger the same workflow.
+
+**Fix A — Use a GitHub App token (recommended)**
+
+Create a GitHub App with `contents: write` and `pull-requests: write` permissions, then pass its token to the action. PRs opened via an App token trigger CI normally.
+
+See [GitHub App Setup](github-app-setup.md) for step-by-step instructions and [`examples/with-branch-protection.yml`](../examples/with-branch-protection.yml) for a complete workflow example.
+
+**Fix B — Add `github-actions[bot]` as a bypass actor**
+
+If CI is not required on release PRs (they only change version metadata files), add `github-actions[bot]` as a bypass actor on your branch protection ruleset:
+
+1. Go to **Settings → Rules → Rulesets** → edit your ruleset
+2. Under **Bypass list** → **Add bypass** → switch type to **App** → search for **GitHub Actions**
+3. Save
+
+The release PR can then merge without CI passing. All other PRs are unaffected.
+
+---
+
 ## Branch protection blocks push
 
 **Symptom:** Action fails with a message like:

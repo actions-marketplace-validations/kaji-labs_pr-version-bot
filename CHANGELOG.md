@@ -1,3 +1,7 @@
+## [1.1.1] - 2026-06-05
+
+- patch: chore: remove internal planning docs from public repo ([#47](https://github.com/kaji-labs/pr-version-bot/pull/47))
+
 ## [1.1.0] - 2026-06-05
 
 - minor: chore: upgrade to Node.js 24 — action runtime and all workflow actions ([#45](https://github.com/kaji-labs/pr-version-bot/pull/45))

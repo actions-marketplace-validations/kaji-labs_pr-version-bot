@@ -90,6 +90,29 @@ describe('applyReadmeUpdate with previousTag', () => {
     expect(written).toContain('v1.1.0');
     expect(written).not.toContain('v1.0.0');
   });
+
+  it('updates version ref appearing before the start marker (header badge scenario)', () => {
+    const readmeContent = [
+      '[![Version](https://img.shields.io/badge/version-v1.0.0-orange)](https://github.com/owner/repo/releases)',
+      '',
+      START,
+      'old block content',
+      END,
+      '',
+      '## Example',
+      '- uses: owner/repo@v1.0.0',
+    ].join('\n');
+
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readFileSync).mockReturnValue(readmeContent);
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+
+    const result = applyReadmeUpdate('README.md', START, END, 'owner/repo', 'v1.1.0', 'v1', 'v1.0.0');
+    expect(result).toBe(true);
+    const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
+    expect(written).toContain('version-v1.1.0-orange');
+    expect(written).not.toContain('version-v1.0.0-orange');
+  });
 });
 
 describe('updateReadmeBlock', () => {

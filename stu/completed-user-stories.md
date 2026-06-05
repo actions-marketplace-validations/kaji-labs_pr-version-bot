@@ -4,6 +4,61 @@ Newest story at top. All AC items ticked. Append-only.
 
 ---
 
+### ✅ Story 11.3 — Config file support and docs
+
+> Completed: 2026-06-05 | Epic 11 — Branch Protection Compatibility
+
+**Acceptance Criteria:**
+
+- [x] `.versionbot.yml` supports `useReleasePr` and `tagOnReleasePr`
+- [x] `docs/configuration.md` updated with both new inputs
+- [x] `docs/troubleshooting.md` updated with Branch protection blocks push section (Option A: exempt bot; Option B: use-release-pr)
+- [x] `examples/with-branch-protection.yml` created with `pull-requests: write` permission
+- [x] `docs/quick-start.md` updated with branch protection note
+
+**Security Criteria:**
+
+- [x] Examples clearly show `pull-requests: write` permission requirement
+- [x] No real tokens or org names beyond `kaji-labs` in examples
+
+---
+
+### ✅ Story 11.2 — Release PR mode
+
+> Completed: 2026-06-05 | Epic 11 — Branch Protection Compatibility
+
+**Acceptance Criteria:**
+
+- [x] `use-release-pr` input (default `'false'`)
+- [x] `src/release-pr.ts`: `sanitiseReleaseBranch`, `createReleaseBranch`, `pushReleaseBranch`, `openReleasePr` (creates PR + applies `release:none` label)
+- [x] Release PR flow: creates `release/{tag}` branch, commits files, pushes, opens PR, outputs `release-pr-url`
+- [x] `tag-on-release-pr` input (default `'true'`): creates tag/release immediately on the branch
+- [x] `action.yml`: `use-release-pr`, `tag-on-release-pr` inputs + `release-pr-url` output
+- [x] 4 unit tests for `sanitiseReleaseBranch`
+
+**Security Criteria:**
+
+- [x] Branch name only contains alphanumeric, `/`, `.`, `-`
+- [x] Release PR always gets `release:none` label
+
+---
+
+### ✅ Story 11.1 — Detect branch protection and fail clearly
+
+> Completed: 2026-06-05 | Epic 11 — Branch Protection Compatibility
+
+**Acceptance Criteria:**
+
+- [x] `pushWithProtectionCheck(targetBranch)` wraps push failure with descriptive message naming the branch, suggesting `use-release-pr`, and linking to troubleshooting docs
+- [x] `createTag` no longer calls bare `git push` — push handled separately
+- [x] 3 unit tests: success, error wrapping with branch-protection message, branch name in error
+
+**Security Criteria:**
+
+- [x] Error message never includes `GITHUB_TOKEN` or any credential
+
+---
+
 ### ✅ Story 10.3 — Docs and PR template example
 
 > Completed: 2026-06-04 | Epic 10 — PR Template Checkbox Label Detection

@@ -37,6 +37,8 @@ export interface BotConfig {
   readmeFile?: string;
   readmeStartMarker?: string;
   readmeEndMarker?: string;
+  useReleasePr?: boolean;
+  tagOnReleasePr?: boolean;
 }
 
 export interface ResolvedConfig {
@@ -64,6 +66,8 @@ export interface ResolvedConfig {
   readmeFile: string;
   readmeStartMarker: string;
   readmeEndMarker: string;
+  useReleasePr: boolean;
+  tagOnReleasePr: boolean;
 }
 
 const DEFAULT_LABELS: LabelConfig = {
@@ -147,5 +151,11 @@ export function mergeConfig(fileConfig: BotConfig, inputs: Record<string, string
       inp('readme-start-marker') || fileConfig.readmeStartMarker || '<!-- VERSIONBOT:START -->',
     readmeEndMarker:
       inp('readme-end-marker') || fileConfig.readmeEndMarker || '<!-- VERSIONBOT:END -->',
+    useReleasePr: inp('use-release-pr')
+      ? inp('use-release-pr') === 'true'
+      : (fileConfig.useReleasePr ?? false),
+    tagOnReleasePr: inp('tag-on-release-pr')
+      ? inp('tag-on-release-pr') !== 'false'
+      : (fileConfig.tagOnReleasePr ?? true),
   };
 }

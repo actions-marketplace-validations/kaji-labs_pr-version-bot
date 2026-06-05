@@ -4,7 +4,13 @@ import { detectBump } from './labels';
 import { bumpPrerelease, readVersion, bumpVersion, writeVersion } from './version';
 import type { PrereleaseChannel } from './version';
 import { prependEntry } from './changelog';
-import { configureGit, commitRelease, createTag } from './git';
+import { configureGit, commitRelease, createTag, pushWithProtectionCheck } from './git';
+import {
+  sanitiseReleaseBranch,
+  createReleaseBranch,
+  pushReleaseBranch,
+  openReleasePr,
+} from './release-pr';
 import { createRelease } from './github-release';
 import { loadConfig, mergeConfig } from './config';
 import { updatePackageVersion } from './package-json';
@@ -45,6 +51,8 @@ export async function run(): Promise<void> {
       'readme-file': core.getInput('readme-file'),
       'readme-start-marker': core.getInput('readme-start-marker'),
       'readme-end-marker': core.getInput('readme-end-marker'),
+      'use-release-pr': core.getInput('use-release-pr'),
+      'tag-on-release-pr': core.getInput('tag-on-release-pr'),
     };
 
     const fileConfig = loadConfig();
@@ -203,16 +211,44 @@ export async function run(): Promise<void> {
     }
 
     await configureGit();
-    await commitRelease(filesToCommit, message);
-    await createTag(tag);
 
-    if (config.createGithubRelease) {
-      await createRelease(
-        token,
-        tag,
-        next,
-        `${bump}: ${pr.title as string} (#${pr.number as number})`
-      );
+    if (config.useReleasePr) {
+      const releaseBranch = sanitiseReleaseBranch(tag);
+      await createReleaseBranch(releaseBranch);
+      await commitRelease(filesToCommit, message);
+      await pushReleaseBranch(releaseBranch);
+
+      if (config.tagOnReleasePr) {
+        await createTag(tag);
+        if (config.createGithubRelease) {
+          await createRelease(
+            token,
+            tag,
+            next,
+            `${bump}: ${pr.title as string} (#${pr.number as number})`
+          );
+        }
+      }
+
+      const prTitle = message;
+      const prBody = `This PR was automatically created by PR Version Bot.\n\n## Changes\n\n- Version bumped to \`${next}\`\n- \`${config.versionFile}\` updated\n- \`${config.changelogFile}\` updated`;
+      const prUrl = await openReleasePr(token, releaseBranch, config.targetBranch, prTitle, prBody);
+
+      core.info(`Release PR created: ${prUrl}`);
+      core.setOutput('release-pr-url', prUrl);
+    } else {
+      await commitRelease(filesToCommit, message);
+      await createTag(tag);
+      await pushWithProtectionCheck(config.targetBranch);
+
+      if (config.createGithubRelease) {
+        await createRelease(
+          token,
+          tag,
+          next,
+          `${bump}: ${pr.title as string} (#${pr.number as number})`
+        );
+      }
     }
 
     const notifMessage = config.notificationTemplate

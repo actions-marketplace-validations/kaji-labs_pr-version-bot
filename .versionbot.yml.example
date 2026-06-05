@@ -48,3 +48,7 @@ labels:
 # readme-file: README.md
 # readme-start-marker: '<!-- VERSIONBOT:START -->'
 # readme-end-marker: '<!-- VERSIONBOT:END -->'
+
+# Branch protection compatibility (optional)
+# useReleasePr: false
+# tagOnReleasePr: true

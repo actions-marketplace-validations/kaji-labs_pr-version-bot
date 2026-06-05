@@ -108,3 +108,9 @@ Enable auto-update of your README on each release by adding markers and enabling
 ```
 
 The action will replace the content between the markers with an auto-generated block showing the current version and install instructions.
+
+## Branch protection
+
+If your repository has branch protection rules that block direct pushes, the action will fail with a clear error message. You can either exempt `github-actions[bot]` from push restrictions, or enable release PR mode by adding `use-release-pr: 'true'` to your workflow.
+
+See [docs/troubleshooting.md](troubleshooting.md#branch-protection-blocks-push) for full instructions.

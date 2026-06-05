@@ -3590,18 +3590,18 @@ var require_webidl = __commonJS({
     webidl.errors.exception = function(message) {
       return new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function(context3) {
-      const plural = context3.types.length === 1 ? "" : " one of";
-      const message = `${context3.argument} could not be converted to${plural}: ${context3.types.join(", ")}.`;
+    webidl.errors.conversionFailed = function(context4) {
+      const plural = context4.types.length === 1 ? "" : " one of";
+      const message = `${context4.argument} could not be converted to${plural}: ${context4.types.join(", ")}.`;
       return webidl.errors.exception({
-        header: context3.prefix,
+        header: context4.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function(context3) {
+    webidl.errors.invalidArgument = function(context4) {
       return webidl.errors.exception({
-        header: context3.prefix,
-        message: `"${context3.value}" is an invalid ${context3.type}.`
+        header: context4.prefix,
+        message: `"${context4.value}" is an invalid ${context4.type}.`
       });
     };
     webidl.brandCheck = function(V, I, opts) {
@@ -9636,17 +9636,17 @@ var require_api_request = __commonJS({
           }
         }
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context3, responseHeaders, highWaterMark } = this;
+        const { callback, opaque, abort, context: context4, responseHeaders, highWaterMark } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -9683,7 +9683,7 @@ var require_api_request = __commonJS({
               trailers: this.trailers,
               opaque,
               body: res,
-              context: context3
+              context: context4
             });
           }
         }
@@ -9852,17 +9852,17 @@ var require_api_stream = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { factory, opaque, context: context3, callback, responseHeaders } = this;
+        const { factory, opaque, context: context4, callback, responseHeaders } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -9890,7 +9890,7 @@ var require_api_stream = __commonJS({
             statusCode,
             headers,
             opaque,
-            context: context3
+            context: context4
           });
           if (!res || typeof res.write !== "function" || typeof res.end !== "function" || typeof res.on !== "function") {
             throw new InvalidReturnValueError("expected Writable");
@@ -10082,7 +10082,7 @@ var require_api_pipeline = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         const { ret, res } = this;
         if (this.reason) {
           abort(this.reason);
@@ -10091,10 +10091,10 @@ var require_api_pipeline = __commonJS({
         assert(!res, "pipeline cannot be retried");
         assert(!ret.destroyed);
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler, context: context3 } = this;
+        const { opaque, handler, context: context4 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
@@ -10112,7 +10112,7 @@ var require_api_pipeline = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context3
+            context: context4
           });
         } catch (err) {
           this.res.on("error", util.nop);
@@ -10196,7 +10196,7 @@ var require_api_upgrade = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (this.reason) {
           abort(this.reason);
           return;
@@ -10210,7 +10210,7 @@ var require_api_upgrade = __commonJS({
       }
       onUpgrade(statusCode, rawHeaders, socket) {
         assert(statusCode === 101);
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context4 } = this;
         removeSignal(this);
         this.callback = null;
         const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
@@ -10218,7 +10218,7 @@ var require_api_upgrade = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context4
         });
       }
       onError(err) {
@@ -10287,20 +10287,20 @@ var require_api_connect = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders() {
         throw new SocketError("bad connect", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context4 } = this;
         removeSignal(this);
         this.callback = null;
         let headers = rawHeaders;
@@ -10312,7 +10312,7 @@ var require_api_connect = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context4
         });
       }
       onError(err) {
@@ -22546,18 +22546,18 @@ var require_webidl2 = __commonJS({
     webidl.errors.exception = function(message) {
       return new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function(context3) {
-      const plural = context3.types.length === 1 ? "" : " one of";
-      const message = `${context3.argument} could not be converted to${plural}: ${context3.types.join(", ")}.`;
+    webidl.errors.conversionFailed = function(context4) {
+      const plural = context4.types.length === 1 ? "" : " one of";
+      const message = `${context4.argument} could not be converted to${plural}: ${context4.types.join(", ")}.`;
       return webidl.errors.exception({
-        header: context3.prefix,
+        header: context4.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function(context3) {
+    webidl.errors.invalidArgument = function(context4) {
       return webidl.errors.exception({
-        header: context3.prefix,
-        message: `"${context3.value}" is an invalid ${context3.type}.`
+        header: context4.prefix,
+        message: `"${context4.value}" is an invalid ${context4.type}.`
       });
     };
     webidl.brandCheck = function(V, I, opts = void 0) {
@@ -27883,15 +27883,15 @@ var require_api_request2 = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context3, responseHeaders, highWaterMark } = this;
+        const { callback, opaque, abort, context: context4, responseHeaders, highWaterMark } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -27918,7 +27918,7 @@ var require_api_request2 = __commonJS({
               trailers: this.trailers,
               opaque,
               body,
-              context: context3
+              context: context4
             });
           }
         }
@@ -28038,15 +28038,15 @@ var require_api_stream2 = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { factory, opaque, context: context3, callback, responseHeaders } = this;
+        const { factory, opaque, context: context4, callback, responseHeaders } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -28074,7 +28074,7 @@ var require_api_stream2 = __commonJS({
             statusCode,
             headers,
             opaque,
-            context: context3
+            context: context4
           });
           if (!res || typeof res.write !== "function" || typeof res.end !== "function" || typeof res.on !== "function") {
             throw new InvalidReturnValueError("expected Writable");
@@ -28266,17 +28266,17 @@ var require_api_pipeline2 = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         const { ret, res } = this;
         assert(!res, "pipeline cannot be retried");
         if (ret.destroyed) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler, context: context3 } = this;
+        const { opaque, handler, context: context4 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
@@ -28294,7 +28294,7 @@ var require_api_pipeline2 = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context3
+            context: context4
           });
         } catch (err) {
           this.res.on("error", util.nop);
@@ -28378,7 +28378,7 @@ var require_api_upgrade2 = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
@@ -28389,7 +28389,7 @@ var require_api_upgrade2 = __commonJS({
         throw new SocketError("bad upgrade", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context4 } = this;
         assert.strictEqual(statusCode, 101);
         removeSignal(this);
         this.callback = null;
@@ -28398,7 +28398,7 @@ var require_api_upgrade2 = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context4
         });
       }
       onError(err) {
@@ -28466,18 +28466,18 @@ var require_api_connect2 = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context3) {
+      onConnect(abort, context4) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context3;
+        this.context = context4;
       }
       onHeaders() {
         throw new SocketError("bad connect", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context3 } = this;
+        const { callback, opaque, context: context4 } = this;
         removeSignal(this);
         this.callback = null;
         let headers = rawHeaders;
@@ -28489,7 +28489,7 @@ var require_api_connect2 = __commonJS({
           headers,
           socket,
           opaque,
-          context: context3
+          context: context4
         });
       }
       onError(err) {
@@ -36608,8 +36608,8 @@ var require_dist_node2 = __commonJS({
     function isKeyOperator(operator) {
       return operator === ";" || operator === "&" || operator === "?";
     }
-    function getValues(context3, operator, key, modifier) {
-      var value = context3[key], result = [];
+    function getValues(context4, operator, key, modifier) {
+      var value = context4[key], result = [];
       if (isDefined(value) && value !== "") {
         if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
           value = value.toString();
@@ -36673,7 +36673,7 @@ var require_dist_node2 = __commonJS({
         expand: expand.bind(null, template)
       };
     }
-    function expand(template, context3) {
+    function expand(template, context4) {
       var operators = ["+", "#", ".", "/", ";", "?", "&"];
       template = template.replace(
         /\{([^\{\}]+)\}|([^\{\}]+)/g,
@@ -36687,7 +36687,7 @@ var require_dist_node2 = __commonJS({
             }
             expression.split(/,/g).forEach(function(variable) {
               var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-              values.push(getValues(context3, operator, tmp[1], tmp[2] || tmp[3]));
+              values.push(getValues(context4, operator, tmp[1], tmp[2] || tmp[3]));
             });
             if (operator && operator !== "+") {
               var separator = ",";
@@ -40190,11 +40190,11 @@ var require_github = __commonJS({
     var Context = __importStar(require_context());
     var utils_1 = require_utils4();
     exports2.context = new Context.Context();
-    function getOctokit3(token, options, ...additionalPlugins) {
+    function getOctokit4(token, options, ...additionalPlugins) {
       const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
       return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
     }
-    exports2.getOctokit = getOctokit3;
+    exports2.getOctokit = getOctokit4;
   }
 });
 
@@ -43150,7 +43150,7 @@ var require_exec = __commonJS({
     exports2.getExecOutput = exports2.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar(require_toolrunner());
-    function exec3(commandLine, args, options) {
+    function exec5(commandLine, args, options) {
       return __awaiter2(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -43162,7 +43162,7 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports2.exec = exec3;
+    exports2.exec = exec5;
     function getExecOutput2(commandLine, args, options) {
       var _a, _b;
       return __awaiter2(this, void 0, void 0, function* () {
@@ -43185,7 +43185,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec3(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec5(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -43702,7 +43702,7 @@ function info(message) {
 }
 
 // src/index.ts
-var github2 = __toESM(require_github());
+var github3 = __toESM(require_github());
 
 // src/labels.ts
 var DEFAULT_LABEL_MAP = {
@@ -43809,14 +43809,56 @@ async function commitRelease(files, message) {
 async function createTag(tag) {
   await exec.exec("git", ["tag", tag]);
   await exec.exec("git", ["push", "origin", tag]);
-  await exec.exec("git", ["push"]);
+}
+async function pushWithProtectionCheck(targetBranch) {
+  try {
+    await exec.exec("git", ["push"]);
+  } catch (error2) {
+    const msg = error2 instanceof Error ? error2.message : String(error2);
+    throw new Error(
+      `Push to "${targetBranch}" was rejected. If branch protection is enabled, direct pushes may be blocked. Enable \`use-release-pr: true\` to open a release PR instead. See https://github.com/kaji-labs/pr-version-bot/blob/main/docs/troubleshooting.md (original error: ${msg})`,
+      { cause: error2 }
+    );
+  }
+}
+
+// src/release-pr.ts
+var exec3 = __toESM(require_exec());
+var github = __toESM(require_github());
+function sanitiseReleaseBranch(tag) {
+  return `release/${tag.replace(/[^a-zA-Z0-9/.-]/g, "-")}`;
+}
+async function createReleaseBranch(branchName) {
+  await exec3.exec("git", ["checkout", "-b", branchName]);
+}
+async function pushReleaseBranch(branchName) {
+  await exec3.exec("git", ["push", "origin", `HEAD:${branchName}`]);
+}
+async function openReleasePr(token, branchName, targetBranch, title, body) {
+  const octokit = github.getOctokit(token);
+  const { owner, repo } = github.context.repo;
+  const pr = await octokit.rest.pulls.create({
+    owner,
+    repo,
+    title,
+    body,
+    head: branchName,
+    base: targetBranch
+  });
+  await octokit.rest.issues.addLabels({
+    owner,
+    repo,
+    issue_number: pr.data.number,
+    labels: ["release:none"]
+  });
+  return pr.data.html_url;
 }
 
 // src/github-release.ts
-var github = __toESM(require_github());
+var github2 = __toESM(require_github());
 async function createRelease(token, tag, version, body) {
-  const octokit = github.getOctokit(token);
-  const { owner, repo } = github.context.repo;
+  const octokit = github2.getOctokit(token);
+  const { owner, repo } = github2.context.repo;
   await octokit.rest.repos.createRelease({
     owner,
     repo,
@@ -46243,7 +46285,9 @@ function mergeConfig(fileConfig, inputs) {
     updateReadme: inp("update-readme") ? inp("update-readme") === "true" : fileConfig.updateReadme ?? false,
     readmeFile: inp("readme-file") || fileConfig.readmeFile || "README.md",
     readmeStartMarker: inp("readme-start-marker") || fileConfig.readmeStartMarker || "<!-- VERSIONBOT:START -->",
-    readmeEndMarker: inp("readme-end-marker") || fileConfig.readmeEndMarker || "<!-- VERSIONBOT:END -->"
+    readmeEndMarker: inp("readme-end-marker") || fileConfig.readmeEndMarker || "<!-- VERSIONBOT:END -->",
+    useReleasePr: inp("use-release-pr") ? inp("use-release-pr") === "true" : fileConfig.useReleasePr ?? false,
+    tagOnReleasePr: inp("tag-on-release-pr") ? inp("tag-on-release-pr") !== "false" : fileConfig.tagOnReleasePr ?? true
   };
 }
 
@@ -46479,7 +46523,7 @@ function applyReadmeUpdate(readmeFile, startMarker, endMarker, repoFullName, tag
 // src/index.ts
 async function run() {
   try {
-    const pr = github2.context.payload.pull_request;
+    const pr = github3.context.payload.pull_request;
     if (!pr?.merged) {
       info("PR not merged \u2014 skipping");
       return;
@@ -46504,7 +46548,9 @@ async function run() {
       "update-readme": getInput("update-readme"),
       "readme-file": getInput("readme-file"),
       "readme-start-marker": getInput("readme-start-marker"),
-      "readme-end-marker": getInput("readme-end-marker")
+      "readme-end-marker": getInput("readme-end-marker"),
+      "use-release-pr": getInput("use-release-pr"),
+      "tag-on-release-pr": getInput("tag-on-release-pr")
     };
     const fileConfig = loadConfig();
     const config = mergeConfig(fileConfig, inputs);
@@ -46523,8 +46569,8 @@ async function run() {
       }
     }
     if (releaseLabels.length === 0 && bump === config.defaultBump && config.useConventionalCommits) {
-      const octokit = github2.getOctokit(token);
-      const { owner, repo } = github2.context.repo;
+      const octokit = github3.getOctokit(token);
+      const { owner, repo } = github3.context.repo;
       const commits = await octokit.rest.pulls.listCommits({
         owner,
         repo,
@@ -46608,7 +46654,7 @@ async function run() {
       }
     }
     if (config.updateReadme) {
-      const { owner, repo } = github2.context.repo;
+      const { owner, repo } = github3.context.repo;
       const repoFullName = `${owner}/${repo}`;
       const majorAlias = extractMajorAlias(tag, config.tagPrefix);
       const updated = applyReadmeUpdate(
@@ -46626,15 +46672,45 @@ async function run() {
       }
     }
     await configureGit();
-    await commitRelease(filesToCommit, message);
-    await createTag(tag);
-    if (config.createGithubRelease) {
-      await createRelease(
-        token,
-        tag,
-        next,
-        `${bump}: ${pr.title} (#${pr.number})`
-      );
+    if (config.useReleasePr) {
+      const releaseBranch = sanitiseReleaseBranch(tag);
+      await createReleaseBranch(releaseBranch);
+      await commitRelease(filesToCommit, message);
+      await pushReleaseBranch(releaseBranch);
+      if (config.tagOnReleasePr) {
+        await createTag(tag);
+        if (config.createGithubRelease) {
+          await createRelease(
+            token,
+            tag,
+            next,
+            `${bump}: ${pr.title} (#${pr.number})`
+          );
+        }
+      }
+      const prTitle = message;
+      const prBody = `This PR was automatically created by PR Version Bot.
+
+## Changes
+
+- Version bumped to \`${next}\`
+- \`${config.versionFile}\` updated
+- \`${config.changelogFile}\` updated`;
+      const prUrl = await openReleasePr(token, releaseBranch, config.targetBranch, prTitle, prBody);
+      info(`Release PR created: ${prUrl}`);
+      setOutput("release-pr-url", prUrl);
+    } else {
+      await commitRelease(filesToCommit, message);
+      await createTag(tag);
+      await pushWithProtectionCheck(config.targetBranch);
+      if (config.createGithubRelease) {
+        await createRelease(
+          token,
+          tag,
+          next,
+          `${bump}: ${pr.title} (#${pr.number})`
+        );
+      }
     }
     const notifMessage = config.notificationTemplate.replace("{tag}", tag).replace("{bump}", bump).replace("{prTitle}", pr.title).replace("{prNumber}", String(pr.number));
     if (config.slackWebhookUrl) {

@@ -75,7 +75,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: kaji-labs/pr-version-bot@v0.6.0
+      - uses: kaji-labs/pr-version-bot@v0.8.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

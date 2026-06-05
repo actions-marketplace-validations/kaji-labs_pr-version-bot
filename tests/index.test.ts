@@ -66,6 +66,19 @@ function mockMergedPR(labels: string[] = ['release:minor']): void {
 describe('run', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock core.summary chain
+    const summaryMock = {
+      addHeading: vi.fn().mockReturnThis(),
+      addTable: vi.fn().mockReturnThis(),
+      write: vi.fn().mockResolvedValue(undefined),
+    };
+    Object.defineProperty(core, 'summary', {
+      value: summaryMock,
+      writable: true,
+      configurable: true,
+    });
+
     vi.mocked(configModule.loadConfig).mockReturnValue({});
     vi.mocked(configModule.mergeConfig).mockReturnValue({
       versionFile: 'VERSION.md',
@@ -93,6 +106,8 @@ describe('run', () => {
     vi.mocked(monorepoModule.resolvePackagePaths).mockReturnValue([]);
     vi.mocked(notifyModule.sendSlackNotification).mockResolvedValue(undefined);
     vi.mocked(notifyModule.sendDiscordNotification).mockResolvedValue(undefined);
+    vi.mocked(notifyModule.sendSlackNotifications).mockResolvedValue(undefined);
+    vi.mocked(notifyModule.sendDiscordNotifications).mockResolvedValue(undefined);
     vi.mocked(pkgModule.updatePackageVersion).mockReturnValue(true);
     vi.mocked(conventionalModule.detectBumpFromCommits).mockReturnValue(null);
     vi.mocked(labelsModule.detectBump).mockReturnValue('minor');
@@ -103,7 +118,9 @@ describe('run', () => {
     vi.mocked(gitModule.configureGit).mockResolvedValue(undefined);
     vi.mocked(gitModule.commitRelease).mockResolvedValue(undefined);
     vi.mocked(gitModule.createTag).mockResolvedValue(undefined);
-    vi.mocked(releaseModule.createRelease).mockResolvedValue(undefined);
+    vi.mocked(releaseModule.createRelease).mockResolvedValue(
+      'https://github.com/test-owner/test-repo/releases/tag/v1.1.0' as unknown as void
+    );
   });
 
   it('exits early when PR is not merged', async () => {
@@ -335,11 +352,11 @@ describe('run', () => {
     });
     const { run } = await import('../src/index');
     await run();
-    expect(notifyModule.sendSlackNotification).toHaveBeenCalledWith(
+    expect(notifyModule.sendSlackNotifications).toHaveBeenCalledWith(
       'https://hooks.slack.com/test',
       expect.stringContaining('v1.1.0')
     );
-    expect(notifyModule.sendDiscordNotification).not.toHaveBeenCalled();
+    expect(notifyModule.sendDiscordNotifications).not.toHaveBeenCalled();
   });
 
   it('bumps each package in monorepo mode', async () => {

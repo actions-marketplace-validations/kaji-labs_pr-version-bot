@@ -47,4 +47,19 @@ describe('resolvePackagePaths', () => {
     const paths = resolvePackagePaths(['packages/api'], 'VERSION.md');
     expect(paths).toEqual(['packages/api/VERSION.md']);
   });
+
+  // S-008: versionFile path traversal guard
+  it('throws when versionFile contains path traversal', () => {
+    expect(() => resolvePackagePaths(['packages/api'], '../../.env')).toThrow('path traversal');
+  });
+
+  it('throws when versionFile is an absolute path', () => {
+    expect(() => resolvePackagePaths(['packages/api'], '/etc/passwd')).toThrow('path traversal');
+  });
+
+  it('accepts a normal versionFile filename', () => {
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    const paths = resolvePackagePaths(['packages/api'], 'VERSION.md');
+    expect(paths).toEqual(['packages/api/VERSION.md']);
+  });
 });

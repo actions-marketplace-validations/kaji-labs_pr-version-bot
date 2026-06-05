@@ -1,8 +1,96 @@
-import { describe, it, expect } from 'vitest';
-import { updateReadmeBlock } from '../src/readme';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as fs from 'fs';
+
+vi.mock('fs');
+
+import { updateReadmeBlock, updateVersionRefs, applyReadmeUpdate } from '../src/readme';
 
 const START = '<!-- VERSIONBOT:START -->';
 const END = '<!-- VERSIONBOT:END -->';
+
+describe('updateVersionRefs', () => {
+  it('replaces all occurrences of previousTag with newTag', () => {
+    const content = 'Use v1.0.0 or v1.0.0 for best results';
+    expect(updateVersionRefs(content, 'v1.0.0', 'v1.1.0')).toBe(
+      'Use v1.1.0 or v1.1.0 for best results'
+    );
+  });
+
+  it('returns content unchanged when previousTag is empty string', () => {
+    const content = 'Some content v1.0.0';
+    expect(updateVersionRefs(content, '', 'v1.1.0')).toBe('Some content v1.0.0');
+  });
+
+  it('handles previousTag with special regex characters like dots', () => {
+    const content = 'Use v1.2.3 in your workflow';
+    expect(updateVersionRefs(content, 'v1.2.3', 'v1.3.0')).toBe('Use v1.3.0 in your workflow');
+  });
+
+  it('does not partially match similar tags', () => {
+    const content = 'Use v1.2.3 but not v1.2.30';
+    expect(updateVersionRefs(content, 'v1.2.3', 'v2.0.0')).toBe('Use v2.0.0 but not v2.0.00');
+  });
+});
+
+describe('applyReadmeUpdate with previousTag', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('replaces old version ref outside markers when markers exist', () => {
+    const readmeContent = `${START}\nold content\n${END}\n\n## Example workflow\n- uses: owner/repo@v1.0.0`;
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readFileSync).mockReturnValue(readmeContent);
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+
+    const result = applyReadmeUpdate(
+      'README.md',
+      START,
+      END,
+      'owner/repo',
+      'v1.1.0',
+      'v1',
+      'v1.0.0'
+    );
+    expect(result).toBe(true);
+    const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
+    expect(written).toContain('owner/repo@v1.1.0');
+    expect(written).not.toContain('owner/repo@v1.0.0');
+  });
+
+  it('returns false when readme file does not exist', () => {
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+    const result = applyReadmeUpdate(
+      'README.md',
+      START,
+      END,
+      'owner/repo',
+      'v1.1.0',
+      'v1',
+      'v1.0.0'
+    );
+    expect(result).toBe(false);
+  });
+
+  it('updates version refs even when markers are absent', () => {
+    const readmeContent = '## Example\n- uses: owner/repo@v1.0.0\n';
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readFileSync).mockReturnValue(readmeContent);
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+
+    const result = applyReadmeUpdate(
+      'README.md',
+      START,
+      END,
+      'owner/repo',
+      'v1.1.0',
+      'v1',
+      'v1.0.0'
+    );
+    expect(result).toBe(true);
+    const written = vi.mocked(fs.writeFileSync).mock.calls[0][1] as string;
+    expect(written).toContain('v1.1.0');
+    expect(written).not.toContain('v1.0.0');
+  });
+});
 
 describe('updateReadmeBlock', () => {
   it('replaces content between markers', () => {

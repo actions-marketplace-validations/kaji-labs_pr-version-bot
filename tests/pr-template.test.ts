@@ -15,9 +15,10 @@ describe('detectBumpFromPrBody', () => {
     expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBe('minor');
   });
 
-  it('detects major from checked checkbox', () => {
+  it('returns null when checkbox text has label as substring only (not exact match)', () => {
+    // S-005: exact match required — "release:major bumps major version" should NOT match
     const body = '- [x] release:major bumps major version';
-    expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBe('major');
+    expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBeNull();
   });
 
   it('returns null when no checkbox matches', () => {
@@ -66,8 +67,14 @@ describe('detectBumpFromPrBody', () => {
     expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBe('patch');
   });
 
-  it('substring match — label in longer text', () => {
+  it('exact match required — label embedded in longer text does not match', () => {
+    // S-005: substring no longer matches
     const body = '- [x] Use release:minor for this change';
+    expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBeNull();
+  });
+
+  it('exact match is case-insensitive', () => {
+    const body = '- [x] RELEASE:MINOR';
     expect(detectBumpFromPrBody(body, DEFAULT_LABELS, true)).toBe('minor');
   });
 });

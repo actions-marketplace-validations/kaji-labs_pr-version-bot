@@ -21,7 +21,7 @@ Automatically bumps your semver, updates `CHANGELOG.md`, creates a git tag, and 
 
 1. Apply a `release:minor` label to your PR
 2. Merge it
-3. The action reads the label, bumps `VERSION.md`, prepends a `CHANGELOG.md` entry, commits both, creates a `v1.1.1` tag, and publishes a GitHub Release
+3. The action reads the label, bumps `VERSION.md`, prepends a `CHANGELOG.md` entry, commits both, creates a `v1.1.2` tag, and publishes a GitHub Release
 
 ## Quick start
 
@@ -52,14 +52,14 @@ See [docs/labels.md](docs/labels.md) for full pre-release lifecycle rules.
 
 <!-- VERSIONBOT:START -->
 
-[![Version](https://img.shields.io/badge/version-v1.1.1-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
+[![Version](https://img.shields.io/badge/version-v1.1.2-orange)](https://github.com/kaji-labs/pr-version-bot/releases)
 
-> Current stable release: **v1.1.1**
+> Current stable release: **v1.1.2**
 
 **Pinned version (recommended):**
 
 ```yaml
-- uses: kaji-labs/pr-version-bot@v1.1.1
+- uses: kaji-labs/pr-version-bot@v1.1.2
 ```
 
 **Major version alias:**

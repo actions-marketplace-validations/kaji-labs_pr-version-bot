@@ -1,3 +1,7 @@
+## [1.1.2] - 2026-06-18
+
+- patch: chore(deps): batch update dependabot bumps ([#53](https://github.com/kaji-labs/pr-version-bot/pull/53))
+
 ## [1.1.1] - 2026-06-05
 
 - patch: chore: remove internal planning docs from public repo ([#47](https://github.com/kaji-labs/pr-version-bot/pull/47))
